@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Brand Colors (source: brand/colors.json v1.1.0) ── */
+  --color-brand-teal:    #0D4F4A; /* primary — headers, symbol bg */
+  --color-brand-amber:   #F5B700; /* accent — findings, alerts, CTAs */
+  --color-brand-paper:   #F8F5EE; /* surface light — backgrounds, cards */
+  --color-brand-ink:     #0F1419; /* text primary on paper */
+  --color-brand-gray:    #5C6670; /* muted — metadata, source citations */
+  --color-brand-danger:  #C8372D; /* risk critical / retraction */
+  --color-brand-success: #1F7A50; /* verification, confirmed source */
+
+  /* ── Dark mode tokens ── */
+  --color-dark-bg:       #0F1419;
+  --color-dark-surface:  #1A2028;
+  --color-dark-border:   #2A323C;
+  --color-dark-muted:    #9BA5AF;
+  --color-dark-brand-fg: #3FBFB3; /* teal clareado para headlines em dark */
+
+  /* ── Risk scale (maps to riskScore ranges) ── */
+  --color-risk-info:     #5C6670; /* 0–29  internal only */
+  --color-risk-low:      #1F7A50; /* 30–59 internal only */
+  --color-risk-alert:    #F5B700; /* 60–79 publishable */
+  --color-risk-critical: #C8372D; /* 80–100 publishable + highlight */
+
+  /* ── Typography ── */
+  /* CSS vars injected at runtime by next/font */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "Cascadia Code", monospace;
+
+  /* ── Border radius (source: brand/colors.json) ── */
+  --radius-sm:   6px;
+  --radius-md:   12px;
+  --radius-lg:   22px;
+  --radius-pill: 9999px;
+}
+
+/* ── Accessibility: respect prefers-reduced-motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

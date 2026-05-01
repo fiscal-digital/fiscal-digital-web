@@ -1,0 +1,312 @@
+{
+  "name": "Fiscal Digital — PT↔EN Glossary",
+  "version": "1.0.0",
+  "description": "Glossário canônico para tradução de termos brasileiros sensíveis. Source of truth para conteúdo do site, alertas, README, prompts dos Fiscais e PRs futuros.",
+  "guidelines": [
+    "Na primeira menção em texto EN, prefixar acrônimos brasileiros com explicação curta entre parênteses. Ex: 'CNPJ (Brazilian company tax ID)'.",
+    "'Fiscal Digital' é proper noun — nunca traduzido. Idem 'Querido Diário', 'Serenata de Amor'.",
+    "Quando houver dúvida, manter o termo PT em itálico e adicionar tradução entre parênteses. Ex: 'a *secretaria* (municipal department)'."
+  ],
+  "terms": [
+    {
+      "pt": "diário oficial",
+      "en": "official gazette",
+      "category": "legal",
+      "note": "Plural: diários oficiais → official gazettes. Termo já consolidado pelo Querido Diário."
+    },
+    {
+      "pt": "licitação",
+      "en": "public procurement",
+      "category": "legal",
+      "note": "Em contextos específicos pode ser 'public bid' ou 'tender'. 'Public procurement' é o termo OECD/Banco Mundial."
+    },
+    {
+      "pt": "dispensa de licitação",
+      "en": "no-bid waiver",
+      "category": "legal",
+      "note": "Quando o poder público compra sem licitar. Lei 14.133/2021, Art. 75. Evitar 'emergency waiver' (subset)."
+    },
+    {
+      "pt": "inexigibilidade",
+      "en": "sole-source justification",
+      "category": "legal",
+      "note": "Quando licitação é inviável por inviabilidade de competição (fornecedor único)."
+    },
+    {
+      "pt": "fracionamento de contrato",
+      "en": "contract splitting",
+      "category": "legal",
+      "note": "Dividir uma compra em várias menores para escapar do teto de dispensa. Adicionar contexto: '(splitting purchases to evade bid thresholds)'."
+    },
+    {
+      "pt": "aditivo contratual",
+      "en": "contract amendment",
+      "category": "legal",
+      "note": "Lei 14.133/2021, Art. 125 — limite de 25% do valor original."
+    },
+    {
+      "pt": "ata de registro de preços",
+      "en": "price registry agreement",
+      "category": "legal",
+      "note": "Mecanismo de compras agregadas. Equivalente funcional ao 'framework agreement' europeu."
+    },
+    {
+      "pt": "pregão",
+      "en": "reverse auction",
+      "category": "legal"
+    },
+    {
+      "pt": "empenho",
+      "en": "budget commitment",
+      "category": "legal",
+      "note": "Reserva orçamentária. 'Nota de empenho' → commitment note."
+    },
+    {
+      "pt": "secretaria",
+      "en": "municipal department",
+      "category": "structure",
+      "note": "NUNCA traduzir como 'secretary' (que é o cargo). 'Secretaria de Saúde' → 'Department of Health'."
+    },
+    {
+      "pt": "secretário",
+      "en": "department head",
+      "category": "structure",
+      "note": "Cargo de chefia da secretaria. 'Secretário de Saúde' → 'Department of Health head'."
+    },
+    {
+      "pt": "prefeitura",
+      "en": "city hall",
+      "category": "structure",
+      "note": "Em contextos institucionais formais: 'municipal government'."
+    },
+    {
+      "pt": "prefeito",
+      "en": "mayor",
+      "category": "structure"
+    },
+    {
+      "pt": "câmara municipal",
+      "en": "city council",
+      "category": "structure"
+    },
+    {
+      "pt": "vereador",
+      "en": "city councilor",
+      "category": "structure"
+    },
+    {
+      "pt": "município",
+      "en": "municipality",
+      "category": "structure"
+    },
+    {
+      "pt": "gestão",
+      "en": "administration",
+      "category": "structure",
+      "note": "Como em 'gestão Adiló 2021–': 'Adiló administration (2021–present)'."
+    },
+    {
+      "pt": "cargo comissionado",
+      "en": "political appointment",
+      "category": "structure",
+      "note": "Cargo de livre nomeação. Pode adicionar '(unrestricted patronage position)' em primeira menção."
+    },
+    {
+      "pt": "nomeação",
+      "en": "appointment",
+      "category": "structure"
+    },
+    {
+      "pt": "exoneração",
+      "en": "dismissal",
+      "category": "structure"
+    },
+    {
+      "pt": "servidor público",
+      "en": "civil servant",
+      "category": "structure"
+    },
+    {
+      "pt": "CNPJ",
+      "en": "CNPJ",
+      "category": "identifier",
+      "note": "Manter sigla. Primeira menção em EN: 'CNPJ (Brazilian company tax ID)'."
+    },
+    {
+      "pt": "CPF",
+      "en": "CPF",
+      "category": "identifier",
+      "note": "Manter sigla. Primeira menção em EN: 'CPF (Brazilian individual tax ID)'."
+    },
+    {
+      "pt": "código IBGE",
+      "en": "IBGE code",
+      "category": "identifier",
+      "note": "Identificador oficial de município. Primeira menção: 'IBGE code (Brazilian municipality identifier)'."
+    },
+    {
+      "pt": "CGU",
+      "en": "CGU",
+      "category": "compliance",
+      "note": "Primeira menção: 'CGU (Brazil''s Federal Office of the Comptroller General)'."
+    },
+    {
+      "pt": "TCE",
+      "en": "TCE",
+      "category": "compliance",
+      "note": "Tribunal de Contas Estadual. Primeira menção: 'TCE (State Audit Court)'."
+    },
+    {
+      "pt": "TCU",
+      "en": "TCU",
+      "category": "compliance",
+      "note": "Tribunal de Contas da União. Primeira menção: 'TCU (Federal Audit Court)'."
+    },
+    {
+      "pt": "CEIS",
+      "en": "CEIS",
+      "category": "compliance",
+      "note": "Cadastro Nacional de Empresas Inidôneas e Suspensas. Primeira menção: 'CEIS (Brazilian Registry of Debarred & Suspended Companies)'."
+    },
+    {
+      "pt": "CNEP",
+      "en": "CNEP",
+      "category": "compliance",
+      "note": "Cadastro Nacional de Empresas Punidas. Primeira menção: 'CNEP (Brazilian Registry of Punished Companies)'."
+    },
+    {
+      "pt": "fornecedor",
+      "en": "supplier",
+      "category": "compliance",
+      "note": "Em contextos de gasto público: 'public supplier' ou 'government vendor'. 'Vendor' isolado é OK em prosa."
+    },
+    {
+      "pt": "Fiscal (agente)",
+      "en": "Fiscal Agent",
+      "category": "product",
+      "note": "Conceito central do produto. Capitalizado em ambas línguas. 'Fiscal de Licitações' → 'Procurement Fiscal Agent'."
+    },
+    {
+      "pt": "Fiscal Geral",
+      "en": "Chief Fiscal",
+      "category": "product",
+      "note": "Orquestrador dos demais Fiscais."
+    },
+    {
+      "pt": "achado",
+      "en": "finding",
+      "category": "product",
+      "note": "Saída bruta de um Fiscal antes de virar alerta publicado."
+    },
+    {
+      "pt": "alerta",
+      "en": "alert",
+      "category": "product"
+    },
+    {
+      "pt": "riskScore",
+      "en": "risk score",
+      "category": "product",
+      "note": "0–100. No código mantém camelCase; em prosa EN é 'risk score'."
+    },
+    {
+      "pt": "evidência",
+      "en": "evidence",
+      "category": "product",
+      "note": "Sempre acompanhada de URL do diário oficial original."
+    },
+    {
+      "pt": "base legal",
+      "en": "legal basis",
+      "category": "product"
+    },
+    {
+      "pt": "narrativa",
+      "en": "narrative",
+      "category": "product"
+    },
+    {
+      "pt": "fonte",
+      "en": "source",
+      "category": "product",
+      "note": "Princípio inegociável — toda peça pública cita a fonte."
+    },
+    {
+      "pt": "fiscalização",
+      "en": "oversight",
+      "category": "tone",
+      "note": "Termo civic-tech internacional padrão. Evitar 'audit' (sugere autoridade formal que não temos)."
+    },
+    {
+      "pt": "vigilância cidadã",
+      "en": "civic monitoring",
+      "category": "tone",
+      "note": "Evitar 'civic watchdog' — mais agressivo que nosso tom factual."
+    },
+    {
+      "pt": "gasto público",
+      "en": "public spending",
+      "category": "tone"
+    },
+    {
+      "pt": "recursos públicos",
+      "en": "public funds",
+      "category": "tone"
+    },
+    {
+      "pt": "transparência",
+      "en": "transparency",
+      "category": "tone"
+    },
+    {
+      "pt": "indício",
+      "en": "indication",
+      "category": "tone",
+      "note": "Termo factual preferido. 'Há indício de fracionamento' → 'There is an indication of contract splitting'."
+    },
+    {
+      "pt": "inconsistência",
+      "en": "inconsistency",
+      "category": "tone",
+      "note": "Preferido a 'irregularidade'. Mais factual, menos juízo de valor."
+    }
+  ],
+  "avoid": [
+    {
+      "pt": "fraude",
+      "en": "fraud",
+      "reason": "Acusação de crime. Não temos competência ou base judicial para afirmar.",
+      "use_instead": ["inconsistência / inconsistency", "indício / indication", "o documento aponta / the document indicates"]
+    },
+    {
+      "pt": "desvio",
+      "en": "embezzlement / misappropriation",
+      "reason": "Acusação de crime patrimonial. Mesmo problema de 'fraude'.",
+      "use_instead": ["divergência / discrepancy", "valor não justificado no documento / unjustified amount in the record"]
+    },
+    {
+      "pt": "esquema",
+      "en": "scheme",
+      "reason": "Implica organização criminosa. Linguagem de acusação informal.",
+      "use_instead": ["padrão recorrente / recurring pattern", "concentração / concentration"]
+    },
+    {
+      "pt": "corrupção",
+      "en": "corruption",
+      "reason": "Termo jurídico-criminal. Usar apenas citando decisão judicial transitada em julgado.",
+      "use_instead": ["riscos de integridade / integrity risks", "indícios de irregularidade / indications of irregularity"]
+    },
+    {
+      "pt": "ladrão / corrupto",
+      "en": "thief / crook",
+      "reason": "Difamação. Imediata ação retratativa caso publicado.",
+      "use_instead": ["NÃO HÁ — reformular completamente"]
+    },
+    {
+      "pt": "máfia / quadrilha",
+      "en": "mafia / gang",
+      "reason": "Implica crime organizado. Não é nosso papel afirmar.",
+      "use_instead": ["concentração de fornecedores / supplier concentration", "vínculos recorrentes / recurring ties"]
+    }
+  ]
+}

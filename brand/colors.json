@@ -1,0 +1,43 @@
+{
+  "name": "Fiscal Digital — Brand Tokens",
+  "version": "1.1.0",
+  "colors": {
+    "deepTeal":   { "hex": "#0D4F4A", "role": "primary",   "use": "fundos institucionais, símbolo, headers" },
+    "civicAmber": { "hex": "#F5B700", "role": "accent",    "use": "achado, alerta, CTA secundário" },
+    "paper":      { "hex": "#F8F5EE", "role": "surface",   "use": "fundo claro, simulação de papel" },
+    "ink":        { "hex": "#0F1419", "role": "text",      "use": "texto principal sobre paper" },
+    "midGray":    { "hex": "#5C6670", "role": "muted",     "use": "metadados, fonte citada" },
+    "danger":     { "hex": "#C8372D", "role": "alert",     "use": "riskScore >= 80, retratação" },
+    "success":    { "hex": "#1F7A50", "role": "ok",        "use": "verificação, fonte confirmada" }
+  },
+  "risk": {
+    "info":     { "range": "0-29",   "token": "midGray",    "hex": "#5C6670", "publishable": false, "label": { "pt": "Informativo",     "en": "Informational" } },
+    "low":      { "range": "30-59",  "token": "success",    "hex": "#1F7A50", "publishable": false, "label": { "pt": "Baixo risco",    "en": "Low risk" } },
+    "alert":    { "range": "60-79",  "token": "civicAmber", "hex": "#F5B700", "publishable": true,  "label": { "pt": "Alerta",         "en": "Alert" } },
+    "critical": { "range": "80-100", "token": "danger",     "hex": "#C8372D", "publishable": true,  "label": { "pt": "Alerta crítico", "en": "Critical alert" } }
+  },
+  "modes": {
+    "light": {
+      "bg":      "#F8F5EE",
+      "surface": "#FFFFFF",
+      "text":    "#0F1419",
+      "muted":   "#5C6670",
+      "border":  "#E6E0D5",
+      "brandFg": "#0D4F4A"
+    },
+    "dark": {
+      "bg":      "#0F1419",
+      "surface": "#1A2028",
+      "text":    "#F8F5EE",
+      "muted":   "#9BA5AF",
+      "border":  "#2A323C",
+      "brandFg": "#3FBFB3"
+    }
+  },
+  "typography": {
+    "sans":  "Inter",
+    "mono":  "JetBrains Mono",
+    "scale": { "xs": 12, "sm": 14, "base": 16, "lg": 20, "xl": 28, "2xl": 40, "3xl": 64 }
+  },
+  "radius": { "sm": 6, "md": 12, "lg": 22, "pill": 999 }
+}

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Fiscal Digital">
+  <rect width="400" height="400" rx="88" fill="#0D4F4A"/>
+  <rect x="88"  y="112" width="224" height="24" rx="8" fill="#F8F5EE"/>
+  <rect x="88"  y="188" width="136" height="24" rx="8" fill="#F8F5EE"/>
+  <rect x="88"  y="264" width="224" height="24" rx="8" fill="#F8F5EE"/>
+  <rect x="248" y="180" width="64" height="40" rx="8" fill="#F5B700"/>
+</svg>

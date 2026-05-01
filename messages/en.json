@@ -1,0 +1,35 @@
+{
+  "nav": {
+    "manifesto": "Manifesto",
+    "alertas": "Alerts",
+    "transparencia": "Transparency",
+    "apoie": "Support Us",
+    "sobre": "About"
+  },
+  "home": {
+    "tagline": "Autonomous oversight of Brazilian municipal spending",
+    "subtitle": "Every alert cites its source. Every source is the official gazette.",
+    "cta_alertas": "See alerts from Caxias do Sul",
+    "cta_apoie": "Support us on Catarse",
+    "section_how": "How it works",
+    "step_collect": "Collect",
+    "step_collect_desc": "Daily monitoring of Brazilian municipal official gazettes via Querido Diário (OKFN Brazil).",
+    "step_analyze": "Analyze",
+    "step_analyze_desc": "Fiscal agents cross-reference company IDs (CNPJs), procurement records, federal sanctions, and contract history.",
+    "step_alert": "Alert",
+    "step_alert_desc": "Automatic publication of findings with risk score ≥ 60 and confidence ≥ 0.70, always with legal basis cited.",
+    "section_ecosystem": "Standing on the shoulders of giants",
+    "ecosystem_desc": "Fiscal Digital extends — not competes with — the foundational Brazilian civic innovation projects.",
+    "section_support": "Support the project",
+    "support_desc": "Fiscal Digital is maintained by community contributions. Every inflow and outflow is publicly reported.",
+    "support_cta": "Support us on Catarse"
+  },
+  "footer": {
+    "tagline": "Autonomous oversight of Brazilian municipal public spending.",
+    "licenca": "MIT (code) · CC-BY 4.0 (data and alerts)",
+    "ombros": "Standing on the shoulders of Serenata de Amor and Querido Diário (OKFN Brazil)"
+  },
+  "meta": {
+    "home_title": "Fiscal Digital — Autonomous oversight of Brazilian municipal spending"
+  }
+}

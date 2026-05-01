@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 500" role="img" aria-label="Fiscal Digital — header X/Twitter">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0D4F4A"/>
+      <stop offset="1" stop-color="#093835"/>
+    </linearGradient>
+  </defs>
+  <rect width="1500" height="500" fill="url(#bg)"/>
+
+  <!-- grid sutil de "linhas de diário" no fundo -->
+  <g opacity="0.06" fill="#F8F5EE">
+    <rect x="60"  y="60"  width="320" height="6" rx="2"/>
+    <rect x="60"  y="100" width="180" height="6" rx="2"/>
+    <rect x="60"  y="140" width="260" height="6" rx="2"/>
+    <rect x="1120" y="380" width="320" height="6" rx="2"/>
+    <rect x="1120" y="420" width="220" height="6" rx="2"/>
+    <rect x="1120" y="460" width="290" height="6" rx="2"/>
+  </g>
+
+  <!-- símbolo grande à esquerda da safe-zone (avatar fica embaixo do header no X) -->
+  <g transform="translate(140,130) scale(2.4)">
+    <rect width="100" height="100" rx="22" fill="#F8F5EE"/>
+    <rect x="22" y="28" width="56" height="6" rx="2" fill="#0D4F4A"/>
+    <rect x="22" y="47" width="34" height="6" rx="2" fill="#0D4F4A"/>
+    <rect x="22" y="66" width="56" height="6" rx="2" fill="#0D4F4A"/>
+    <rect x="62" y="45" width="16" height="10" rx="2" fill="#F5B700"/>
+  </g>
+
+  <g font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" fill="#F8F5EE">
+    <text x="460" y="220" font-size="84" font-weight="700" letter-spacing="-2">
+      <tspan>Fiscal</tspan> <tspan font-weight="400">Digital</tspan>
+    </text>
+    <text x="460" y="280" font-size="30" font-weight="500" fill="#F5B700" letter-spacing="0.4">FISCALIZAÇÃO AUTÔNOMA DE GASTOS PÚBLICOS</text>
+    <text x="460" y="332" font-size="22" font-weight="400" fill="#F8F5EE" opacity="0.8">Cada alerta cita a fonte. Cada fonte é o diário oficial.</text>
+    <text x="460" y="380" font-size="18" font-weight="500" fill="#F8F5EE" opacity="0.6" letter-spacing="0.6">fiscaldigital.org · @FiscalDigitalBR</text>
+    <text x="460" y="412" font-size="14" font-weight="400" fill="#F8F5EE" opacity="0.45" letter-spacing="0.4">Sobre os ombros de Serenata de Amor &amp; Querido Diário (OKFN Brasil)</text>
+  </g>
+</svg>

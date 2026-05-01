@@ -1,0 +1,22 @@
+# dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+
+# env
+.env
+.env.local
+.env*.local
+
+# gerado — regerar via npm run brand:theme
+app/brand.generated.css
+
+# build artifacts
+*.tsbuildinfo
+
+# misc
+*.local
+.DS_Store
+Thumbs.db

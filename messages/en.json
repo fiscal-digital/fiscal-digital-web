@@ -29,7 +29,50 @@
     "licenca": "MIT (code) · CC-BY 4.0 (data and alerts)",
     "ombros": "Standing on the shoulders of Serenata de Amor and Querido Diário (OKFN Brazil)"
   },
+  "alertas": {
+    "title": "Public Spending Alerts",
+    "subtitle": "Findings automatically published by Fiscal agents. Every alert cites its official gazette source.",
+    "loading": "Loading alerts...",
+    "empty": "No alerts found",
+    "empty_desc": "Try adjusting the filters or check back later.",
+    "error": "Could not load alerts.",
+    "retry": "Try again",
+    "filters": {
+      "state": "State",
+      "type": "Type",
+      "all": "All"
+    },
+    "card": {
+      "source": "View source",
+      "riskScore": "Risk",
+      "date": "Date",
+      "secretaria": "Department",
+      "value": "Value",
+      "confidence": "Confidence"
+    },
+    "types": {
+      "dispensa_irregular": "Irregular Waiver",
+      "fracionamento": "Contract Splitting",
+      "aditivo_abusivo": "Abusive Amendment",
+      "prorrogacao_excessiva": "Excessive Extension",
+      "cnpj_jovem": "New Company",
+      "concentracao_fornecedor": "Supplier Concentration",
+      "pico_nomeacoes": "Appointment Spike",
+      "rotatividade_anormal": "Abnormal Turnover"
+    },
+    "rss": {
+      "title": "Subscribe via RSS",
+      "description": "Receive alerts directly in your RSS reader",
+      "all": "All alerts",
+      "byState": "By state",
+      "statePlaceholder": "e.g. RS",
+      "copied": "URL copied!",
+      "copy": "Copy",
+      "compatible": "Compatible with any RSS reader (Feedly, NewsBlur, etc.)"
+    }
+  },
   "meta": {
-    "home_title": "Fiscal Digital — Autonomous oversight of Brazilian municipal spending"
+    "home_title": "Fiscal Digital — Autonomous oversight of Brazilian municipal spending",
+    "alertas_title": "Public Spending Alerts"
   }
 }

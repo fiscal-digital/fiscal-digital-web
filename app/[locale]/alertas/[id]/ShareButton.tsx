@@ -69,33 +69,27 @@ export default function ShareButton({ title, text, label, locale }: ShareButtonP
   }
 
   const baseBtn =
-    'inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-xs font-semibold transition-opacity hover:opacity-90'
+    'inline-flex items-center gap-1.5 rounded-md border border-brand-gray/20 bg-white px-3 py-2 text-xs font-semibold text-brand-ink transition-colors hover:border-brand-teal hover:text-brand-teal'
 
   return (
     <div className="flex flex-wrap items-center gap-2" aria-label={label}>
-      <button
-        type="button"
-        onClick={onChannel('whatsapp')}
-        aria-label={i18n.whatsapp}
-        className={`${baseBtn} bg-[#25D366] text-white`}
-      >
+      <button type="button" onClick={onChannel('whatsapp')} aria-label={i18n.whatsapp} className={baseBtn}>
         <WhatsappLogo size={14} weight="fill" />
         WhatsApp
       </button>
-      <button
-        type="button"
-        onClick={onChannel('telegram')}
-        aria-label={i18n.telegram}
-        className={`${baseBtn} bg-[#229ED9] text-white`}
-      >
+      <button type="button" onClick={onChannel('telegram')} aria-label={i18n.telegram} className={baseBtn}>
         <TelegramLogo size={14} weight="fill" />
         Telegram
       </button>
+      <button type="button" onClick={onChannel('x')} aria-label={i18n.x} className={baseBtn}>
+        <XLogo size={14} weight="bold" />
+        X
+      </button>
       <button
         type="button"
-        onClick={onChannel('x')}
-        aria-label={i18n.x}
-        className={`${baseBtn} bg-brand-ink text-brand-paper`}
+        onClick={handleCopy}
+        aria-label={i18n.copy}
+        className="inline-flex items-center gap-1.5 rounded-md bg-brand-teal px-3 py-2 text-xs font-semibold text-brand-paper transition-opacity hover:opacity-90"
       >
         <XLogo size={14} weight="bold" />
         X

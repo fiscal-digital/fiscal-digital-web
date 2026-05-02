@@ -50,20 +50,35 @@ export interface ApiAlertsResponse {
  * Espelha `engine/types/FindingType` + fallback EN curto.
  */
 export const FINDING_TYPE_LABELS: Record<string, { pt: string; en: string }> = {
-  dispensa_irregular:               { pt: 'Dispensa Irregular',          en: 'Irregular Waiver' },
-  fracionamento:                    { pt: 'Fracionamento',                en: 'Contract Splitting' },
-  aditivo_abusivo:                  { pt: 'Aditivo Abusivo',              en: 'Abusive Amendment' },
-  prorrogacao_excessiva:            { pt: 'Prorrogação Excessiva',        en: 'Excessive Extension' },
-  cnpj_jovem:                       { pt: 'CNPJ Jovem',                   en: 'New Company' },
-  concentracao_fornecedor:          { pt: 'Concentração Fornecedor',      en: 'Supplier Concentration' },
-  pico_nomeacoes:                   { pt: 'Pico Nomeações',               en: 'Appointment Spike' },
-  rotatividade_anormal:             { pt: 'Rotatividade Anormal',         en: 'Abnormal Turnover' },
-  inexigibilidade_sem_justificativa:{ pt: 'Inexigibilidade Sem Justif.',  en: 'Unjustified Non-bid' },
-  padrao_recorrente:                { pt: 'Padrão Recorrente',            en: 'Recurring Pattern' },
+  dispensa_irregular:               { pt: 'Dispensa irregular',           en: 'Irregular waiver' },
+  fracionamento:                    { pt: 'Fracionamento',                en: 'Contract splitting' },
+  aditivo_abusivo:                  { pt: 'Aditivo abusivo',              en: 'Abusive amendment' },
+  prorrogacao_excessiva:            { pt: 'Prorrogação excessiva',        en: 'Excessive extension' },
+  cnpj_jovem:                       { pt: 'CNPJ jovem',                   en: 'New company' },
+  concentracao_fornecedor:          { pt: 'Concentração de fornecedor',   en: 'Supplier concentration' },
+  pico_nomeacoes:                   { pt: 'Pico de nomeações',            en: 'Appointment spike' },
+  rotatividade_anormal:             { pt: 'Rotatividade anormal',         en: 'Abnormal turnover' },
+  inexigibilidade_sem_justificativa:{ pt: 'Inexigibilidade sem justif.',  en: 'Unjustified non-bid' },
+  padrao_recorrente:                { pt: 'Padrão recorrente',            en: 'Recurring pattern' },
+  convenio_sem_chamamento:          { pt: 'Convênio sem chamamento',      en: 'Agreement without call' },
+  repasse_recorrente_osc:           { pt: 'Repasse recorrente a OSC',     en: 'Recurring NGO transfer' },
+  diaria_irregular:                 { pt: 'Diária irregular',             en: 'Irregular per diem' },
+  publicidade_eleitoral:            { pt: 'Publicidade em janela vedada', en: 'Electoral publicity' },
+  locacao_sem_justificativa:        { pt: 'Locação sem justificativa',    en: 'Lease without justification' },
+  nepotismo_indicio:                { pt: 'Indício de nepotismo',         en: 'Nepotism indicator' },
+  cnpj_situacao_irregular:          { pt: 'CNPJ situação irregular',      en: 'Irregular CNPJ status' },
+  fornecedor_sancionado:            { pt: 'Fornecedor sancionado (CGU)',  en: 'Sanctioned supplier (CGU)' },
+}
+
+function humanizeSnake(s: string): string {
+  return s
+    .split('_')
+    .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : w))
+    .join(' ')
 }
 
 export function findingTypeLabel(type: string, locale: 'pt' | 'en' = 'pt'): string {
-  return FINDING_TYPE_LABELS[type]?.[locale] ?? type.toUpperCase()
+  return FINDING_TYPE_LABELS[type]?.[locale] ?? humanizeSnake(type)
 }
 
 export function formatCurrency(value: number, locale: 'pt' | 'en' = 'pt'): string {

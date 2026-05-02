@@ -44,31 +44,46 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <main>
-      {/* 1. Hero */}
-      <section className="flex min-h-dvh items-center justify-center bg-brand-teal px-6 text-brand-paper">
-        <div className="max-w-3xl text-center">
-          <p className="mb-6 text-sm font-semibold uppercase tracking-widest text-brand-amber">
-            Fiscal Digital
-          </p>
-          <h1 className="mb-4 text-balance text-4xl font-bold tracking-tight sm:text-6xl">
-            {t('tagline')}
-          </h1>
-          <p className="mb-10 text-lg opacity-70 sm:text-xl">
-            {t('subtitle')}
-          </p>
-          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <a
-              href="#alertas"
-              className="rounded-lg bg-brand-amber px-6 py-3 font-semibold text-brand-ink transition-opacity hover:opacity-90"
-            >
-              {t('cta_alertas')}
-            </a>
-            <a
-              href="#apoie"
-              className="rounded-lg border border-brand-paper/40 px-6 py-3 font-semibold transition-opacity hover:opacity-90"
-            >
-              {t('cta_apoie')}
-            </a>
+      {/* 1. Hero — layout assimétrico duas colunas */}
+      <section className="bg-brand-teal px-6 py-24 text-brand-paper sm:py-32">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid items-center gap-12 lg:grid-cols-5">
+            {/* Coluna texto — 3/5 */}
+            <div className="lg:col-span-3">
+              <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-brand-amber">
+                Fiscal Digital
+              </p>
+              <h1 className="mb-5 text-balance text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+                {t('tagline')}
+              </h1>
+              <p className="mb-8 text-base leading-relaxed opacity-75 sm:text-lg">
+                {t('subtitle')}
+              </p>
+              <a
+                href={`/${locale}/alertas`}
+                className="inline-block rounded-lg bg-brand-amber px-6 py-3 font-semibold text-brand-ink transition-opacity hover:opacity-90"
+              >
+                {t('cta_alertas')}
+              </a>
+            </div>
+
+            {/* Coluna stat visual — 2/5 */}
+            <div className="lg:col-span-2">
+              <div className="rounded-xl border border-brand-paper/15 bg-brand-paper/10 p-6">
+                <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-brand-amber">
+                  {t('section_indicators')}
+                </p>
+                <p className="font-mono text-4xl font-bold text-brand-paper">
+                  50
+                </p>
+                <p className="mb-6 text-sm text-brand-paper/60">
+                  {t('hero_stat_cities')}
+                </p>
+                <p className="text-xs leading-relaxed text-brand-paper/50">
+                  {t('hero_stat_desc')}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -260,23 +275,18 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      {/* 11. Apoie */}
-      <section id="apoie" className="bg-brand-teal px-6 py-24 text-brand-paper">
+      {/* 11. Contribua */}
+      <section
+        id="contribua"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-20"
+      >
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="mb-4 text-3xl font-bold tracking-tight">
-            {t('section_support')}
+          <h2 className="mb-4 text-3xl font-bold tracking-tight text-brand-teal">
+            {t('section_contribute')}
           </h2>
-          <p className="mb-10 text-lg opacity-70">
-            {t('support_desc')}
+          <p className="text-brand-gray">
+            {t('contribute_desc')}
           </p>
-          <a
-            href="https://www.catarse.me"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block rounded-lg bg-brand-amber px-8 py-4 font-semibold text-brand-ink transition-opacity hover:opacity-90"
-          >
-            {t('support_cta')}
-          </a>
         </div>
       </section>
     </main>

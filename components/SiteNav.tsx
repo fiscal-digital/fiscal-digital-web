@@ -11,16 +11,13 @@ type Props = {
   locale: string
 }
 
-type NavItem = { href: string; key: 'manifesto' | 'sobre' | 'alertas' | 'fiscais' | 'roadmap' | 'transparencia' | 'apoie' }
+type NavItem = { href: string; key: 'alertas' | 'fiscais' | 'roadmap' | 'sobre' }
 
 const NAV_ITEMS: NavItem[] = [
-  { href: '/manifesto', key: 'manifesto' },
-  { href: '/sobre', key: 'sobre' },
   { href: '/alertas', key: 'alertas' },
   { href: '/fiscais', key: 'fiscais' },
   { href: '/roadmap', key: 'roadmap' },
-  { href: '/transparencia', key: 'transparencia' },
-  { href: '/apoie', key: 'apoie' },
+  { href: '/sobre', key: 'sobre' },
 ]
 
 /**
@@ -75,7 +72,7 @@ export default function SiteNav({ locale }: Props) {
   }
 
   return (
-    <header className="sticky top-0 z-20 border-b border-brand-gray/10 bg-brand-paper/90 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur">
       <nav
         className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3"
         aria-label={tA11y('primaryNav')}
@@ -88,41 +85,27 @@ export default function SiteNav({ locale }: Props) {
           <Image
             src="/brand/logo/wordmark-horizontal.svg"
             alt="Fiscal Digital"
-            width={208}
-            height={56}
+            width={140}
+            height={28}
             priority
-            className="h-10 w-auto md:h-12"
+            className="h-7 w-auto"
           />
         </Link>
 
         {/* Desktop nav (>= md) */}
-        <ul className="hidden items-center gap-6 text-sm text-brand-ink md:flex">
+        <ul className="hidden items-center gap-6 md:flex">
           {NAV_ITEMS.map((item) => {
             const localized = `/${locale}${item.href}`
             const active = isActive(item.href)
-            const isCta = item.key === 'apoie'
-            if (isCta) {
-              return (
-                <li key={item.key}>
-                  <Link
-                    href={localized}
-                    aria-current={active ? 'page' : undefined}
-                    className="rounded-md bg-brand-amber px-3 py-1.5 text-xs font-semibold text-brand-ink transition-opacity hover:opacity-90"
-                  >
-                    {t(item.key)}
-                  </Link>
-                </li>
-              )
-            }
             return (
               <li key={item.key}>
                 <Link
                   href={localized}
                   aria-current={active ? 'page' : undefined}
-                  className={`border-b-2 pb-1 transition-colors hover:text-brand-teal ${
+                  className={`border-b-2 pb-1 text-sm transition-colors hover:text-brand-ink ${
                     active
-                      ? 'border-brand-amber text-brand-teal'
-                      : 'border-transparent'
+                      ? 'border-brand-amber text-brand-ink'
+                      : 'border-transparent text-brand-gray'
                   }`}
                 >
                   {t(item.key)}
@@ -135,7 +118,7 @@ export default function SiteNav({ locale }: Props) {
               href={langTogglePath}
               hrefLang={otherLocale}
               aria-label={tA11y('switchLanguage', { lang: otherLocale.toUpperCase() })}
-              className="text-xs font-semibold text-brand-gray transition-colors hover:text-brand-teal"
+              className="text-xs text-brand-gray/60 transition-colors hover:text-brand-gray"
             >
               {otherLocale.toUpperCase()}
             </Link>
@@ -163,7 +146,7 @@ export default function SiteNav({ locale }: Props) {
           role="dialog"
           aria-modal="true"
           aria-label={tA11y('primaryNav')}
-          className="md:hidden border-t border-brand-gray/10 bg-brand-paper"
+          className="md:hidden border-t border-gray-100 bg-white"
         >
           <ul className="flex flex-col px-6 py-4 text-base text-brand-ink">
             {NAV_ITEMS.map((item) => {
@@ -174,10 +157,10 @@ export default function SiteNav({ locale }: Props) {
                   <Link
                     href={localized}
                     aria-current={active ? 'page' : undefined}
-                    className={`block border-l-2 py-3 pl-3 transition-colors hover:text-brand-teal ${
+                    className={`block border-l-2 py-3 pl-3 text-sm transition-colors hover:text-brand-ink ${
                       active
-                        ? 'border-brand-amber font-semibold text-brand-teal'
-                        : 'border-transparent'
+                        ? 'border-brand-amber font-semibold text-brand-ink'
+                        : 'border-transparent text-brand-gray'
                     }`}
                   >
                     {t(item.key)}
@@ -185,12 +168,12 @@ export default function SiteNav({ locale }: Props) {
                 </li>
               )
             })}
-            <li className="mt-2 border-t border-brand-gray/10 pt-3">
+            <li className="mt-2 border-t border-gray-100 pt-3">
               <Link
                 href={langTogglePath}
                 hrefLang={otherLocale}
                 aria-label={tA11y('switchLanguage', { lang: otherLocale.toUpperCase() })}
-                className="inline-block py-2 text-sm font-semibold text-brand-gray hover:text-brand-teal"
+                className="inline-block py-2 text-xs text-brand-gray/60 hover:text-brand-gray"
               >
                 {otherLocale === 'en' ? 'English' : 'Português'} ({otherLocale.toUpperCase()})
               </Link>

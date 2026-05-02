@@ -12,15 +12,6 @@ export interface OgCopy {
   en: { eyebrow: string; title: string; sub: string }
 }
 
-export function ogGenerateImageMetadata(alt: string) {
-  return routing.locales.map((locale) => ({
-    id: locale,
-    alt,
-    contentType: OG_CONTENT_TYPE,
-    size: OG_SIZE,
-  }))
-}
-
 export function ogGenerateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }

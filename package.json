@@ -5,9 +5,13 @@
   "engines": { "node": ">=24.0.0" },
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/generate-brand-theme.mjs",
     "build": "next build",
+    "predev": "node scripts/generate-brand-theme.mjs",
     "type-check": "tsc --noEmit",
-    "brand:theme": "node scripts/generate-brand-theme.mjs"
+    "brand:theme": "node scripts/generate-brand-theme.mjs",
+    "lint:copy": "node scripts/lint-copy.mjs",
+    "pretest": "npm run lint:copy"
   },
   "dependencies": {
     "next": "^16.0.0",

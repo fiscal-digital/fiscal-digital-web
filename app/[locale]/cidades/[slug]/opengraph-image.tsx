@@ -3,8 +3,10 @@ import { CITIES, getCityBySlug } from '@/lib/cities'
 import { API_URL } from '@/lib/api'
 import { routing } from '@/i18n/routing'
 
+export const dynamic = 'force-static'
 export const runtime = 'nodejs'
 
+export const alt = 'Fiscal Digital — Fiscalização Municipal'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -18,20 +20,6 @@ export function generateStaticParams() {
   return routing.locales.flatMap((locale) =>
     Object.values(CITIES).map((city) => ({ locale, slug: city.slug })),
   )
-}
-
-// ── Image metadata ────────────────────────────────────────────────────────────
-
-export function generateImageMetadata({ params: _params }: { params: Props['params'] }) {
-  // alt é preenchido no render a partir do slug; retornamos 1 entry por chamada
-  return [
-    {
-      id: 'og',
-      contentType,
-      size,
-      alt: 'Fiscal Digital',
-    },
-  ]
 }
 
 // ── findingsCount via API (timeout 2 s, fallback null) ───────────────────────

@@ -13,10 +13,26 @@ type Props = {
   params: Promise<{ locale: string; slug: string }>
 }
 
-// SSG: 50 cidades × 2 locales = 100 páginas estáticas
+// SSG: gera páginas apenas para cidades com findings reais.
+// Escalável para 5000 cidades — só constrói o que tem dado.
+// Fallback para as 2 cidades-padrão (Caxias + Porto Alegre) se API indisponível.
 export async function generateStaticParams() {
+  try {
+    const res = await fetch(`${API_URL}/cities`, {
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(5000),
+    })
+    if (res.ok) {
+      const cities = (await res.json()) as Array<{ slug: string; findingsCount: number }>
+      const withData = cities.filter((c) => c.findingsCount > 0).map((c) => c.slug)
+      if (withData.length > 0) {
+        return routing.locales.flatMap((locale) => withData.map((slug) => ({ locale, slug })))
+      }
+    }
+  } catch { /* fallback abaixo */ }
+  // Fallback: cidades-padrão para provas de conceito (CLAUDE.md)
   return routing.locales.flatMap((locale) =>
-    Object.values(CITIES).map((city: City) => ({ locale, slug: city.slug })),
+    ['caxias-do-sul', 'porto-alegre'].map((slug) => ({ locale, slug })),
   )
 }
 

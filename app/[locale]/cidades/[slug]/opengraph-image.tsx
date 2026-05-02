@@ -14,11 +14,24 @@ type Props = {
   params: Promise<{ locale: string; slug: string }>
 }
 
-// ── Static generation: 50 cidades × 2 locales = 100 entradas ─────────────────
+// ── Static generation: apenas cidades com findings reais — escalável para 5000 ─
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  try {
+    const res = await fetch(`${API_URL}/cities`, {
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(5000),
+    })
+    if (res.ok) {
+      const cities = (await res.json()) as Array<{ slug: string; findingsCount: number }>
+      const withData = cities.filter((c) => c.findingsCount > 0).map((c) => c.slug)
+      if (withData.length > 0) {
+        return routing.locales.flatMap((locale) => withData.map((slug) => ({ locale, slug })))
+      }
+    }
+  } catch { /* fallback */ }
   return routing.locales.flatMap((locale) =>
-    Object.values(CITIES).map((city) => ({ locale, slug: city.slug })),
+    ['caxias-do-sul', 'porto-alegre'].map((slug) => ({ locale, slug })),
   )
 }
 

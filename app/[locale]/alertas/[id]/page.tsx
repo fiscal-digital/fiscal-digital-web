@@ -13,25 +13,21 @@ type Props = {
   params: Promise<{ locale: string; id: string }>
 }
 
-// SSG: gera params para os 200 findings mais recentes em build-time.
-// Findings novos (após o build) não terão página estática — ficam disponíveis
-// via /alertas (feed dinâmico). Próximo rebuild os captura.
+// SSG: pré-renderiza os 50 findings mais recentes em build-time.
+// IDs fora desse conjunto retornam 404 (dynamicParams: false) — visíveis via feed.
+// Limitar a 50 mantém build rápido mesmo com milhares de findings futuros.
 export async function generateStaticParams() {
-  const findings = await fetchAlerts({ limit: 200 })
+  const findings = await fetchAlerts({ limit: 50 })
   const ids = findings.map((f) => findingIdToSlug(f.id))
-  // Cross product: cada locale × cada id
-  return routing.locales.flatMap((locale) =>
-    ids.map((id) => ({ locale, id })),
-  )
+  return routing.locales.flatMap((locale) => ids.map((id) => ({ locale, id })))
 }
 
-// Em export estático, dynamicParams=false é o default — só serve as IDs
-// pré-renderizadas. Mantemos default.
+export const dynamicParams = false
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, id } = await params
   const findingId = slugToFindingId(id)
-  const findings = await fetchAlerts({ limit: 200 })
+  const findings = await fetchAlerts({ limit: 50 })
   const finding = findings.find((f) => f.id === findingId)
 
   if (!finding) {
@@ -59,7 +55,7 @@ export default async function AlertaPage({ params }: Props) {
   setRequestLocale(locale)
 
   const findingId = slugToFindingId(id)
-  const findings = await fetchAlerts({ limit: 200 })
+  const findings = await fetchAlerts({ limit: 50 })
   const finding = findings.find((f) => f.id === findingId)
 
   if (!finding) notFound()

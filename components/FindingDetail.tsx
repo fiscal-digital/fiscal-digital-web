@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowSquareOut, Buildings, Gavel, Calendar, CurrencyDollar, Hash, Scales } from '@phosphor-icons/react/dist/ssr'
+import { ArrowSquareOut, Buildings, Gavel, Calendar, Hash, Scales, CaretDown } from '@phosphor-icons/react/dist/ssr'
 import { getRiskLevel, getRiskLabel } from '@/lib/brand'
 import {
   type ApiFinding,
@@ -13,12 +13,13 @@ import PdfPreview from './PdfPreview'
 /**
  * FindingDetail — Server component reutilizável.
  *
- * Renderiza todos os campos disponíveis de um finding em formato detalhado.
- * Usado nas páginas: /alertas/[id], /cidades/[slug] (versão compacta opcional),
- * /fornecedores/[cnpj], /secretarias/[id].
+ * Hierarquia visual (UH-WEB-003 — Progressive Disclosure):
+ *  1. Impacto      — valor + cidade + risco (destaque grande)
+ *  2. Narrativa    — TL;DR factual (texto)
+ *  3. Detalhes     — CNPJ, contrato, base legal, datas (collapsed via <details>)
+ *  4. Fonte        — PDF preview / link externo
  *
- * Stub-tolerante: campos ausentes (cnpj, contractNumber, evidence completo)
- * são silenciosamente omitidos — Frente F está expandindo a API.
+ * Stub-tolerante: campos ausentes são silenciosamente omitidos.
  */
 
 function riskBadgeClass(score: number): string {
@@ -40,9 +41,7 @@ function typeBadgeClass(type: string): string {
 interface FindingDetailProps {
   finding: ApiFinding
   locale: 'pt-br' | 'en'
-  /** Mostrar preview do PDF? Default: true. */
   showPdf?: boolean
-  /** Esconder header com cidade (útil quando já está em página de cidade). */
   hideCity?: boolean
 }
 
@@ -52,9 +51,14 @@ export default function FindingDetail({
   showPdf = true,
   hideCity = false,
 }: FindingDetailProps) {
+  const isPt = locale === 'pt-br'
   const riskLabel = getRiskLabel(finding.riskScore, locale)
   const evidence = finding.evidence?.[0]
   const cityHref = `/${locale}/cidades/${slugForCityId(finding.cityId)}`
+  const hasValue = finding.value != null
+  const hasMetadata = Boolean(
+    finding.cnpj || finding.contractNumber || finding.legalBasis || finding.secretaria || finding.createdAt,
+  )
 
   return (
     <article className="space-y-6">
@@ -64,37 +68,54 @@ export default function FindingDetail({
           {findingTypeLabel(finding.type, locale)}
         </span>
         <span className={`rounded-pill px-3 py-1 text-xs font-semibold ${riskBadgeClass(finding.riskScore)}`}>
-          {locale === 'pt-br' ? 'Risco' : 'Risk'} {finding.riskScore} — {riskLabel}
+          {isPt ? 'Risco' : 'Risk'} {finding.riskScore} — {riskLabel}
         </span>
         <span className="rounded-pill bg-brand-gray/10 px-3 py-1 text-xs font-semibold text-brand-gray">
-          {locale === 'pt-br' ? 'Confiança' : 'Confidence'} {Math.round(finding.confidence * 100)}%
+          {isPt ? 'Confiança' : 'Confidence'} {Math.round(finding.confidence * 100)}%
         </span>
       </div>
 
-      {/* City link */}
-      {!hideCity && (
-        <p className="text-sm text-brand-gray">
-          <Link
-            href={cityHref}
-            className="font-semibold text-brand-ink underline-offset-2 hover:underline"
-          >
-            {finding.city}
-          </Link>
-          <span className="ml-1 font-mono text-xs">· {finding.state}</span>
-        </p>
-      )}
+      {/* NÍVEL 1 — IMPACTO (valor + entidade) */}
+      <section
+        aria-label={isPt ? 'Impacto do achado' : 'Finding impact'}
+        className="rounded-xl border border-brand-gray/15 bg-white p-5 sm:p-6"
+      >
+        {hasValue && (
+          <div className="mb-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
+              {isPt ? 'Valor envolvido' : 'Amount involved'}
+            </p>
+            <p className="mt-1 font-mono text-2xl font-bold text-brand-ink sm:text-3xl">
+              {formatCurrency(finding.value!, locale)}
+            </p>
+          </div>
+        )}
 
-      {/* Narrative */}
+        {!hideCity && (
+          <p className="text-sm text-brand-ink">
+            <Link
+              href={cityHref}
+              className="font-semibold underline-offset-2 hover:underline"
+            >
+              {finding.city}
+            </Link>
+            <span className="ml-1 font-mono text-xs text-brand-gray">· {finding.state}</span>
+            {finding.secretaria && (
+              <span className="ml-1 text-brand-gray"> · {finding.secretaria}</span>
+            )}
+          </p>
+        )}
+      </section>
+
+      {/* NÍVEL 2 — NARRATIVA (TL;DR) */}
       {finding.narrative && (
         <div className="prose prose-sm max-w-none">
           <p className="whitespace-pre-line text-base leading-relaxed text-brand-ink">
             {finding.narrative
-              // Remove linhas que são apenas títulos LLM (ex: **Achado de Fiscalização**)
               .split('\n')
               .filter(line => !/^\*{1,2}[^*\n]+\*{1,2}$/.test(line.trim()))
               .filter(line => !/^#{1,6}\s/.test(line))
               .join('\n')
-              // Remove markdown restante inline
               .replace(/\*\*(.+?)\*\*/g, '$1')
               .replace(/\*(.+?)\*/g, '$1')
               .replace(/\n{3,}/g, '\n\n')
@@ -104,44 +125,51 @@ export default function FindingDetail({
         </div>
       )}
 
-      {/* Metadata grid */}
-      <dl className="grid gap-4 rounded-xl border border-brand-gray/15 bg-white p-5 sm:grid-cols-2">
-        {finding.value != null && (
-          <MetaRow icon={<CurrencyDollar size={16} weight="bold" />} label={locale === 'pt-br' ? 'Valor' : 'Value'}>
-            <span className="font-mono">{formatCurrency(finding.value, locale)}</span>
-          </MetaRow>
-        )}
-        {finding.secretaria && (
-          <MetaRow icon={<Buildings size={16} weight="bold" />} label={locale === 'pt-br' ? 'Secretaria' : 'Department'}>
-            {finding.secretaria}
-          </MetaRow>
-        )}
-        {finding.cnpj && (
-          <MetaRow icon={<Hash size={16} weight="bold" />} label="CNPJ">
-            <Link
-              href={`/${locale}/fornecedores/${finding.cnpj.replace(/\D/g, '')}`}
-              className="font-mono text-brand-teal underline-offset-2 hover:underline"
-            >
-              {finding.cnpj}
-            </Link>
-          </MetaRow>
-        )}
-        {finding.contractNumber && (
-          <MetaRow icon={<Gavel size={16} weight="bold" />} label={locale === 'pt-br' ? 'Contrato' : 'Contract'}>
-            <span className="font-mono">{finding.contractNumber}</span>
-          </MetaRow>
-        )}
-        {finding.legalBasis && (
-          <MetaRow icon={<Scales size={16} weight="bold" />} label={locale === 'pt-br' ? 'Base legal' : 'Legal basis'}>
-            {finding.legalBasis}
-          </MetaRow>
-        )}
-        <MetaRow icon={<Calendar size={16} weight="bold" />} label={locale === 'pt-br' ? 'Detectado em' : 'Detected on'}>
-          <span className="font-mono">{formatDate(finding.createdAt, locale)}</span>
-        </MetaRow>
-      </dl>
+      {/* NÍVEL 3 — DETALHES TÉCNICOS (collapsed) */}
+      {hasMetadata && (
+        <details className="group rounded-xl border border-brand-gray/15 bg-white">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-2 rounded-xl p-4 text-sm font-semibold text-brand-ink transition-colors hover:bg-brand-paper">
+            <span>{isPt ? 'Detalhes técnicos e base legal' : 'Technical details and legal basis'}</span>
+            <CaretDown
+              size={16}
+              weight="bold"
+              className="text-brand-gray transition-transform group-open:rotate-180"
+            />
+          </summary>
+          <dl className="grid gap-4 border-t border-brand-gray/10 p-5 sm:grid-cols-2">
+            {finding.cnpj && (
+              <MetaRow icon={<Hash size={16} weight="bold" />} label="CNPJ">
+                <Link
+                  href={`/${locale}/fornecedores/${finding.cnpj.replace(/\D/g, '')}`}
+                  className="font-mono text-brand-teal underline-offset-2 hover:underline"
+                >
+                  {finding.cnpj}
+                </Link>
+              </MetaRow>
+            )}
+            {finding.contractNumber && (
+              <MetaRow icon={<Gavel size={16} weight="bold" />} label={isPt ? 'Contrato' : 'Contract'}>
+                <span className="font-mono">{finding.contractNumber}</span>
+              </MetaRow>
+            )}
+            {finding.legalBasis && (
+              <MetaRow icon={<Scales size={16} weight="bold" />} label={isPt ? 'Base legal' : 'Legal basis'}>
+                {renderLegalBasis(finding.legalBasis, isPt)}
+              </MetaRow>
+            )}
+            {finding.secretaria && (
+              <MetaRow icon={<Buildings size={16} weight="bold" />} label={isPt ? 'Secretaria' : 'Department'}>
+                {finding.secretaria}
+              </MetaRow>
+            )}
+            <MetaRow icon={<Calendar size={16} weight="bold" />} label={isPt ? 'Detectado em' : 'Detected on'}>
+              <span className="font-mono">{formatDate(finding.createdAt, locale)}</span>
+            </MetaRow>
+          </dl>
+        </details>
+      )}
 
-      {/* PDF preview */}
+      {/* FONTE — PDF preview */}
       {showPdf && (
         <PdfPreview
           source={finding.source}
@@ -152,7 +180,6 @@ export default function FindingDetail({
         />
       )}
 
-      {/* Source link (always visible as fallback) */}
       {!showPdf && (
         <a
           href={finding.source}
@@ -160,11 +187,44 @@ export default function FindingDetail({
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 rounded-md bg-brand-teal px-3 py-2 text-xs font-semibold text-brand-paper transition-opacity hover:opacity-90"
         >
-          {locale === 'pt-br' ? 'Ver fonte' : 'View source'}
+          {isPt ? 'Ver fonte' : 'View source'}
           <ArrowSquareOut size={12} weight="bold" />
         </a>
       )}
     </article>
+  )
+}
+
+/**
+ * UH-WEB-004 — Accordion no legalBasis.
+ *
+ * Quando o texto contém um separador (`. ` ou `; `), a primeira parte vira
+ * label visível ("Lei 14.133/2021, Art. 75") e o resto vira detalhe expansível
+ * via <details>/<summary>. Sem separador, exibe inline (texto curto).
+ */
+function renderLegalBasis(text: string, isPt: boolean): React.ReactNode {
+  const trimmed = text.trim()
+  const splitMatch = trimmed.match(/^([^.;]{1,80}[.;])\s+(.+)$/s)
+  if (!splitMatch) return trimmed
+
+  const head = splitMatch[1].replace(/[.;]$/, '')
+  const tail = splitMatch[2]
+
+  return (
+    <details className="group">
+      <summary className="flex cursor-pointer list-none items-center gap-1 text-brand-ink hover:text-brand-teal">
+        <span>{head}</span>
+        <CaretDown
+          size={12}
+          weight="bold"
+          className="text-brand-gray transition-transform group-open:rotate-180"
+        />
+        <span className="ml-1 text-xs text-brand-gray">
+          ({isPt ? 'ver completo' : 'show more'})
+        </span>
+      </summary>
+      <p className="mt-1 text-sm leading-relaxed text-brand-gray">{tail}</p>
+    </details>
   )
 }
 
@@ -185,4 +245,3 @@ function MetaRow({ icon, label, children }: MetaRowProps) {
     </div>
   )
 }
-

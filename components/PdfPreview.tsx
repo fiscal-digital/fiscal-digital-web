@@ -23,6 +23,14 @@ import { ArrowSquareOut, FilePdf, Eye, X as XIcon } from '@phosphor-icons/react'
 
 interface PdfPreviewProps {
   source: string
+  /**
+   * URL do PDF no nosso cache CDN (gazettes.fiscaldigital.org).
+   * Se presente, o iframe usa essa URL — temos controle de headers
+   * (Content-Disposition: inline, X-Frame-Options: SAMEORIGIN) para
+   * que o browser realmente exiba inline em vez de baixar.
+   * Quando ausente, fallback para o source URL do QD direto.
+   */
+  cachedPdfUrl?: string | null
   excerpt?: string
   date?: string
   /** Locale para labels — defaults to 'pt'. */
@@ -65,9 +73,12 @@ function formatDate(iso: string, locale: 'pt' | 'en'): string {
   }
 }
 
-export default function PdfPreview({ source, excerpt, date, locale = 'pt' }: PdfPreviewProps) {
+export default function PdfPreview({ source, cachedPdfUrl, excerpt, date, locale = 'pt' }: PdfPreviewProps) {
   const [showInline, setShowInline] = useState(false)
   const t = labels[locale]
+  // Preferir cache CDN quando disponível — temos controle de headers,
+  // navegador exibe inline ao invés de baixar.
+  const iframeSrc = cachedPdfUrl ?? source
 
   return (
     <section className="rounded-xl border border-brand-gray/15 bg-white p-5 shadow-sm">
@@ -145,7 +156,7 @@ export default function PdfPreview({ source, excerpt, date, locale = 'pt' }: Pdf
           <div className="relative aspect-[3/4] w-full overflow-hidden rounded-md border border-brand-gray/20 bg-brand-paper">
             <iframe
               id="pdf-inline-frame"
-              src={source}
+              src={iframeSrc}
               title={t.sourceLabel}
               loading="lazy"
               className="h-full w-full"

@@ -37,6 +37,12 @@ export interface ApiFinding {
   cnpj?: string
   contractNumber?: string
   fiscalId?: string
+  /**
+   * URL do PDF no cache CDN (gazettes.fiscaldigital.org). Derivado pelo
+   * backend a partir do source QD. Pode ser null se não houver cache.
+   * Site usa para renderizar iframe inline com headers controlados.
+   */
+  cachedPdfUrl?: string | null
 }
 
 export interface ApiAlertsResponse {

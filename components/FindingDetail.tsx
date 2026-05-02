@@ -145,6 +145,7 @@ export default function FindingDetail({
       {showPdf && (
         <PdfPreview
           source={finding.source}
+          cachedPdfUrl={finding.cachedPdfUrl}
           excerpt={evidence?.excerpt}
           date={evidence?.date}
           locale={locale}

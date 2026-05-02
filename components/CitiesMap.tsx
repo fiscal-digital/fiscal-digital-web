@@ -80,11 +80,19 @@ export default async function CitiesMap({ locale }: Props) {
       </div>
 
       <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-brand-gray">
-        <span className="flex items-center gap-1.5">
-          <span aria-hidden="true">✅</span> {t('legend_active')}
+        <span className="flex items-center gap-2">
+          <span
+            aria-hidden="true"
+            className="inline-block h-2 w-2 rounded-full bg-brand-success"
+          />
+          {t('legend_active')}
         </span>
-        <span className="flex items-center gap-1.5">
-          <span aria-hidden="true">⏳</span> {t('legend_planned')}
+        <span className="flex items-center gap-2">
+          <span
+            aria-hidden="true"
+            className="inline-block h-2 w-2 rounded-full bg-brand-gray/30"
+          />
+          {t('legend_planned')}
         </span>
       </div>
     </div>

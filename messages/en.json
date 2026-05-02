@@ -84,8 +84,15 @@
     },
     "section_newsletter": "Get notified at launch",
     "newsletter": {
-      "desc": "Want to be notified when the first public alert ships? Drop us an email and we will reach back out.",
-      "cta": "Notify me by email"
+      "desc": "Want to be notified when the first public alert ships? Drop your email below.",
+      "label": "Newsletter email",
+      "placeholder": "you@email.com",
+      "cta": "Notify me",
+      "submitting": "Sending…",
+      "success": "Done! You'll get the first alert in your inbox.",
+      "invalid": "Invalid email. Check the format.",
+      "error": "We couldn't subscribe you right now. Please try again shortly.",
+      "privacy": "No spam. One-click unsubscribe. You can also reach us at lineu@fiscaldigital.org any time."
     },
     "section_contribute": "Want to contribute to the project?",
     "contribute_desc": "Open an issue on GitHub at github.com/fiscal-digital or use the contact form."

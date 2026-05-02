@@ -13,27 +13,18 @@ type Props = {
   params: Promise<{ locale: string; slug: string }>
 }
 
-// SSG: gera páginas apenas para cidades com findings reais.
-// Escalável para 5000 cidades — só constrói o que tem dado.
-// Fallback para as 2 cidades-padrão (Caxias + Porto Alegre) se API indisponível.
+// SSG: gera páginas para TODAS as cidades active (mesmo sem findings ainda).
+// A home exibe 50 cidades; cada link precisa abrir uma página real, mesmo que
+// vazia ("Sem alertas detectados ainda" já é tratado abaixo). Filtrar por
+// findingsCount>0 deixava 44 cidades com 404. Quando passar de ~200 cidades,
+// reavaliar para evitar build lento.
+// Fonte canônica de cidades: lib/cities (build-time, sempre disponível).
+// API /cities é hint de findings, mas não bloqueia geração das páginas.
 export async function generateStaticParams() {
-  try {
-    const res = await fetch(`${API_URL}/cities`, {
-      next: { revalidate: 3600 },
-      signal: AbortSignal.timeout(5000),
-    })
-    if (res.ok) {
-      const cities = (await res.json()) as Array<{ slug: string; findingsCount: number }>
-      const withData = cities.filter((c) => c.findingsCount > 0).map((c) => c.slug)
-      if (withData.length > 0) {
-        return routing.locales.flatMap((locale) => withData.map((slug) => ({ locale, slug })))
-      }
-    }
-  } catch { /* fallback abaixo */ }
-  // Fallback: cidades-padrão para provas de conceito (CLAUDE.md)
-  return routing.locales.flatMap((locale) =>
-    ['caxias-do-sul', 'porto-alegre'].map((slug) => ({ locale, slug })),
-  )
+  const slugs = Object.values(CITIES)
+    .filter((c) => c.active)
+    .map((c) => c.slug)
+  return routing.locales.flatMap((locale) => slugs.map((slug) => ({ locale, slug })))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

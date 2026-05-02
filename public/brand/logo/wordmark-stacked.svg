@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 260" role="img" aria-label="Fiscal Digital">
+  <g transform="translate(110,20)">
+    <rect width="100" height="100" rx="22" fill="#0D4F4A"/>
+    <rect x="22" y="28" width="56" height="6" rx="2" fill="#F8F5EE"/>
+    <rect x="22" y="47" width="34" height="6" rx="2" fill="#F8F5EE"/>
+    <rect x="22" y="66" width="56" height="6" rx="2" fill="#F8F5EE"/>
+    <rect x="62" y="45" width="16" height="10" rx="2" fill="#F5B700"/>
+  </g>
+  <g font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" fill="#0F1419" text-anchor="middle">
+    <text x="160" y="170" font-size="40" font-weight="700" letter-spacing="-1">
+      <tspan font-weight="700">Fiscal</tspan> <tspan font-weight="400">Digital</tspan>
+    </text>
+    <text x="160" y="200" font-size="11" font-weight="500" fill="#5C6670" letter-spacing="0.3">FISCALIZAÇÃO AUTÔNOMA DE GASTOS PÚBLICOS</text>
+  </g>
+</svg>

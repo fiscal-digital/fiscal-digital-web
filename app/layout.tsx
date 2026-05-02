@@ -21,6 +21,13 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@FiscalDigitalBR',
   },
+  icons: {
+    icon: [
+      { url: '/brand/logo/favicon.svg', type: 'image/svg+xml' },
+      { url: '/brand/logo/favicon.png', type: 'image/png', sizes: '32x32' },
+    ],
+    apple: { url: '/brand/logo/favicon-256.png', sizes: '256x256' },
+  },
 }
 
 // JSON-LD Organization — schema.org/Organization

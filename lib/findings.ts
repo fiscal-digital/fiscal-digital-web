@@ -93,15 +93,23 @@ export function findingShortDate(id: string): string {
 
 /**
  * Slug URL-safe a partir do ID interno do finding.
- * IDs começam com `FINDING#fiscal-X#cityId#type#timestamp` — base64url o
- * tornaria opaco. Manter o ID literal mas substituir `#` por `--` para
- * garantir compatibilidade com `[id]` route segment do Next (ele faz
- * percent-encoding por baixo, então `#` puro quebraria).
+ * IDs têm formato `FINDING#fiscal-X#cityId#type#timestamp` onde o
+ * timestamp é ISO8601 (contém `:` e `.`).
+ *
+ * Estratégia: Base64url encoding do ID completo para garantir reversibilidade
+ * total e compatibilidade com qualquer sistema de arquivos (Windows incluso).
  */
 export function findingIdToSlug(id: string): string {
-  return id.replace(/#/g, '--')
+  // btoa não está disponível em Node server-side de forma confiável em todas versões;
+  // usar Buffer (Node built-in) para base64url encoding
+  return Buffer.from(id, 'utf8').toString('base64url')
 }
 
 export function slugToFindingId(slug: string): string {
-  return slug.replace(/--/g, '#')
+  try {
+    return Buffer.from(slug, 'base64url').toString('utf8')
+  } catch {
+    // fallback para slugs no formato antigo (retrocompatibilidade)
+    return slug.replace(/--/g, '#')
+  }
 }

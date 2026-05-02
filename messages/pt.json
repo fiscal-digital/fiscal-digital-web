@@ -22,7 +22,69 @@
     "ecosystem_desc": "O Fiscal Digital estende — não compete — com os projetos fundamentais da inovação cívica brasileira.",
     "section_support": "Apoie o projeto",
     "support_desc": "O Fiscal Digital é mantido por contribuições comunitárias. Toda entrada e saída é pública.",
-    "support_cta": "Apoie no Catarse"
+    "support_cta": "Apoie no Catarse",
+    "section_problem": "O problema",
+    "problem_desc": "Diários oficiais municipais publicam, todos os dias, decisões de gasto que poucos cidadãos conseguem ler. Dispensas, aditivos, nomeações e contratos passam despercebidos por falta de tempo, ferramenta ou linguagem técnica. O Fiscal Digital lê esses documentos por você e aponta o que merece atenção — sempre com link para o documento original.",
+    "section_indicators": "Em números",
+    "indicators_desc": "Atualizado a cada execução do pipeline.",
+    "stats": {
+      "gazettes": "Diários processados",
+      "findings": "Achados publicados",
+      "cities": "Cidades monitoradas",
+      "cost": "Custo acumulado",
+      "error_title": "Indicadores em sincronização",
+      "error_desc": "Os contadores ao vivo voltam em instantes. Enquanto isso, a cobertura territorial está confirmada:"
+    },
+    "section_fiscais": "O que fiscalizamos",
+    "fiscais_desc": "Quatro agentes autônomos vigiam diferentes facetas do gasto público municipal.",
+    "fiscais": {
+      "licitacoes": {
+        "title": "Fiscal de Licitações",
+        "detects": "Identifica dispensas sem justificativa, fracionamento de contrato e inexigibilidades suspeitas.",
+        "law": "Lei 14.133/2021 — Art. 75 (teto R$ 100k obras / R$ 50k serviços)"
+      },
+      "contratos": {
+        "title": "Fiscal de Contratos",
+        "detects": "Sinaliza aditivos acima de 25% do valor original e prorrogações fora do limite legal.",
+        "law": "Lei 14.133/2021 — Art. 125"
+      },
+      "fornecedores": {
+        "title": "Fiscal de Fornecedores",
+        "detects": "Aponta CNPJs com menos de 6 meses na data do contrato e concentração acima de 40% por secretaria.",
+        "law": "Receita Federal + CGU (CEIS/CNEP)"
+      },
+      "pessoal": {
+        "title": "Fiscal de Pessoal",
+        "detects": "Detecta picos de nomeações em períodos eleitorais e rotatividade anormal em cargos comissionados.",
+        "law": "Lei 9.504/1997 (período eleitoral)"
+      }
+    },
+    "section_featured": "Em destaque",
+    "featured_desc": "O achado mais recente publicado pelo pipeline.",
+    "featured": {
+      "empty_title": "Primeiros alertas em maio/2026",
+      "empty_desc": "O pipeline está em backfill da gestão municipal de Caxias do Sul (2021–atual). Os primeiros achados públicos vão aparecer aqui."
+    },
+    "section_cities": "Cobertura",
+    "cities_desc": "Cidades já cadastradas no Fiscal Digital, agrupadas por região.",
+    "cities": {
+      "summary": "{active} cidades ativas de {total} cadastradas — agrupadas por região.",
+      "legend_active": "Em produção",
+      "legend_planned": "Planejada (aguarda Querido Diário)",
+      "badge_active_alt": "Em produção",
+      "badge_planned_alt": "Planejada"
+    },
+    "section_open_source": "Código aberto",
+    "open_source": {
+      "desc": "Toda a engine, infraestrutura e site são código aberto sob licença MIT. Inspecione, audite, contribua.",
+      "cta_github": "Veja como funciona o código",
+      "license_label": "Licença"
+    },
+    "section_newsletter": "Receba quando lançar",
+    "newsletter": {
+      "desc": "Quer ser avisado quando o primeiro alerta público sair do forno? Mande um e-mail e a gente te lembra.",
+      "cta": "Avise-me por e-mail"
+    }
   },
   "footer": {
     "tagline": "Fiscalização autônoma de gastos públicos municipais no Brasil.",

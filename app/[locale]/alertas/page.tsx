@@ -10,7 +10,26 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'meta' })
-  return { title: t('alertas_title') }
+  const isPt = locale === 'pt'
+  const path = isPt ? '/pt/alertas' : '/en/alertas'
+  return {
+    title: t('alertas_title'),
+    description: t('alertas_description'),
+    alternates: {
+      canonical: path,
+      languages: {
+        pt: '/pt/alertas',
+        en: '/en/alertas',
+        'x-default': '/pt/alertas',
+      },
+    },
+    openGraph: {
+      title: t('alertas_title'),
+      description: t('alertas_description'),
+      url: path,
+      locale: isPt ? 'pt_BR' : 'en_US',
+    },
+  }
 }
 
 export default async function AlertasPage({ params }: Props) {

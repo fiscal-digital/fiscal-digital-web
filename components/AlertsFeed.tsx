@@ -18,6 +18,8 @@ export interface Finding {
   confidence: number
   value?: number
   secretaria?: string
+  cnpj?: string
+  contractNumber?: string
   legalBasis?: string
   narrative?: string
   source: string
@@ -122,9 +124,28 @@ function FindingCard({ finding, typeLabel, t, locale }: CardProps) {
       </div>
 
       {/* City + state */}
-      <p className="mb-2 text-sm font-semibold text-brand-ink">
+      <p className="mb-1 text-sm font-semibold text-brand-ink">
         {finding.city} · <span className="text-brand-gray">{finding.state}</span>
       </p>
+
+      {/* Subtítulo desambiguador — secretaria + contrato + CNPJ formatado.
+          Sem isso, 23 cards "Aditivo abusivo" ficavam visualmente idênticos. */}
+      {(finding.secretaria || finding.contractNumber || finding.cnpj) && (
+        <p className="mb-2 flex flex-wrap gap-x-2 gap-y-0.5 text-xs text-brand-gray">
+          {finding.secretaria && (
+            <span className="font-semibold text-brand-ink">{finding.secretaria}</span>
+          )}
+          {finding.contractNumber && (
+            <span className="font-mono">
+              <span className="text-brand-gray/70">Contrato </span>
+              {finding.contractNumber}
+            </span>
+          )}
+          {finding.cnpj && (
+            <span className="font-mono text-brand-gray/80">{finding.cnpj}</span>
+          )}
+        </p>
+      )}
 
       {/* Narrative */}
       {finding.narrative && (
@@ -133,18 +154,12 @@ function FindingCard({ finding, typeLabel, t, locale }: CardProps) {
         </p>
       )}
 
-      {/* Metadata row */}
+      {/* Metadata row — secretaria já está no subtítulo desambiguador acima */}
       <dl className="mb-4 flex flex-wrap gap-x-4 gap-y-1 text-xs text-brand-gray">
         {finding.value != null && (
           <div className="flex gap-1">
             <dt className="font-medium">{t('card.value')}:</dt>
             <dd className="font-mono">{formatCurrency(finding.value)}</dd>
-          </div>
-        )}
-        {finding.secretaria && (
-          <div className="flex gap-1">
-            <dt className="font-medium">{t('card.secretaria')}:</dt>
-            <dd>{finding.secretaria}</dd>
           </div>
         )}
         {finding.legalBasis && (

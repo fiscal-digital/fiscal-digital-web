@@ -22,7 +22,69 @@
     "ecosystem_desc": "Fiscal Digital extends — not competes with — the foundational Brazilian civic innovation projects.",
     "section_support": "Support the project",
     "support_desc": "Fiscal Digital is maintained by community contributions. Every inflow and outflow is publicly reported.",
-    "support_cta": "Support us on Catarse"
+    "support_cta": "Support us on Catarse",
+    "section_problem": "The problem",
+    "problem_desc": "Brazilian municipal gazettes publish, every day, spending decisions that almost no citizen has time to read. Waivers, contract amendments, appointments and procurement slip by unnoticed for lack of time, tools or technical fluency. Fiscal Digital reads these documents for you and surfaces what deserves attention — always with a link back to the original record.",
+    "section_indicators": "By the numbers",
+    "indicators_desc": "Updated on every pipeline run.",
+    "stats": {
+      "gazettes": "Gazettes processed",
+      "findings": "Findings published",
+      "cities": "Cities monitored",
+      "cost": "Cumulative cost",
+      "error_title": "Indicators syncing",
+      "error_desc": "Live counters will return shortly. In the meantime, territorial coverage is confirmed:"
+    },
+    "section_fiscais": "What we audit",
+    "fiscais_desc": "Four autonomous agents watch over different facets of municipal public spending.",
+    "fiscais": {
+      "licitacoes": {
+        "title": "Procurement Auditor",
+        "detects": "Spots unjustified waivers, contract splitting and suspicious non-bidding awards.",
+        "law": "Law 14.133/2021 — Art. 75 (BRL 100k works / BRL 50k services cap)"
+      },
+      "contratos": {
+        "title": "Contract Auditor",
+        "detects": "Flags amendments above 25% of the original value and extensions beyond the legal limit.",
+        "law": "Law 14.133/2021 — Art. 125"
+      },
+      "fornecedores": {
+        "title": "Supplier Auditor",
+        "detects": "Surfaces CNPJs less than 6 months old at contract date and concentration above 40% per department.",
+        "law": "Federal Revenue + CGU (CEIS/CNEP)"
+      },
+      "pessoal": {
+        "title": "Personnel Auditor",
+        "detects": "Detects appointment spikes in election periods and abnormal turnover in commissioned roles.",
+        "law": "Law 9.504/1997 (electoral period)"
+      }
+    },
+    "section_featured": "Featured",
+    "featured_desc": "The latest finding published by the pipeline.",
+    "featured": {
+      "empty_title": "First alerts in May 2026",
+      "empty_desc": "The pipeline is backfilling the Caxias do Sul municipal administration (2021–present). The first public findings will appear here."
+    },
+    "section_cities": "Coverage",
+    "cities_desc": "Cities already registered in Fiscal Digital, grouped by region.",
+    "cities": {
+      "summary": "{active} active cities out of {total} registered — grouped by region.",
+      "legend_active": "In production",
+      "legend_planned": "Planned (awaiting Querido Diário)",
+      "badge_active_alt": "In production",
+      "badge_planned_alt": "Planned"
+    },
+    "section_open_source": "Open source",
+    "open_source": {
+      "desc": "The entire engine, infrastructure and website are open source under the MIT license. Inspect, audit, contribute.",
+      "cta_github": "See how the code works",
+      "license_label": "License"
+    },
+    "section_newsletter": "Get notified at launch",
+    "newsletter": {
+      "desc": "Want to be notified when the first public alert ships? Drop us an email and we will reach back out.",
+      "cta": "Notify me by email"
+    }
   },
   "footer": {
     "tagline": "Autonomous oversight of Brazilian municipal public spending.",

@@ -1,0 +1,38 @@
+import {
+  OG_CONTENT_TYPE,
+  OG_SIZE,
+  ogGenerateImageMetadata,
+  ogGenerateStaticParams,
+  renderOgImage,
+  resolveLocale,
+  type OgCopy,
+} from '@/lib/og'
+
+export const alt = 'Sobre — Fiscal Digital'
+export const size = OG_SIZE
+export const contentType = OG_CONTENT_TYPE
+
+export const generateImageMetadata = () => ogGenerateImageMetadata(alt)
+export const generateStaticParams = ogGenerateStaticParams
+
+const COPY: OgCopy = {
+  pt: {
+    eyebrow: 'Sobre',
+    title: 'Quem está por trás do Fiscal Digital.',
+    sub: 'Time, parceiros e ecossistema cívico.',
+  },
+  en: {
+    eyebrow: 'About',
+    title: 'Who is behind Fiscal Digital.',
+    sub: 'Team, partners and civic ecosystem.',
+  },
+}
+
+export default async function OpengraphImage({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+  return renderOgImage(COPY[resolveLocale(locale)])
+}

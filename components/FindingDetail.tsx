@@ -60,6 +60,23 @@ export default function FindingDetail({
     finding.cnpj || finding.contractNumber || finding.legalBasis || finding.secretaria || finding.createdAt,
   )
 
+  // UH-WEB-001 — distinguir data do diário oficial (evidence[0].date) da data
+  // em que o Fiscal detectou o achado (createdAt). Quando gap > 30d, é backfill
+  // histórico (cidadão precisa entender que não é fato recente).
+  const gazetteDate = evidence?.date
+  const detectedAt = finding.createdAt
+  const gapDays = (() => {
+    if (!gazetteDate || !detectedAt) return 0
+    try {
+      const g = new Date(gazetteDate).getTime()
+      const d = new Date(detectedAt).getTime()
+      return Math.floor((d - g) / 86400000)
+    } catch {
+      return 0
+    }
+  })()
+  const isBackfill = gapDays > 30
+
   return (
     <article className="space-y-6">
       {/* Badges header */}
@@ -73,6 +90,16 @@ export default function FindingDetail({
         <span className="rounded-pill bg-brand-gray/10 px-3 py-1 text-xs font-semibold text-brand-gray">
           {isPt ? 'Confiança' : 'Confidence'} {Math.round(finding.confidence * 100)}%
         </span>
+        {isBackfill && (
+          <span
+            className="rounded-pill border border-brand-gray/25 bg-brand-paper px-3 py-1 text-xs font-semibold text-brand-gray"
+            title={isPt
+              ? `Diário oficial publicado há ${gapDays} dias. Achado detectado posteriormente em backfill histórico.`
+              : `Official gazette published ${gapDays} days ago. Finding detected later in historical backfill.`}
+          >
+            {isPt ? 'Backfill histórico' : 'Historical backfill'}
+          </span>
+        )}
       </div>
 
       {/* NÍVEL 1 — IMPACTO (valor + entidade) */}
@@ -160,6 +187,11 @@ export default function FindingDetail({
             {finding.secretaria && (
               <MetaRow icon={<Buildings size={16} weight="bold" />} label={isPt ? 'Secretaria' : 'Department'}>
                 {finding.secretaria}
+              </MetaRow>
+            )}
+            {gazetteDate && (
+              <MetaRow icon={<Calendar size={16} weight="bold" />} label={isPt ? 'Diário oficial' : 'Official gazette'}>
+                <span className="font-mono">{formatDate(gazetteDate, locale)}</span>
               </MetaRow>
             )}
             <MetaRow icon={<Calendar size={16} weight="bold" />} label={isPt ? 'Detectado em' : 'Detected on'}>

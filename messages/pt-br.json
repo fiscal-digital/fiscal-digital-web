@@ -95,7 +95,10 @@
       "privacy": "Sem spam. Cancelamento em 1 clique. Você pode escrever para lineu@fiscaldigital.org a qualquer momento."
     },
     "section_contribute": "Quer contribuir com o projeto?",
-    "contribute_desc": "Abra uma issue no GitHub em github.com/fiscal-digital ou use o formulário de contato."
+    "contribute_desc": "Toda contribuição ajuda — código, dados, ideias ou apoio financeiro. Veja como começar.",
+    "contribute_cta_issue": "Abrir issue no GitHub",
+    "contribute_cta_apoie": "Apoiar financeiramente",
+    "contribute_email": "Para outras conversas: lineu[at]fiscaldigital.org"
   },
   "footer": {
     "tagline": "Fiscalização autônoma de gastos públicos municipais no Brasil.",

@@ -95,7 +95,10 @@
       "privacy": "No spam. One-click unsubscribe. You can also reach us at lineu@fiscaldigital.org any time."
     },
     "section_contribute": "Want to contribute to the project?",
-    "contribute_desc": "Open an issue on GitHub at github.com/fiscal-digital or use the contact form."
+    "contribute_desc": "Every contribution helps — code, data, ideas, or financial support. Here is how to start.",
+    "contribute_cta_issue": "Open an issue on GitHub",
+    "contribute_cta_apoie": "Support financially",
+    "contribute_email": "For other conversations: lineu[at]fiscaldigital.org"
   },
   "footer": {
     "tagline": "Autonomous oversight of Brazilian municipal public spending.",

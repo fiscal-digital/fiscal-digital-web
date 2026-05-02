@@ -263,8 +263,28 @@ export default async function HomePage({ params }: Props) {
           <h2 className="mb-4 text-3xl font-bold tracking-tight text-brand-teal">
             {t('section_contribute')}
           </h2>
-          <p className="text-brand-gray">
+          <p className="mb-6 text-brand-gray">
             {t('contribute_desc')}
+          </p>
+          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <a
+              href="https://github.com/fiscal-digital/fiscal-digital/issues/new/choose"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-md bg-brand-teal px-5 py-3 text-sm font-semibold text-brand-paper transition-opacity hover:opacity-90"
+            >
+              {t('contribute_cta_issue')}
+            </a>
+            <Link
+              href={`/${locale}/apoie`}
+              prefetch
+              className="inline-flex items-center gap-2 rounded-md border border-brand-teal px-5 py-3 text-sm font-semibold text-brand-teal transition-colors hover:bg-brand-teal hover:text-brand-paper"
+            >
+              {t('contribute_cta_apoie')}
+            </Link>
+          </div>
+          <p className="mt-5 text-xs text-brand-gray">
+            {t('contribute_email')}
           </p>
         </div>
       </section>

@@ -112,8 +112,39 @@ export default async function Footer({ locale }: Props) {
 
         <div className="mt-12 border-t border-brand-gray/15 pt-6 text-xs text-brand-gray">
           <p>
-            Fiscal Digital © 2026 ·{' '}
-            <span className="text-brand-gray">{t('ombros')}</span>
+            Fiscal Digital{' '}
+            {t.rich('ombros', {
+              cernyn: (chunks) => (
+                <a
+                  href="https://cernyn.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-brand-teal"
+                >
+                  {chunks}
+                </a>
+              ),
+              serenata: (chunks) => (
+                <a
+                  href="https://serenata.ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-brand-teal"
+                >
+                  {chunks}
+                </a>
+              ),
+              qd: (chunks) => (
+                <a
+                  href="https://queridodiario.ok.org.br"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-brand-teal"
+                >
+                  {chunks}
+                </a>
+              ),
+            })}
           </p>
           <p className="mt-2 text-brand-gray/80">{t('tagline')}</p>
         </div>

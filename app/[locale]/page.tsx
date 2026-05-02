@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import StatsCounter from '@/components/StatsCounter'
 import HeroStats from '@/components/HeroStats'
 import FourFiscais from '@/components/FourFiscais'
@@ -54,12 +55,13 @@ export default async function HomePage({ params }: Props) {
               <p className="mb-8 text-base leading-relaxed opacity-75 sm:text-lg">
                 {t('subtitle')}
               </p>
-              <a
+              <Link
                 href={`/${locale}/alertas`}
+                prefetch
                 className="inline-block rounded-md bg-brand-amber px-6 py-3 font-semibold text-brand-ink transition-opacity hover:opacity-90"
               >
                 {t('cta_alertas')}
-              </a>
+              </Link>
             </div>
 
             {/* Coluna stats ao vivo — 2/5 */}

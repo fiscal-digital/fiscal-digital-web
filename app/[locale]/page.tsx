@@ -1,5 +1,9 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
+import StatsCounter from '@/components/StatsCounter'
+import FourFiscais from '@/components/FourFiscais'
+import FeaturedAlert from '@/components/FeaturedAlert'
+import CitiesMap from '@/components/CitiesMap'
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -34,10 +38,13 @@ export default async function HomePage({ params }: Props) {
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: 'home' })
+  const newsletterMailto =
+    'mailto:lineu@fiscaldigital.org?subject=' +
+    encodeURIComponent('Avise-me quando lançar')
 
   return (
     <main>
-      {/* Hero */}
+      {/* 1. Hero */}
       <section className="flex min-h-dvh items-center justify-center bg-brand-teal px-6 text-brand-paper">
         <div className="max-w-3xl text-center">
           <p className="mb-6 text-sm font-semibold uppercase tracking-widest text-brand-amber">
@@ -66,8 +73,71 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      {/* Como funciona */}
-      <section id="como-funciona" className="bg-brand-paper px-6 py-24">
+      {/* 2. O problema */}
+      <section id="problema" className="bg-brand-paper px-6 py-20">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="mb-6 text-3xl font-bold tracking-tight text-brand-teal">
+            {t('section_problem')}
+          </h2>
+          <p className="text-lg leading-relaxed text-brand-gray">
+            {t('problem_desc')}
+          </p>
+        </div>
+      </section>
+
+      {/* 3. Indicadores ao vivo */}
+      <section
+        id="indicadores"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-20"
+      >
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-10 text-center">
+            <h2 className="mb-3 text-3xl font-bold tracking-tight text-brand-teal">
+              {t('section_indicators')}
+            </h2>
+            <p className="text-sm text-brand-gray">{t('indicators_desc')}</p>
+          </div>
+          <StatsCounter />
+        </div>
+      </section>
+
+      {/* 4. O que fiscalizamos (4 Fiscais) */}
+      <section
+        id="fiscais"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-20"
+      >
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-10 text-center">
+            <h2 className="mb-3 text-3xl font-bold tracking-tight text-brand-teal">
+              {t('section_fiscais')}
+            </h2>
+            <p className="text-sm text-brand-gray">{t('fiscais_desc')}</p>
+          </div>
+          <FourFiscais locale={locale} />
+        </div>
+      </section>
+
+      {/* 5. Alerta em destaque */}
+      <section
+        id="destaque"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-20"
+      >
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-10 text-center">
+            <h2 className="mb-3 text-3xl font-bold tracking-tight text-brand-teal">
+              {t('section_featured')}
+            </h2>
+            <p className="text-sm text-brand-gray">{t('featured_desc')}</p>
+          </div>
+          <FeaturedAlert locale={locale} />
+        </div>
+      </section>
+
+      {/* 6. Como funciona */}
+      <section
+        id="como-funciona"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-24"
+      >
         <div className="mx-auto max-w-4xl">
           <h2 className="mb-16 text-center text-3xl font-bold tracking-tight text-brand-teal">
             {t('section_how')}
@@ -90,8 +160,27 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      {/* Ecossistema */}
-      <section id="ecossistema" className="border-t border-brand-gray/10 bg-brand-paper px-6 py-24">
+      {/* 7. Cobertura — mapa de cidades */}
+      <section
+        id="cobertura"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-24"
+      >
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-6 text-center">
+            <h2 className="mb-3 text-3xl font-bold tracking-tight text-brand-teal">
+              {t('section_cities')}
+            </h2>
+            <p className="text-sm text-brand-gray">{t('cities_desc')}</p>
+          </div>
+          <CitiesMap locale={locale} />
+        </div>
+      </section>
+
+      {/* 8. Ecossistema */}
+      <section
+        id="ecossistema"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-24"
+      >
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="mb-4 text-3xl font-bold tracking-tight text-brand-teal">
             {t('section_ecosystem')}
@@ -120,7 +209,58 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      {/* Apoie */}
+      {/* 9. Open source */}
+      <section
+        id="open-source"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-20"
+      >
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="mb-4 text-3xl font-bold tracking-tight text-brand-teal">
+            {t('section_open_source')}
+          </h2>
+          <p className="mb-8 text-brand-gray">{t('open_source.desc')}</p>
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <a
+              href="https://github.com/fiscal-digital"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg bg-brand-ink px-6 py-3 font-semibold text-brand-paper transition-opacity hover:opacity-90"
+            >
+              {t('open_source.cta_github')}
+              <span aria-hidden="true">→</span>
+            </a>
+            <span
+              className="inline-flex items-center gap-2 rounded-pill border border-brand-gray/25 px-3 py-1.5 text-xs text-brand-gray"
+              aria-label={t('open_source.license_label')}
+            >
+              <span className="font-mono font-semibold text-brand-teal">MIT</span>
+              <span>·</span>
+              <span>{t('open_source.license_label')}</span>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* 10. Newsletter (mailto-only sem provider) */}
+      <section
+        id="newsletter"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-20"
+      >
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="mb-3 text-3xl font-bold tracking-tight text-brand-teal">
+            {t('section_newsletter')}
+          </h2>
+          <p className="mb-8 text-brand-gray">{t('newsletter.desc')}</p>
+          <a
+            href={newsletterMailto}
+            className="inline-block rounded-lg bg-brand-teal px-6 py-3 font-semibold text-brand-paper transition-opacity hover:opacity-90"
+          >
+            {t('newsletter.cta')}
+          </a>
+        </div>
+      </section>
+
+      {/* 11. Apoie */}
       <section id="apoie" className="bg-brand-teal px-6 py-24 text-brand-paper">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="mb-4 text-3xl font-bold tracking-tight">

@@ -40,8 +40,23 @@ export default async function SobrePage({ params }: Props) {
         </div>
       </section>
 
-      {/* Quem somos */}
+      {/* Origem */}
       <section className="px-6 py-16">
+        <div className="mx-auto max-w-3xl space-y-5">
+          <h2 className="text-2xl font-bold tracking-tight text-brand-teal">
+            {t('origin_title')}
+          </h2>
+          <p className="text-base leading-relaxed text-brand-ink sm:text-lg">
+            {t('origin_p1')}
+          </p>
+          <p className="text-base leading-relaxed text-brand-ink sm:text-lg">
+            {t('origin_p2')}
+          </p>
+        </div>
+      </section>
+
+      {/* Quem somos */}
+      <section className="border-t border-brand-gray/10 bg-brand-paper px-6 py-16">
         <div className="mx-auto max-w-3xl space-y-5">
           <h2 className="text-2xl font-bold tracking-tight text-brand-teal">
             {t('who_title')}

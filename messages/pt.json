@@ -29,7 +29,50 @@
     "licenca": "MIT (código) · CC-BY 4.0 (dados e alertas)",
     "ombros": "Sobre os ombros de Serenata de Amor e Querido Diário (OKFN Brasil)"
   },
+  "alertas": {
+    "title": "Alertas de Gastos Públicos",
+    "subtitle": "Achados publicados automaticamente pelos Fiscais. Cada alerta cita o diário oficial de origem.",
+    "loading": "Carregando alertas...",
+    "empty": "Nenhum alerta encontrado",
+    "empty_desc": "Tente ajustar os filtros ou aguarde novos achados.",
+    "error": "Não foi possível carregar os alertas.",
+    "retry": "Tentar novamente",
+    "filters": {
+      "state": "Estado",
+      "type": "Tipo",
+      "all": "Todos"
+    },
+    "card": {
+      "source": "Ver fonte",
+      "riskScore": "Risco",
+      "date": "Data",
+      "secretaria": "Secretaria",
+      "value": "Valor",
+      "confidence": "Confiança"
+    },
+    "types": {
+      "dispensa_irregular": "Dispensa Irregular",
+      "fracionamento": "Fracionamento",
+      "aditivo_abusivo": "Aditivo Abusivo",
+      "prorrogacao_excessiva": "Prorrogação Excessiva",
+      "cnpj_jovem": "CNPJ Jovem",
+      "concentracao_fornecedor": "Concentração Fornecedor",
+      "pico_nomeacoes": "Pico Nomeações",
+      "rotatividade_anormal": "Rotatividade Anormal"
+    },
+    "rss": {
+      "title": "Assinar via RSS",
+      "description": "Receba alertas diretamente no seu leitor de RSS",
+      "all": "Todos os alertas",
+      "byState": "Por estado",
+      "statePlaceholder": "Ex: RS",
+      "copied": "URL copiada!",
+      "copy": "Copiar",
+      "compatible": "Compatível com qualquer leitor de RSS (Feedly, NewsBlur, etc.)"
+    }
+  },
   "meta": {
-    "home_title": "Fiscal Digital — Fiscalização autônoma de gastos públicos"
+    "home_title": "Fiscal Digital — Fiscalização autônoma de gastos públicos",
+    "alertas_title": "Alertas de Gastos Públicos"
   }
 }

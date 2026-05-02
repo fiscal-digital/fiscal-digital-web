@@ -4,6 +4,7 @@ import { getMessages, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { inter, jetbrainsMono } from '@/lib/fonts'
 import { routing } from '@/i18n/routing'
+import SiteNav from '@/components/SiteNav'
 
 type Locale = (typeof routing.locales)[number]
 
@@ -47,6 +48,7 @@ export default async function LocaleLayout({ children, params }: Props) {
     >
       <body className="bg-brand-paper font-sans text-brand-ink antialiased">
         <NextIntlClientProvider messages={messages}>
+          <SiteNav locale={locale} />
           {children}
         </NextIntlClientProvider>
       </body>

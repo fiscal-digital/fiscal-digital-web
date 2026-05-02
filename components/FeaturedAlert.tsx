@@ -65,9 +65,6 @@ export default async function FeaturedAlert({ locale }: Props) {
   if (!finding) {
     return (
       <div className="mx-auto max-w-2xl rounded-xl border border-brand-gray/15 bg-white px-6 py-10 text-center shadow-sm">
-        <p className="mb-2 text-2xl" aria-hidden="true">
-          🕒
-        </p>
         <p className="mb-1 font-semibold text-brand-ink">{t('empty_title')}</p>
         <p className="text-sm text-brand-gray">{t('empty_desc')}</p>
       </div>
@@ -108,7 +105,16 @@ export default async function FeaturedAlert({ locale }: Props) {
 
       {finding.narrative && (
         <p className="mb-4 text-base leading-relaxed text-brand-ink">
-          {finding.narrative}
+          {finding.narrative
+            .split('\n')
+            .filter(line => !/^\*{1,2}[^*\n]+\*{1,2}$/.test(line.trim()))
+            .filter(line => !/^#{1,6}\s/.test(line))
+            .join('\n')
+            .replace(/\*\*(.+?)\*\*/g, '$1')
+            .replace(/\*(.+?)\*/g, '$1')
+            .replace(/\n{3,}/g, '\n\n')
+            .trim()
+          }
         </p>
       )}
 

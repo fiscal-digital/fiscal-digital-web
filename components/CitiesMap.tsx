@@ -54,15 +54,15 @@ export default async function CitiesMap({ locale }: Props) {
                       <span className="flex items-center gap-2">
                         <span
                           aria-hidden="true"
-                          className="font-mono text-xs"
+                          className={`inline-block h-2 w-2 shrink-0 rounded-full ${
+                            city.active ? 'bg-brand-success' : 'bg-brand-gray/30'
+                          }`}
                           title={
                             city.active
                               ? t('badge_active_alt')
                               : t('badge_planned_alt')
                           }
-                        >
-                          {city.active ? '✅' : '⏳'}
-                        </span>
+                        />
                         <span className="group-hover:text-brand-teal">
                           {city.name}
                         </span>

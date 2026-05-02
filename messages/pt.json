@@ -1,18 +1,18 @@
 {
   "nav": {
-    "manifesto": "Manifesto",
     "alertas": "Alertas",
     "fiscais": "Fiscais",
     "roadmap": "Linha do Tempo",
-    "transparencia": "Transparência",
-    "apoie": "Apoie",
-    "sobre": "Sobre"
+    "sobre": "Sobre",
+    "manifesto": "Manifesto",
+    "transparencia": "Transparência"
   },
   "home": {
-    "tagline": "Fiscalização autônoma de gastos públicos",
-    "subtitle": "Cada alerta cita a fonte. Cada fonte é o diário oficial.",
-    "cta_alertas": "Ver alertas de Caxias do Sul",
-    "cta_apoie": "Apoie no Catarse",
+    "tagline": "Cada contrato público pode ser fiscalizado. Fazemos isso, todo dia, para 50 cidades.",
+    "subtitle": "Os Fiscais leem os diários oficiais e identificam irregularidades com base em critérios legais explícitos.",
+    "cta_alertas": "Ver alertas",
+    "hero_stat_cities": "cidades monitoradas",
+    "hero_stat_desc": "Pipeline diário · alertas com base legal · fonte sempre citada",
     "section_how": "Como funciona",
     "step_collect": "Coleta",
     "step_collect_desc": "Monitoramento diário dos diários oficiais municipais via Querido Diário (OKFN Brasil).",
@@ -86,7 +86,9 @@
     "newsletter": {
       "desc": "Quer ser avisado quando o primeiro alerta público sair do forno? Mande um e-mail e a gente te lembra.",
       "cta": "Avise-me por e-mail"
-    }
+    },
+    "section_contribute": "Quer contribuir com o projeto?",
+    "contribute_desc": "Entre em contato pelo e-mail contato@fiscaldigital.org ou abra uma issue no GitHub em github.com/fiscal-digital."
   },
   "footer": {
     "tagline": "Fiscalização autônoma de gastos públicos municipais no Brasil.",

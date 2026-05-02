@@ -27,7 +27,28 @@
   "footer": {
     "tagline": "Autonomous oversight of Brazilian municipal public spending.",
     "licenca": "MIT (code) · CC-BY 4.0 (data and alerts)",
-    "ombros": "Standing on the shoulders of Serenata de Amor and Querido Diário (OKFN Brazil)"
+    "ombros": "Standing on the shoulders of Serenata de Amor and Querido Diário (OKFN Brazil)",
+    "col_about": "About",
+    "col_resources": "Resources",
+    "col_community": "Community",
+    "col_legal": "Legal",
+    "api_link": "Public API (coming soon)",
+    "license_code": "MIT — code",
+    "license_data": "CC-BY 4.0 — data and alerts",
+    "retraction_policy": "Retraction policy"
+  },
+  "a11y": {
+    "skipToMain": "Skip to main content",
+    "primaryNav": "Primary navigation",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "switchLanguage": "Switch language to {lang}"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The address you accessed does not exist or has moved. You can still browse published alerts or return to the home page.",
+    "cta_home": "Back to home",
+    "cta_alerts": "View alerts"
   },
   "alertas": {
     "title": "Public Spending Alerts",
@@ -73,6 +94,24 @@
   },
   "meta": {
     "home_title": "Fiscal Digital — Autonomous oversight of Brazilian municipal spending",
-    "alertas_title": "Public Spending Alerts"
+    "home_description": "Autonomous agents read Brazilian municipal official gazettes and publish verifiable alerts. Every finding cites its source. MIT and CC-BY 4.0.",
+    "alertas_title": "Public Spending Alerts",
+    "alertas_description": "Findings published automatically by Fiscal agents. Risk score >= 60 and confidence >= 0.70. Always with cited source.",
+    "manifesto_title": "Manifesto — Fiscal Digital",
+    "manifesto_description": "Why municipal oversight is the most urgent civic work. Principles, method, limits and commitments of Fiscal Digital.",
+    "sobre_title": "About — Fiscal Digital",
+    "sobre_description": "Who is behind Fiscal Digital, the team, partners and our roots in Serenata de Amor and Querido Diário.",
+    "transparencia_title": "Transparency — Fiscal Digital",
+    "transparencia_description": "Every dollar in and every dollar out, in public. Operating costs, donations and financial reports of the project.",
+    "apoie_title": "Support — Fiscal Digital",
+    "apoie_description": "Support Fiscal Digital on Catarse. Recurring, transparent, with no governmental or partisan funding.",
+    "cidades_title": "Cities covered — Fiscal Digital",
+    "cidades_description": "Brazilian municipalities monitored by Fiscal Digital. Caxias do Sul live; expanding to 50 cities.",
+    "cidade_title": "{cidade} — Fiscal Digital dashboard",
+    "cidade_description": "Alerts, suppliers and public contracts of {cidade} extracted from the official gazette. Updated daily.",
+    "alerta_title": "Alert {tipo} — {cidade}",
+    "alerta_description": "Detail of the finding in {cidade}, with legal basis, evidence and link to the original Querido Diário gazette.",
+    "comparacoes_title": "City comparisons — Fiscal Digital",
+    "comparacoes_description": "Compare spending, suppliers and risk patterns across Brazilian municipalities monitored by Fiscal Digital."
   }
 }

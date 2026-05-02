@@ -42,3 +42,31 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Accessibility: focus visible (WCAG 2.4.7) ──
+ * Anel 2px brand-amber com offset 2px em todos interativos.
+ * Use :focus-visible para não acionar em clique de mouse.
+ */
+:focus-visible {
+  outline: 2px solid var(--color-brand-amber);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── Skip link: visível somente em :focus (a11y nav bypass) ── */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  z-index: 100;
+}
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-brand-ink);
+  color: var(--color-brand-paper);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  text-decoration: none;
+}

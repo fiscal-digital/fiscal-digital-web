@@ -150,7 +150,7 @@ export default async function FiscaisPage({ params }: Props) {
           </div>
 
           <p className="mt-8 text-sm text-brand-gray">
-            {locale === 'pt'
+            {locale === 'pt-br'
               ? 'Critérios completos e histórico de calibração em'
               : 'Full criteria and calibration history at'}{' '}
             <a

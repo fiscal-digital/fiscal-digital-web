@@ -87,7 +87,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Páginas estáticas por locale
   for (const { path, priority, changeFrequency } of STATIC_PAGES) {
-    for (const locale of ['pt', 'en'] as const) {
+    for (const locale of ['pt-br', 'en'] as const) {
       const suffix = path ? `/${path}` : ''
       entries.push({
         url: `${SITE}/${locale}${suffix}`,
@@ -96,7 +96,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority,
         alternates: {
           languages: {
-            pt: `${SITE}/pt${suffix}`,
+            'pt-br': `${SITE}/pt-br${suffix}`,
             en: `${SITE}/en${suffix}`,
           },
         },
@@ -106,7 +106,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Páginas de cidade — uma entrada por locale × cidade
   for (const slug of ACTIVE_CITY_SLUGS) {
-    for (const locale of ['pt', 'en'] as const) {
+    for (const locale of ['pt-br', 'en'] as const) {
       entries.push({
         url: `${SITE}/${locale}/cidades/${slug}`,
         lastModified,
@@ -114,7 +114,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: 0.6,
         alternates: {
           languages: {
-            pt: `${SITE}/pt/cidades/${slug}`,
+            'pt-br': `${SITE}/pt-br/cidades/${slug}`,
             en: `${SITE}/en/cidades/${slug}`,
           },
         },

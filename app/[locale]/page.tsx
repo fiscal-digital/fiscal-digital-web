@@ -14,17 +14,17 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'meta' })
-  const isPt = locale === 'pt'
-  const path = isPt ? '/pt' : '/en'
+  const isPt = locale === 'pt-br'
+  const path = isPt ? '/pt-br' : '/en'
   return {
     title: t('home_title'),
     description: t('home_description'),
     alternates: {
       canonical: path,
       languages: {
-        pt: '/pt',
+        'pt-br': '/pt-br',
         en: '/en',
-        'x-default': '/pt',
+        'x-default': '/pt-br',
       },
     },
     openGraph: {
@@ -248,7 +248,7 @@ export default async function HomePage({ params }: Props) {
             {t('section_newsletter')}
           </h2>
           <p className="mb-6 text-brand-gray">{t('newsletter.desc')}</p>
-          <NewsletterForm source="home" locale={locale as 'pt' | 'en'} />
+          <NewsletterForm source="home" locale={locale as 'pt-br' | 'en'} />
         </div>
       </section>
 

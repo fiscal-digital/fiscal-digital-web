@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
 import StatsCounter from '@/components/StatsCounter'
+import HeroStats from '@/components/HeroStats'
 import FourFiscais from '@/components/FourFiscais'
 import FeaturedAlert from '@/components/FeaturedAlert'
 import CitiesMap from '@/components/CitiesMap'
@@ -50,9 +51,6 @@ export default async function HomePage({ params }: Props) {
           <div className="grid items-center gap-12 lg:grid-cols-5">
             {/* Coluna texto — 3/5 */}
             <div className="lg:col-span-3">
-              <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-brand-amber">
-                Fiscal Digital
-              </p>
               <h1 className="mb-5 text-balance text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
                 {t('tagline')}
               </h1>
@@ -61,35 +59,22 @@ export default async function HomePage({ params }: Props) {
               </p>
               <a
                 href={`/${locale}/alertas`}
-                className="inline-block rounded-lg bg-brand-amber px-6 py-3 font-semibold text-brand-ink transition-opacity hover:opacity-90"
+                className="inline-block rounded-md bg-brand-amber px-6 py-3 font-semibold text-brand-ink transition-opacity hover:opacity-90"
               >
                 {t('cta_alertas')}
               </a>
             </div>
 
-            {/* Coluna stat visual — 2/5 */}
+            {/* Coluna stats ao vivo — 2/5 */}
             <div className="lg:col-span-2">
-              <div className="rounded-xl border border-brand-paper/15 bg-brand-paper/10 p-6">
-                <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-brand-amber">
-                  {t('section_indicators')}
-                </p>
-                <p className="font-mono text-4xl font-bold text-brand-paper">
-                  50
-                </p>
-                <p className="mb-6 text-sm text-brand-paper/60">
-                  {t('hero_stat_cities')}
-                </p>
-                <p className="text-xs leading-relaxed text-brand-paper/50">
-                  {t('hero_stat_desc')}
-                </p>
-              </div>
+              <HeroStats locale={locale} />
             </div>
           </div>
         </div>
       </section>
 
       {/* 2. O problema */}
-      <section id="problema" className="bg-brand-paper px-6 py-20">
+      <section id="problema" className="bg-brand-paper px-6 py-14">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="mb-6 text-3xl font-bold tracking-tight text-brand-teal">
             {t('section_problem')}
@@ -103,7 +88,7 @@ export default async function HomePage({ params }: Props) {
       {/* 3. Indicadores ao vivo */}
       <section
         id="indicadores"
-        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-20"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
       >
         <div className="mx-auto max-w-5xl">
           <div className="mb-10 text-center">
@@ -119,7 +104,7 @@ export default async function HomePage({ params }: Props) {
       {/* 4. O que fiscalizamos (4 Fiscais) */}
       <section
         id="fiscais"
-        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-20"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
       >
         <div className="mx-auto max-w-6xl">
           <div className="mb-10 text-center">
@@ -135,7 +120,7 @@ export default async function HomePage({ params }: Props) {
       {/* 5. Alerta em destaque */}
       <section
         id="destaque"
-        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-20"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
       >
         <div className="mx-auto max-w-4xl">
           <div className="mb-10 text-center">
@@ -151,10 +136,10 @@ export default async function HomePage({ params }: Props) {
       {/* 6. Como funciona */}
       <section
         id="como-funciona"
-        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-24"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
       >
         <div className="mx-auto max-w-4xl">
-          <h2 className="mb-16 text-center text-3xl font-bold tracking-tight text-brand-teal">
+          <h2 className="mb-10 text-center text-3xl font-bold tracking-tight text-brand-teal">
             {t('section_how')}
           </h2>
           <div className="grid gap-10 sm:grid-cols-3">
@@ -178,7 +163,7 @@ export default async function HomePage({ params }: Props) {
       {/* 7. Cobertura — mapa de cidades */}
       <section
         id="cobertura"
-        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-24"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
       >
         <div className="mx-auto max-w-6xl">
           <div className="mb-6 text-center">
@@ -194,7 +179,7 @@ export default async function HomePage({ params }: Props) {
       {/* 8. Ecossistema */}
       <section
         id="ecossistema"
-        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-24"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
       >
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="mb-4 text-3xl font-bold tracking-tight text-brand-teal">
@@ -227,7 +212,7 @@ export default async function HomePage({ params }: Props) {
       {/* 9. Open source */}
       <section
         id="open-source"
-        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-20"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
       >
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="mb-4 text-3xl font-bold tracking-tight text-brand-teal">
@@ -259,7 +244,7 @@ export default async function HomePage({ params }: Props) {
       {/* 10. Newsletter (mailto-only sem provider) */}
       <section
         id="newsletter"
-        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-20"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
       >
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="mb-3 text-3xl font-bold tracking-tight text-brand-teal">
@@ -278,7 +263,7 @@ export default async function HomePage({ params }: Props) {
       {/* 11. Contribua */}
       <section
         id="contribua"
-        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-20"
+        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
       >
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="mb-4 text-3xl font-bold tracking-tight text-brand-teal">

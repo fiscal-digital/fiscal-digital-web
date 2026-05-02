@@ -11,12 +11,13 @@ type Props = {
   locale: string
 }
 
-type NavItem = { href: string; key: 'manifesto' | 'sobre' | 'alertas' | 'transparencia' | 'apoie' }
+type NavItem = { href: string; key: 'manifesto' | 'sobre' | 'alertas' | 'fiscais' | 'transparencia' | 'apoie' }
 
 const NAV_ITEMS: NavItem[] = [
   { href: '/manifesto', key: 'manifesto' },
   { href: '/sobre', key: 'sobre' },
   { href: '/alertas', key: 'alertas' },
+  { href: '/fiscais', key: 'fiscais' },
   { href: '/transparencia', key: 'transparencia' },
   { href: '/apoie', key: 'apoie' },
 ]

@@ -88,7 +88,18 @@ export default function FindingDetail({
       {finding.narrative && (
         <div className="prose prose-sm max-w-none">
           <p className="whitespace-pre-line text-base leading-relaxed text-brand-ink">
-            {finding.narrative}
+            {finding.narrative
+              // Remove linhas que são apenas títulos LLM (ex: **Achado de Fiscalização**)
+              .split('\n')
+              .filter(line => !/^\*{1,2}[^*\n]+\*{1,2}$/.test(line.trim()))
+              .filter(line => !/^#{1,6}\s/.test(line))
+              .join('\n')
+              // Remove markdown restante inline
+              .replace(/\*\*(.+?)\*\*/g, '$1')
+              .replace(/\*(.+?)\*/g, '$1')
+              .replace(/\n{3,}/g, '\n\n')
+              .trim()
+            }
           </p>
         </div>
       )}

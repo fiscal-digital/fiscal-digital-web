@@ -89,15 +89,6 @@ export default function ShareButton({ title, text, label, locale }: ShareButtonP
         type="button"
         onClick={handleCopy}
         aria-label={i18n.copy}
-        className="inline-flex items-center gap-1.5 rounded-md bg-brand-teal px-3 py-2 text-xs font-semibold text-brand-paper transition-opacity hover:opacity-90"
-      >
-        <XLogo size={14} weight="bold" />
-        X
-      </button>
-      <button
-        type="button"
-        onClick={handleCopy}
-        aria-label={i18n.copy}
         className={`${baseBtn} bg-brand-teal text-brand-paper`}
       >
         {copied ? (

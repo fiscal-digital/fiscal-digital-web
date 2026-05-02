@@ -5,6 +5,7 @@ import HeroStats from '@/components/HeroStats'
 import FourFiscais from '@/components/FourFiscais'
 import FeaturedAlert from '@/components/FeaturedAlert'
 import CitiesMap from '@/components/CitiesMap'
+import NewsletterForm from '@/components/NewsletterForm'
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -237,7 +238,7 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      {/* 10. Newsletter (mailto-only sem provider) */}
+      {/* 10. Newsletter — captura via API /newsletter */}
       <section
         id="newsletter"
         className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
@@ -246,15 +247,8 @@ export default async function HomePage({ params }: Props) {
           <h2 className="mb-3 text-3xl font-bold tracking-tight text-brand-teal">
             {t('section_newsletter')}
           </h2>
-          <p className="mb-8 text-brand-gray">{t('newsletter.desc')}</p>
-          <a
-            href="https://github.com/fiscal-digital/fiscal-digital/issues/new?labels=newsletter&title=Inscrever+na+newsletter"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block rounded-lg bg-brand-teal px-6 py-3 font-semibold text-brand-paper transition-opacity hover:opacity-90"
-          >
-            {t('newsletter.cta')}
-          </a>
+          <p className="mb-6 text-brand-gray">{t('newsletter.desc')}</p>
+          <NewsletterForm source="home" locale={locale as 'pt' | 'en'} />
         </div>
       </section>
 

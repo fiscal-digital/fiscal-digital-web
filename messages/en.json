@@ -141,7 +141,17 @@
       "cnpj_jovem": "New Company",
       "concentracao_fornecedor": "Supplier Concentration",
       "pico_nomeacoes": "Appointment Spike",
-      "rotatividade_anormal": "Abnormal Turnover"
+      "rotatividade_anormal": "Abnormal Turnover",
+      "inexigibilidade_sem_justificativa": "Unjustified Non-bid",
+      "padrao_recorrente": "Recurring Pattern"
+    },
+    "detalhe": {
+      "back": "Back to alerts",
+      "share": "Share",
+      "pdf_excerpt": "Cited excerpt",
+      "pdf_open": "Open in Querido Diário",
+      "pdf_view_inline": "View PDF inline",
+      "pdf_close_inline": "Close inline viewer"
     },
     "rss": {
       "title": "Subscribe via RSS",

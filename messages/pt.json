@@ -141,7 +141,17 @@
       "cnpj_jovem": "CNPJ Jovem",
       "concentracao_fornecedor": "Concentração Fornecedor",
       "pico_nomeacoes": "Pico Nomeações",
-      "rotatividade_anormal": "Rotatividade Anormal"
+      "rotatividade_anormal": "Rotatividade Anormal",
+      "inexigibilidade_sem_justificativa": "Inexigibilidade Sem Justificativa",
+      "padrao_recorrente": "Padrão Recorrente"
+    },
+    "detalhe": {
+      "back": "Voltar para alertas",
+      "share": "Compartilhar",
+      "pdf_excerpt": "Trecho citado",
+      "pdf_open": "Abrir no Querido Diário",
+      "pdf_view_inline": "Visualizar PDF inline",
+      "pdf_close_inline": "Fechar visualização"
     },
     "rss": {
       "title": "Assinar via RSS",

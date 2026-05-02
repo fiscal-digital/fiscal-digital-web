@@ -47,9 +47,8 @@ export default async function Footer({ locale }: Props) {
           external: true,
         },
         {
-          label: 'lineu@fiscaldigital.org',
-          href: 'mailto:lineu@fiscaldigital.org',
-          external: true,
+          label: 'lineu [at] fiscaldigital.org',
+          href: `/${locale}/sobre`,
         },
       ],
     },

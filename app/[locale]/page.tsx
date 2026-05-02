@@ -39,10 +39,6 @@ export default async function HomePage({ params }: Props) {
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: 'home' })
-  const newsletterMailto =
-    'mailto:lineu@fiscaldigital.org?subject=' +
-    encodeURIComponent('Avise-me quando lançar')
-
   return (
     <main>
       {/* 1. Hero — layout assimétrico duas colunas */}
@@ -252,7 +248,9 @@ export default async function HomePage({ params }: Props) {
           </h2>
           <p className="mb-8 text-brand-gray">{t('newsletter.desc')}</p>
           <a
-            href={newsletterMailto}
+            href="https://github.com/fiscal-digital/fiscal-digital/issues/new?labels=newsletter&title=Inscrever+na+newsletter"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-block rounded-lg bg-brand-teal px-6 py-3 font-semibold text-brand-paper transition-opacity hover:opacity-90"
           >
             {t('newsletter.cta')}

@@ -136,16 +136,24 @@
       "confidence": "Confiança"
     },
     "types": {
-      "dispensa_irregular": "Dispensa Irregular",
+      "dispensa_irregular": "Dispensa irregular",
       "fracionamento": "Fracionamento",
-      "aditivo_abusivo": "Aditivo Abusivo",
-      "prorrogacao_excessiva": "Prorrogação Excessiva",
-      "cnpj_jovem": "CNPJ Jovem",
-      "concentracao_fornecedor": "Concentração Fornecedor",
-      "pico_nomeacoes": "Pico Nomeações",
-      "rotatividade_anormal": "Rotatividade Anormal",
-      "inexigibilidade_sem_justificativa": "Inexigibilidade Sem Justificativa",
-      "padrao_recorrente": "Padrão Recorrente"
+      "aditivo_abusivo": "Aditivo abusivo",
+      "prorrogacao_excessiva": "Prorrogação excessiva",
+      "cnpj_jovem": "CNPJ jovem",
+      "concentracao_fornecedor": "Concentração de fornecedor",
+      "pico_nomeacoes": "Pico de nomeações",
+      "rotatividade_anormal": "Rotatividade anormal",
+      "inexigibilidade_sem_justificativa": "Inexigibilidade sem justificativa",
+      "padrao_recorrente": "Padrão recorrente",
+      "convenio_sem_chamamento": "Convênio sem chamamento",
+      "repasse_recorrente_osc": "Repasse recorrente a OSC",
+      "diaria_irregular": "Diária irregular",
+      "publicidade_eleitoral": "Publicidade em janela vedada",
+      "locacao_sem_justificativa": "Locação sem justificativa",
+      "nepotismo_indicio": "Indício de nepotismo",
+      "cnpj_situacao_irregular": "CNPJ em situação irregular",
+      "fornecedor_sancionado": "Fornecedor sancionado (CGU)"
     },
     "detalhe": {
       "back": "Voltar para alertas",

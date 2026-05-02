@@ -19,7 +19,7 @@ export default async function CitiesMap({ locale }: Props) {
   const grouped = citiesByRegion()
   const activeN = activeCount()
   const totalN = totalCount()
-  const lang = locale === 'en' ? 'en' : 'pt'
+  const lang = locale === 'en' ? 'en' : 'pt-br'
 
   return (
     <div>

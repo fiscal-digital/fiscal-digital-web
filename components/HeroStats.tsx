@@ -16,7 +16,7 @@ interface Props {
 }
 
 const labels = {
-  pt: {
+  'pt-br': {
     findings: 'Achados publicados',
     gazettes: 'Diários analisados',
     cost: 'Custo operacional total',
@@ -35,7 +35,7 @@ function fmt(n: number, k: number): string {
 
 export default function HeroStats({ locale }: Props) {
   const [stats, setStats] = useState<StatsApiResponse | null>(null)
-  const lang = locale === 'en' ? 'en' : 'pt'
+  const lang = locale === 'en' ? 'en' : 'pt-br'
   const l = labels[lang]
 
   useEffect(() => {

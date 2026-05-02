@@ -39,7 +39,7 @@ function typeBadgeClass(type: string): string {
 
 interface FindingDetailProps {
   finding: ApiFinding
-  locale: 'pt' | 'en'
+  locale: 'pt-br' | 'en'
   /** Mostrar preview do PDF? Default: true. */
   showPdf?: boolean
   /** Esconder header com cidade (útil quando já está em página de cidade). */
@@ -64,10 +64,10 @@ export default function FindingDetail({
           {findingTypeLabel(finding.type, locale)}
         </span>
         <span className={`rounded-pill px-3 py-1 text-xs font-semibold ${riskBadgeClass(finding.riskScore)}`}>
-          {locale === 'pt' ? 'Risco' : 'Risk'} {finding.riskScore} — {riskLabel}
+          {locale === 'pt-br' ? 'Risco' : 'Risk'} {finding.riskScore} — {riskLabel}
         </span>
         <span className="rounded-pill bg-brand-gray/10 px-3 py-1 text-xs font-semibold text-brand-gray">
-          {locale === 'pt' ? 'Confiança' : 'Confidence'} {Math.round(finding.confidence * 100)}%
+          {locale === 'pt-br' ? 'Confiança' : 'Confidence'} {Math.round(finding.confidence * 100)}%
         </span>
       </div>
 
@@ -107,12 +107,12 @@ export default function FindingDetail({
       {/* Metadata grid */}
       <dl className="grid gap-4 rounded-xl border border-brand-gray/15 bg-white p-5 sm:grid-cols-2">
         {finding.value != null && (
-          <MetaRow icon={<CurrencyDollar size={16} weight="bold" />} label={locale === 'pt' ? 'Valor' : 'Value'}>
+          <MetaRow icon={<CurrencyDollar size={16} weight="bold" />} label={locale === 'pt-br' ? 'Valor' : 'Value'}>
             <span className="font-mono">{formatCurrency(finding.value, locale)}</span>
           </MetaRow>
         )}
         {finding.secretaria && (
-          <MetaRow icon={<Buildings size={16} weight="bold" />} label={locale === 'pt' ? 'Secretaria' : 'Department'}>
+          <MetaRow icon={<Buildings size={16} weight="bold" />} label={locale === 'pt-br' ? 'Secretaria' : 'Department'}>
             {finding.secretaria}
           </MetaRow>
         )}
@@ -127,16 +127,16 @@ export default function FindingDetail({
           </MetaRow>
         )}
         {finding.contractNumber && (
-          <MetaRow icon={<Gavel size={16} weight="bold" />} label={locale === 'pt' ? 'Contrato' : 'Contract'}>
+          <MetaRow icon={<Gavel size={16} weight="bold" />} label={locale === 'pt-br' ? 'Contrato' : 'Contract'}>
             <span className="font-mono">{finding.contractNumber}</span>
           </MetaRow>
         )}
         {finding.legalBasis && (
-          <MetaRow icon={<Scales size={16} weight="bold" />} label={locale === 'pt' ? 'Base legal' : 'Legal basis'}>
+          <MetaRow icon={<Scales size={16} weight="bold" />} label={locale === 'pt-br' ? 'Base legal' : 'Legal basis'}>
             {finding.legalBasis}
           </MetaRow>
         )}
-        <MetaRow icon={<Calendar size={16} weight="bold" />} label={locale === 'pt' ? 'Detectado em' : 'Detected on'}>
+        <MetaRow icon={<Calendar size={16} weight="bold" />} label={locale === 'pt-br' ? 'Detectado em' : 'Detected on'}>
           <span className="font-mono">{formatDate(finding.createdAt, locale)}</span>
         </MetaRow>
       </dl>
@@ -160,7 +160,7 @@ export default function FindingDetail({
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 rounded-md bg-brand-teal px-3 py-2 text-xs font-semibold text-brand-paper transition-opacity hover:opacity-90"
         >
-          {locale === 'pt' ? 'Ver fonte' : 'View source'}
+          {locale === 'pt-br' ? 'Ver fonte' : 'View source'}
           <ArrowSquareOut size={12} weight="bold" />
         </a>
       )}

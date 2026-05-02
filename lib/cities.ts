@@ -103,12 +103,12 @@ const UF_TO_REGION: Record<string, Region> = {
   PR: 'S',  RS: 'S',  SC: 'S',
 }
 
-export const REGION_LABELS: Record<Region, { pt: string; en: string }> = {
-  N:  { pt: 'Norte',        en: 'North' },
-  NE: { pt: 'Nordeste',     en: 'Northeast' },
-  CO: { pt: 'Centro-Oeste', en: 'Central-West' },
-  SE: { pt: 'Sudeste',      en: 'Southeast' },
-  S:  { pt: 'Sul',          en: 'South' },
+export const REGION_LABELS: Record<Region, { 'pt-br': string; en: string }> = {
+  N:  { 'pt-br': 'Norte',        en: 'North' },
+  NE: { 'pt-br': 'Nordeste',     en: 'Northeast' },
+  CO: { 'pt-br': 'Centro-Oeste', en: 'Central-West' },
+  SE: { 'pt-br': 'Sudeste',      en: 'Southeast' },
+  S:  { 'pt-br': 'Sul',          en: 'South' },
 }
 
 export function regionOf(uf: string): Region | undefined {

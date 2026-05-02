@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const city = getCityBySlug(slug)
   if (!city) return { title: 'Cidade — Fiscal Digital' }
 
-  const isPt = locale === 'pt'
+  const isPt = locale === 'pt-br'
   const title = isPt
     ? `${city.name} (${city.uf}) — Alertas de Gastos Públicos · Fiscal Digital`
     : `${city.name} (${city.uf}) — Public Spending Alerts · Fiscal Digital`
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description,
     alternates: {
       canonical: `/${locale}/cidades/${slug}`,
-      languages: { pt: `/pt/cidades/${slug}`, en: `/en/cidades/${slug}` },
+      languages: { 'pt-br': `/pt-br/cidades/${slug}`, en: `/en/cidades/${slug}` },
     },
     openGraph: { title, description, type: 'website' },
   }
@@ -61,7 +61,7 @@ function riskBadgeClass(score: number): string {
 
 export default async function CidadePage({ params }: Props) {
   const { locale, slug } = await params
-  if (!routing.locales.includes(locale as 'pt' | 'en')) notFound()
+  if (!routing.locales.includes(locale as 'pt-br' | 'en')) notFound()
   setRequestLocale(locale)
 
   const city = getCityBySlug(slug)
@@ -69,13 +69,13 @@ export default async function CidadePage({ params }: Props) {
 
   const findings = await fetchAlerts({ city: city.cityId, limit: 200 })
   const region = regionOf(city.uf)
-  const isPt = locale === 'pt'
+  const isPt = locale === 'pt-br'
 
   // Stats
   const totalCount = findings.length
   const lastFinding = findings[0]
   const lastDateLabel = lastFinding
-    ? formatDate(lastFinding.createdAt, locale as 'pt' | 'en')
+    ? formatDate(lastFinding.createdAt, locale as 'pt-br' | 'en')
     : (isPt ? 'Sem alertas' : 'No alerts')
   // Top secretaria
   const secCounts = findings.reduce<Record<string, number>>((acc, f) => {
@@ -126,7 +126,7 @@ export default async function CidadePage({ params }: Props) {
                 {region && (
                   <>
                     {' · '}
-                    {t.region}: {REGION_LABELS[region][locale as 'pt' | 'en']}
+                    {t.region}: {REGION_LABELS[region][locale as 'pt-br' | 'en']}
                   </>
                 )}
               </p>
@@ -195,7 +195,7 @@ export default async function CidadePage({ params }: Props) {
                         {isPt ? 'Risco' : 'Risk'} {f.riskScore}
                       </span>
                       <span className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
-                        {findingTypeLabel(f.type, locale as 'pt' | 'en')}
+                        {findingTypeLabel(f.type, locale as 'pt-br' | 'en')}
                       </span>
                     </div>
                     {f.narrative && (
@@ -205,10 +205,10 @@ export default async function CidadePage({ params }: Props) {
                     )}
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-brand-gray">
                       {f.value != null && (
-                        <span className="font-mono">{formatCurrency(f.value, locale as 'pt' | 'en')}</span>
+                        <span className="font-mono">{formatCurrency(f.value, locale as 'pt-br' | 'en')}</span>
                       )}
                       {f.secretaria && <span>{f.secretaria}</span>}
-                      <span className="ml-auto font-mono">{formatDate(f.createdAt, locale as 'pt' | 'en')}</span>
+                      <span className="ml-auto font-mono">{formatDate(f.createdAt, locale as 'pt-br' | 'en')}</span>
                     </div>
                   </Link>
                 </li>

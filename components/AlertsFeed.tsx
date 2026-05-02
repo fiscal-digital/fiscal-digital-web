@@ -107,7 +107,7 @@ interface CardProps {
 }
 
 function FindingCard({ finding, typeLabel, t, locale }: CardProps) {
-  const riskLabel = getRiskLabel(finding.riskScore, locale as 'pt' | 'en')
+  const riskLabel = getRiskLabel(finding.riskScore, locale as 'pt-br' | 'en')
 
   return (
     <article className="rounded-xl border border-brand-gray/15 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">

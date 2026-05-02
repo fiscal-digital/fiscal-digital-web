@@ -33,12 +33,12 @@ interface PdfPreviewProps {
   cachedPdfUrl?: string | null
   excerpt?: string
   date?: string
-  /** Locale para labels — defaults to 'pt'. */
-  locale?: 'pt' | 'en'
+  /** Locale para labels — defaults to 'pt-br'. */
+  locale?: 'pt-br' | 'en'
 }
 
 const labels = {
-  pt: {
+  'pt-br': {
     excerpt: 'Trecho citado',
     sourceLabel: 'Fonte: Querido Diário',
     open: 'Abrir no Querido Diário',
@@ -60,10 +60,10 @@ const labels = {
   },
 } as const
 
-function formatDate(iso: string, locale: 'pt' | 'en'): string {
+function formatDate(iso: string, locale: 'pt-br' | 'en'): string {
   try {
     const d = new Date(iso)
-    return d.toLocaleDateString(locale === 'pt' ? 'pt-BR' : 'en-US', {
+    return d.toLocaleDateString(locale === 'pt-br' ? 'pt-BR' : 'en-US', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -73,7 +73,7 @@ function formatDate(iso: string, locale: 'pt' | 'en'): string {
   }
 }
 
-export default function PdfPreview({ source, cachedPdfUrl, excerpt, date, locale = 'pt' }: PdfPreviewProps) {
+export default function PdfPreview({ source, cachedPdfUrl, excerpt, date, locale = 'pt-br' }: PdfPreviewProps) {
   const [showInline, setShowInline] = useState(false)
   const t = labels[locale]
   // Preferir cache CDN quando disponível — temos controle de headers,

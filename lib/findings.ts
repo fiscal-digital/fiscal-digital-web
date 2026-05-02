@@ -55,25 +55,25 @@ export interface ApiAlertsResponse {
  * Labels canônicos PT-BR de cada FindingType.
  * Espelha `engine/types/FindingType` + fallback EN curto.
  */
-export const FINDING_TYPE_LABELS: Record<string, { pt: string; en: string }> = {
-  dispensa_irregular:               { pt: 'Dispensa irregular',           en: 'Irregular waiver' },
-  fracionamento:                    { pt: 'Fracionamento',                en: 'Contract splitting' },
-  aditivo_abusivo:                  { pt: 'Aditivo abusivo',              en: 'Abusive amendment' },
-  prorrogacao_excessiva:            { pt: 'Prorrogação excessiva',        en: 'Excessive extension' },
-  cnpj_jovem:                       { pt: 'CNPJ jovem',                   en: 'New company' },
-  concentracao_fornecedor:          { pt: 'Concentração de fornecedor',   en: 'Supplier concentration' },
-  pico_nomeacoes:                   { pt: 'Pico de nomeações',            en: 'Appointment spike' },
-  rotatividade_anormal:             { pt: 'Rotatividade anormal',         en: 'Abnormal turnover' },
-  inexigibilidade_sem_justificativa:{ pt: 'Inexigibilidade sem justif.',  en: 'Unjustified non-bid' },
-  padrao_recorrente:                { pt: 'Padrão recorrente',            en: 'Recurring pattern' },
-  convenio_sem_chamamento:          { pt: 'Convênio sem chamamento',      en: 'Agreement without call' },
-  repasse_recorrente_osc:           { pt: 'Repasse recorrente a OSC',     en: 'Recurring NGO transfer' },
-  diaria_irregular:                 { pt: 'Diária irregular',             en: 'Irregular per diem' },
-  publicidade_eleitoral:            { pt: 'Publicidade em janela vedada', en: 'Electoral publicity' },
-  locacao_sem_justificativa:        { pt: 'Locação sem justificativa',    en: 'Lease without justification' },
-  nepotismo_indicio:                { pt: 'Indício de nepotismo',         en: 'Nepotism indicator' },
-  cnpj_situacao_irregular:          { pt: 'CNPJ situação irregular',      en: 'Irregular CNPJ status' },
-  fornecedor_sancionado:            { pt: 'Fornecedor sancionado (CGU)',  en: 'Sanctioned supplier (CGU)' },
+export const FINDING_TYPE_LABELS: Record<string, { 'pt-br': string; en: string }> = {
+  dispensa_irregular:               { 'pt-br': 'Dispensa irregular',           en: 'Irregular waiver' },
+  fracionamento:                    { 'pt-br': 'Fracionamento',                en: 'Contract splitting' },
+  aditivo_abusivo:                  { 'pt-br': 'Aditivo abusivo',              en: 'Abusive amendment' },
+  prorrogacao_excessiva:            { 'pt-br': 'Prorrogação excessiva',        en: 'Excessive extension' },
+  cnpj_jovem:                       { 'pt-br': 'CNPJ jovem',                   en: 'New company' },
+  concentracao_fornecedor:          { 'pt-br': 'Concentração de fornecedor',   en: 'Supplier concentration' },
+  pico_nomeacoes:                   { 'pt-br': 'Pico de nomeações',            en: 'Appointment spike' },
+  rotatividade_anormal:             { 'pt-br': 'Rotatividade anormal',         en: 'Abnormal turnover' },
+  inexigibilidade_sem_justificativa:{ 'pt-br': 'Inexigibilidade sem justif.',  en: 'Unjustified non-bid' },
+  padrao_recorrente:                { 'pt-br': 'Padrão recorrente',            en: 'Recurring pattern' },
+  convenio_sem_chamamento:          { 'pt-br': 'Convênio sem chamamento',      en: 'Agreement without call' },
+  repasse_recorrente_osc:           { 'pt-br': 'Repasse recorrente a OSC',     en: 'Recurring NGO transfer' },
+  diaria_irregular:                 { 'pt-br': 'Diária irregular',             en: 'Irregular per diem' },
+  publicidade_eleitoral:            { 'pt-br': 'Publicidade em janela vedada', en: 'Electoral publicity' },
+  locacao_sem_justificativa:        { 'pt-br': 'Locação sem justificativa',    en: 'Lease without justification' },
+  nepotismo_indicio:                { 'pt-br': 'Indício de nepotismo',         en: 'Nepotism indicator' },
+  cnpj_situacao_irregular:          { 'pt-br': 'CNPJ situação irregular',      en: 'Irregular CNPJ status' },
+  fornecedor_sancionado:            { 'pt-br': 'Fornecedor sancionado (CGU)',  en: 'Sanctioned supplier (CGU)' },
 }
 
 function humanizeSnake(s: string): string {
@@ -83,20 +83,20 @@ function humanizeSnake(s: string): string {
     .join(' ')
 }
 
-export function findingTypeLabel(type: string, locale: 'pt' | 'en' = 'pt'): string {
+export function findingTypeLabel(type: string, locale: 'pt-br' | 'en' = 'pt-br'): string {
   return FINDING_TYPE_LABELS[type]?.[locale] ?? humanizeSnake(type)
 }
 
-export function formatCurrency(value: number, locale: 'pt' | 'en' = 'pt'): string {
-  return value.toLocaleString(locale === 'pt' ? 'pt-BR' : 'en-US', {
+export function formatCurrency(value: number, locale: 'pt-br' | 'en' = 'pt-br'): string {
+  return value.toLocaleString(locale === 'pt-br' ? 'pt-BR' : 'en-US', {
     style: 'currency',
     currency: 'BRL',
   })
 }
 
-export function formatDate(iso: string, locale: 'pt' | 'en' = 'pt'): string {
+export function formatDate(iso: string, locale: 'pt-br' | 'en' = 'pt-br'): string {
   try {
-    return new Date(iso).toLocaleDateString(locale === 'pt' ? 'pt-BR' : 'en-US', {
+    return new Date(iso).toLocaleDateString(locale === 'pt-br' ? 'pt-BR' : 'en-US', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',

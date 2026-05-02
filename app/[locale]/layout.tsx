@@ -21,11 +21,11 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
-  const isPt = locale === 'pt'
+  const isPt = locale === 'pt-br'
   return {
     alternates: {
-      canonical: isPt ? '/pt' : '/en',
-      languages: { pt: '/pt', en: '/en' },
+      canonical: isPt ? '/pt-br' : '/en',
+      languages: { 'pt-br': '/pt-br', en: '/en' },
     },
   }
 }

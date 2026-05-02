@@ -14,12 +14,10 @@ type Props = {
 /**
  * SSG seed: gera params para CNPJs já vistos em findings publicados.
  *
- * Limitação atual: a API pública (Sprint 5) ainda NÃO expõe o campo `cnpj`
- * por finding (Frente F está expandindo). Enquanto isso, generateStaticParams
- * retorna lista vazia — qualquer CNPJ acessado direto cai em 404.
- *
- * Quando a Frente F expor `cnpj` na resposta de /alerts, descomentar o filtro
- * abaixo e a página ganha SSG completo.
+ * API /alerts já expõe `cnpj` denormalizado (Frente F entregue 2026-05-02).
+ * `fetchAlerts` retorna até 200 findings (limite default da Lambda); CNPJs
+ * que aparecem fora desse top 200 caem em 404. Aceitável para v1.0 — a
+ * lista cresce à medida que findings ficam mais ricos.
  */
 export async function generateStaticParams() {
   const findings = await fetchAlerts({ limit: 200 })

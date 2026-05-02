@@ -79,17 +79,21 @@ export default function SiteNav({ locale }: Props) {
       >
         <Link
           href={`/${locale}`}
-          className="flex items-center"
+          className="flex items-center gap-2.5"
           aria-label="Fiscal Digital — home"
         >
           <Image
-            src="/brand/logo/wordmark-horizontal.svg"
-            alt="Fiscal Digital"
-            width={140}
-            height={28}
+            src="/brand/logo/symbol.svg"
+            alt=""
+            width={36}
+            height={36}
             priority
-            className="h-7 w-auto"
+            className="h-9 w-9 shrink-0"
           />
+          <span className="flex items-baseline gap-1 leading-none" aria-hidden="true">
+            <span className="text-lg font-bold tracking-tight text-brand-teal">Fiscal</span>
+            <span className="text-lg font-light tracking-tight text-brand-ink">Digital</span>
+          </span>
         </Link>
 
         {/* Desktop nav (>= md) */}

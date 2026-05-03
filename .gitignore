@@ -5,6 +5,9 @@ node_modules/
 .next/
 out/
 
+# OpenNext build output
+.open-next/
+
 # env
 .env
 .env.local

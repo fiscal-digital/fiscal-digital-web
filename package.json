@@ -2,11 +2,13 @@
   "name": "@fiscal-digital/web",
   "version": "0.1.0",
   "private": true,
-  "engines": { "node": ">=24.0.0" },
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "scripts": {
     "dev": "next dev",
     "prebuild": "node scripts/generate-brand-theme.mjs",
-    "build": "next build",
+    "build": "open-next build",
     "predev": "node scripts/generate-brand-theme.mjs",
     "type-check": "tsc --noEmit",
     "brand:theme": "node scripts/generate-brand-theme.mjs",
@@ -14,18 +16,19 @@
     "pretest": "npm run lint:copy"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.0",
     "next": "^16.0.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
     "next-intl": "^4.0.0",
-    "@phosphor-icons/react": "^2.1.0"
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "@opennextjs/aws": "^3.10.4",
+    "@tailwindcss/postcss": "^4.2.0",
     "@types/node": "^25.0.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
-    "typescript": "^6.0.0",
     "tailwindcss": "^4.2.0",
-    "@tailwindcss/postcss": "^4.2.0"
+    "typescript": "^6.0.0"
   }
 }

@@ -124,18 +124,39 @@ export function findingShortDate(id: string): string {
  * IDs têm formato `FINDING#fiscal-X#cityId#type#timestamp` onde o
  * timestamp é ISO8601 (contém `:` e `.`).
  *
- * Estratégia: Base64url encoding do ID completo para garantir reversibilidade
- * total e compatibilidade com qualquer sistema de arquivos (Windows incluso).
+ * Implementação cross-platform: Buffer.toString('base64url') funciona em
+ * Node mas o polyfill webpack do Buffer no browser não suporta esse
+ * encoding (TypeError: Unknown encoding: base64url). Usamos TextEncoder +
+ * btoa/atob, que existe nativamente em ambos.
  */
+
+function bytesToBase64Url(bytes: Uint8Array): string {
+  let bin = ''
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i])
+  const b64 = typeof btoa !== 'undefined'
+    ? btoa(bin)
+    : Buffer.from(bin, 'binary').toString('base64')
+  return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+}
+
+function base64UrlToBytes(slug: string): Uint8Array {
+  const padding = '=='.slice((slug.length + 2) % 4)
+  const b64 = slug.replace(/-/g, '+').replace(/_/g, '/') + padding
+  const bin = typeof atob !== 'undefined'
+    ? atob(b64)
+    : Buffer.from(b64, 'base64').toString('binary')
+  const out = new Uint8Array(bin.length)
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i)
+  return out
+}
+
 export function findingIdToSlug(id: string): string {
-  // btoa não está disponível em Node server-side de forma confiável em todas versões;
-  // usar Buffer (Node built-in) para base64url encoding
-  return Buffer.from(id, 'utf8').toString('base64url')
+  return bytesToBase64Url(new TextEncoder().encode(id))
 }
 
 export function slugToFindingId(slug: string): string {
   try {
-    return Buffer.from(slug, 'base64url').toString('utf8')
+    return new TextDecoder().decode(base64UrlToBytes(slug))
   } catch {
     // fallback para slugs no formato antigo (retrocompatibilidade)
     return slug.replace(/--/g, '#')

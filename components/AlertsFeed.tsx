@@ -1,10 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { ArrowSquareOut, ArrowRight, Warning, WarningCircle } from '@phosphor-icons/react'
 import { getRiskLevel, getRiskLabel } from '@/lib/brand'
 import { API_URL } from '@/lib/api'
-import { ArrowSquareOut, Warning, WarningCircle } from '@phosphor-icons/react'
+import { FINDING_TYPE_LABELS, findingIdToSlug } from '@/lib/findings'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -24,6 +26,8 @@ export interface Finding {
   narrative?: string
   source: string
   createdAt: string
+  // BUG-WEB-004 / UH-WEB-008: API expõe evidence[].date — usado para detectar backfill
+  evidence?: Array<{ source: string; excerpt: string; date: string }>
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -34,26 +38,34 @@ const BR_STATES = [
   'RJ', 'RN', 'RO', 'RR', 'RS', 'SC', 'SE', 'SP', 'TO',
 ]
 
-const ALERT_TYPES = [
-  'dispensa_irregular',
-  'fracionamento',
-  'aditivo_abusivo',
-  'prorrogacao_excessiva',
-  'cnpj_jovem',
-  'concentracao_fornecedor',
-  'pico_nomeacoes',
-  'rotatividade_anormal',
-]
+// BUG-WEB-004: lista de tipos vem do source de verdade (lib/findings).
+// Antes era array hardcoded de 8; hoje cobre os 18 tipos catalogados.
+const ALERT_TYPES = Object.keys(FINDING_TYPE_LABELS)
+
+const BACKFILL_GAP_DAYS = 30
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function formatCurrency(value: number): string {
-  return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+function formatCurrency(value: number, locale: 'pt-br' | 'en'): string {
+  return value.toLocaleString(locale === 'pt-br' ? 'pt-BR' : 'en-US', {
+    style: 'currency',
+    currency: 'BRL',
+  })
 }
 
-function formatDate(iso: string): string {
+function formatCompactBrl(value: number): string {
+  if (value >= 1_000_000) return `R$ ${(value / 1_000_000).toFixed(1).replace('.', ',')}M`
+  if (value >= 1_000) return `R$ ${(value / 1_000).toFixed(0)}k`
+  return `R$ ${value.toFixed(0)}`
+}
+
+function formatDate(iso: string, locale: 'pt-br' | 'en'): string {
   const d = new Date(iso)
-  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  return d.toLocaleDateString(locale === 'pt-br' ? 'pt-BR' : 'en-US', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
 }
 
 function truncate(text: string, maxLen: number): string {
@@ -61,7 +73,17 @@ function truncate(text: string, maxLen: number): string {
   return text.slice(0, maxLen).trimEnd() + '…'
 }
 
-// Risk badge colors using Tailwind classes based on brand scale
+function gapDaysBetween(gazetteIso?: string, detectedIso?: string): number {
+  if (!gazetteIso || !detectedIso) return 0
+  try {
+    const g = new Date(gazetteIso).getTime()
+    const d = new Date(detectedIso).getTime()
+    return Math.floor((d - g) / 86400000)
+  } catch {
+    return 0
+  }
+}
+
 function riskBadgeClass(score: number): string {
   const level = getRiskLevel(score)
   if (level === 'critical') return 'bg-risk-critical text-white'
@@ -70,10 +92,9 @@ function riskBadgeClass(score: number): string {
   return 'bg-brand-gray text-white'
 }
 
-// Type badge colors: red for critical fraud types, orange for excessive types
 function typeBadgeClass(type: string): string {
-  const red = ['dispensa_irregular', 'fracionamento', 'cnpj_jovem']
-  const orange = ['aditivo_abusivo', 'prorrogacao_excessiva', 'concentracao_fornecedor']
+  const red = ['dispensa_irregular', 'fracionamento', 'cnpj_jovem', 'inexigibilidade_sem_justificativa', 'nepotismo_indicio']
+  const orange = ['aditivo_abusivo', 'prorrogacao_excessiva', 'concentracao_fornecedor', 'pico_nomeacoes', 'rotatividade_anormal', 'publicidade_eleitoral']
   if (red.includes(type)) return 'bg-brand-danger/10 text-brand-danger'
   if (orange.includes(type)) return 'bg-brand-amber/15 text-brand-ink'
   return 'bg-brand-gray/10 text-brand-gray'
@@ -99,20 +120,83 @@ function SkeletonCard() {
   )
 }
 
+// ── KPIs ──────────────────────────────────────────────────────────────────────
+
+interface KpiBarProps {
+  findings: Finding[]
+  locale: 'pt-br' | 'en'
+  t: ReturnType<typeof useTranslations<'alertas'>>
+}
+
+function KpiBar({ findings, locale, t }: KpiBarProps) {
+  const stats = useMemo(() => {
+    const totalValue = findings.reduce((sum, f) => sum + (f.value ?? 0), 0)
+    const cities = new Set(findings.map(f => f.cityId)).size
+    return { count: findings.length, totalValue, cities }
+  }, [findings])
+
+  if (stats.count === 0) return null
+
+  return (
+    <dl className="mb-6 grid gap-3 rounded-xl border border-brand-gray/15 bg-white p-4 sm:grid-cols-3">
+      <div>
+        <dt className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
+          {t('kpi.alerts')}
+        </dt>
+        <dd className="mt-1 font-mono text-2xl font-bold text-brand-ink tabular-nums">
+          {stats.count}
+        </dd>
+      </div>
+      <div>
+        <dt className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
+          {t('kpi.totalValue')}
+        </dt>
+        <dd className="mt-1 font-mono text-2xl font-bold text-brand-ink tabular-nums">
+          {stats.totalValue > 0 ? formatCompactBrl(stats.totalValue) : '—'}
+        </dd>
+      </div>
+      <div>
+        <dt className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
+          {t('kpi.cities')}
+        </dt>
+        <dd className="mt-1 font-mono text-2xl font-bold text-brand-ink tabular-nums">
+          {stats.cities}
+        </dd>
+      </div>
+    </dl>
+  )
+}
+
 // ── Finding Card ──────────────────────────────────────────────────────────────
 
 interface CardProps {
   finding: Finding
   typeLabel: (type: string) => string
   t: ReturnType<typeof useTranslations<'alertas'>>
-  locale: string
+  locale: 'pt-br' | 'en'
 }
 
 function FindingCard({ finding, typeLabel, t, locale }: CardProps) {
-  const riskLabel = getRiskLabel(finding.riskScore, locale as 'pt-br' | 'en')
+  const riskLabel = getRiskLabel(finding.riskScore, locale)
+  const detailHref = `/${locale}/alertas/${findingIdToSlug(finding.id)}`
+
+  // UH-WEB-008: backfill quando gap entre data do diário e detecção > 30 dias
+  const gazetteDate = finding.evidence?.[0]?.date
+  const isBackfill = gapDaysBetween(gazetteDate, finding.createdAt) > BACKFILL_GAP_DAYS
 
   return (
-    <article className="rounded-xl border border-brand-gray/15 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+    <article className="group relative flex flex-col rounded-xl border border-brand-gray/15 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+      {/* BUG-WEB-003: card inteiro vira link clicável para a página de detalhe.
+          Usamos overlay invisível em vez de wrapper <Link> para preservar
+          links internos no footer (PDF, fornecedor) sem nesting de <a>. */}
+      <Link
+        href={detailHref}
+        aria-label={`${typeLabel(finding.type)} — ${finding.city}`}
+        className="absolute inset-0 z-10 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal"
+      >
+        <span className="sr-only">{t('card.viewFull')}</span>
+      </Link>
+
       {/* Header: badges */}
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <span className={`rounded-pill px-2.5 py-0.5 text-xs font-semibold ${typeBadgeClass(finding.type)}`}>
@@ -121,6 +205,18 @@ function FindingCard({ finding, typeLabel, t, locale }: CardProps) {
         <span className={`rounded-pill px-2.5 py-0.5 text-xs font-semibold ${riskBadgeClass(finding.riskScore)}`}>
           {t('card.riskScore')} {finding.riskScore} — {riskLabel}
         </span>
+        {isBackfill && (
+          <span
+            className="rounded-pill border border-brand-gray/25 bg-brand-paper px-2.5 py-0.5 text-xs font-semibold text-brand-gray"
+            title={
+              locale === 'pt-br'
+                ? 'Diário oficial é anterior — achado detectado em backfill histórico'
+                : 'Official gazette predates detection — historical backfill'
+            }
+          >
+            {t('card.backfill')}
+          </span>
+        )}
       </div>
 
       {/* City + state */}
@@ -128,8 +224,7 @@ function FindingCard({ finding, typeLabel, t, locale }: CardProps) {
         {finding.city} · <span className="text-brand-gray">{finding.state}</span>
       </p>
 
-      {/* Subtítulo desambiguador — secretaria + contrato + CNPJ formatado.
-          Sem isso, 23 cards "Aditivo abusivo" ficavam visualmente idênticos. */}
+      {/* Subtítulo desambiguador — secretaria + contrato + CNPJ formatado */}
       {(finding.secretaria || finding.contractNumber || finding.cnpj) && (
         <p className="mb-2 flex flex-wrap gap-x-2 gap-y-0.5 text-xs text-brand-gray">
           {finding.secretaria && (
@@ -137,7 +232,7 @@ function FindingCard({ finding, typeLabel, t, locale }: CardProps) {
           )}
           {finding.contractNumber && (
             <span className="font-mono">
-              <span className="text-brand-gray/70">Contrato </span>
+              <span className="text-brand-gray/70">{locale === 'pt-br' ? 'Contrato ' : 'Contract '}</span>
               {finding.contractNumber}
             </span>
           )}
@@ -154,40 +249,50 @@ function FindingCard({ finding, typeLabel, t, locale }: CardProps) {
         </p>
       )}
 
-      {/* Metadata row — secretaria já está no subtítulo desambiguador acima */}
+      {/* Metadata row */}
       <dl className="mb-4 flex flex-wrap gap-x-4 gap-y-1 text-xs text-brand-gray">
         {finding.value != null && (
           <div className="flex gap-1">
             <dt className="font-medium">{t('card.value')}:</dt>
-            <dd className="font-mono">{formatCurrency(finding.value)}</dd>
+            <dd className="font-mono">{formatCurrency(finding.value, locale)}</dd>
           </div>
         )}
         {finding.legalBasis && (
           <div className="flex gap-1">
-            <dt className="font-medium">Base legal:</dt>
+            <dt className="font-medium">{locale === 'pt-br' ? 'Base legal' : 'Legal basis'}:</dt>
             <dd>{finding.legalBasis}</dd>
           </div>
         )}
         <div className="flex gap-1">
           <dt className="font-medium">{t('card.date')}:</dt>
-          <dd className="font-mono">{formatDate(finding.createdAt)}</dd>
+          <dd className="font-mono">{formatDate(finding.createdAt, locale)}</dd>
         </div>
       </dl>
 
-      {/* Footer: source link + confidence */}
-      <div className="flex items-center justify-between border-t border-brand-gray/10 pt-3">
+      {/* Footer: confidence + actions
+          BUG-WEB-003: ação primária = página de detalhe; PDF é secundário */}
+      <div className="mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-brand-gray/10 pt-3">
         <span className="text-xs text-brand-gray">
           {t('card.confidence')}: {Math.round(finding.confidence * 100)}%
         </span>
-        <a
-          href={finding.source}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-md bg-brand-teal px-3 py-1.5 text-xs font-semibold text-brand-paper transition-opacity hover:opacity-90"
-        >
-          {t('card.source')}
-          <ArrowSquareOut size={12} weight="bold" />
-        </a>
+        <div className="relative z-20 flex items-center gap-3">
+          <a
+            href={finding.source}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-brand-gray hover:text-brand-teal"
+          >
+            {t('card.viewGazette')}
+            <ArrowSquareOut size={11} weight="bold" />
+          </a>
+          <Link
+            href={detailHref}
+            className="inline-flex items-center gap-1.5 rounded-md bg-brand-teal px-3 py-1.5 text-xs font-semibold text-brand-paper transition-opacity hover:opacity-90"
+          >
+            {t('card.viewFull')}
+            <ArrowRight size={12} weight="bold" />
+          </Link>
+        </div>
       </div>
     </article>
   )
@@ -201,6 +306,7 @@ interface AlertsFeedProps {
 
 export default function AlertsFeed({ locale }: AlertsFeedProps) {
   const t = useTranslations('alertas')
+  const lang: 'pt-br' | 'en' = locale === 'en' ? 'en' : 'pt-br'
 
   const [findings, setFindings] = useState<Finding[]>([])
   const [loading, setLoading] = useState(true)
@@ -231,14 +337,12 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
       .finally(() => setLoading(false))
   }
 
-  // Refetch when filters change
   useEffect(() => {
     fetchAlerts()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stateFilter, typeFilter])
 
   const typeLabel = (type: string): string => {
-    // Use translation if key exists, fall back to raw type
     const key = `types.${type}` as Parameters<typeof t>[0]
     try {
       return t(key)
@@ -249,10 +353,13 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
 
   return (
     <div>
+      {/* UH-WEB-010: KPIs agregados — total alertas, valor envolvido, cidades distintas */}
+      {!loading && !error && <KpiBar findings={findings} locale={lang} t={t} />}
+
       {/* Filters */}
       <div className="mb-6 flex flex-wrap gap-3">
         <div className="flex flex-col gap-1">
-          <label htmlFor="filter-state" className="text-xs font-semibold text-brand-gray uppercase tracking-wider">
+          <label htmlFor="filter-state" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
             {t('filters.state')}
           </label>
           <select
@@ -269,7 +376,7 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="filter-type" className="text-xs font-semibold text-brand-gray uppercase tracking-wider">
+          <label htmlFor="filter-type" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
             {t('filters.type')}
           </label>
           <select
@@ -327,7 +434,7 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
               finding={f}
               typeLabel={typeLabel}
               t={t}
-              locale={locale}
+              locale={lang}
             />
           ))}
         </div>

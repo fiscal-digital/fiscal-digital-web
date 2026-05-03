@@ -141,11 +141,19 @@
     },
     "card": {
       "source": "View source",
+      "viewFull": "View full alert",
+      "viewGazette": "Official gazette",
+      "backfill": "Historical backfill",
       "riskScore": "Risk",
-      "date": "Date",
+      "date": "Detected",
       "secretaria": "Department",
       "value": "Value",
       "confidence": "Confidence"
+    },
+    "kpi": {
+      "alerts": "Published alerts",
+      "totalValue": "Total amount involved",
+      "cities": "Cities with findings"
     },
     "types": {
       "dispensa_irregular": "Irregular waiver",

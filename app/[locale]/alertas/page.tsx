@@ -39,16 +39,13 @@ export default async function AlertasPage({ params }: Props) {
 
   return (
     <main className="min-h-dvh bg-brand-paper">
-      {/* Page header */}
-      <section className="bg-brand-teal px-6 py-16 text-brand-paper">
+      {/* Page header — UH-WEB-009: removido eyebrow redundante (nav já tem logo+marca) */}
+      <section className="bg-brand-teal px-6 py-12 text-brand-paper sm:py-16">
         <div className="mx-auto max-w-5xl">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-brand-amber">
-            Fiscal Digital
-          </p>
-          <h1 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl">
+          <h1 className="mb-3 text-balance text-3xl font-bold tracking-tight sm:text-4xl">
             {t('title')}
           </h1>
-          <p className="max-w-2xl text-base opacity-70 sm:text-lg">
+          <p className="max-w-2xl text-base opacity-75 sm:text-lg">
             {t('subtitle')}
           </p>
         </div>

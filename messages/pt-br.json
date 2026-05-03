@@ -141,11 +141,19 @@
     },
     "card": {
       "source": "Ver fonte",
+      "viewFull": "Ver alerta completo",
+      "viewGazette": "Diário oficial",
+      "backfill": "Backfill histórico",
       "riskScore": "Risco",
-      "date": "Data",
+      "date": "Detectado",
       "secretaria": "Secretaria",
       "value": "Valor",
       "confidence": "Confiança"
+    },
+    "kpi": {
+      "alerts": "Alertas publicados",
+      "totalValue": "Valor total envolvido",
+      "cities": "Cidades com achados"
     },
     "types": {
       "dispensa_irregular": "Dispensa irregular",

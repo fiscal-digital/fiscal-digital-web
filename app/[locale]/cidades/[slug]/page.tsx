@@ -14,7 +14,7 @@ import {
 } from '@phosphor-icons/react/dist/ssr'
 import { routing } from '@/i18n/routing'
 import { CITIES, getCityBySlug, regionOf, REGION_LABELS } from '@/lib/cities'
-import { fetchAlerts, API_URL } from '@/lib/api'
+import { fetchAlertsWithTotal, API_URL } from '@/lib/api'
 import { findingTypeLabel, formatCurrency, formatDate } from '@/lib/findings'
 import CityAlertsList from '@/components/CityAlertsList'
 import { getRiskLevel, getRiskLabel } from '@/lib/brand'
@@ -85,19 +85,22 @@ export default async function CidadePage({ params }: Props) {
   const city = getCityBySlug(slug)
   if (!city) notFound()
 
-  const findings = await fetchAlerts({ city: city.cityId, limit: 200 })
+  // Usa pageInfo.total (global) para KPIs — antes mostrava items.length (50,
+  // limitado pela paginação default da API), divergindo do número real.
+  const result = await fetchAlertsWithTotal({ city: city.cityId, size: 200 })
+  const findings = result.items
   const region = regionOf(city.uf)
   const isPt = locale === 'pt-br'
   const lang: 'pt-br' | 'en' = isPt ? 'pt-br' : 'en'
 
   // ── Stats ─────────────────────────────────────────────────────────────────
-  const totalCount = findings.length
-  const totalValue = findings.reduce((sum, f) => sum + (f.value ?? 0), 0)
-  const typesDetected = new Set(findings.map((f) => f.type)).size
+  const totalCount = result.total                 // total real (pageInfo.total)
+  const totalValue = result.totalValue            // soma global de values
+  const typesDetected = new Set(findings.map((f) => f.type)).size  // tipos visíveis no que carregou
   const avgRiskRaw =
-    totalCount > 0 ? findings.reduce((s, f) => s + f.riskScore, 0) / totalCount : 0
+    findings.length > 0 ? findings.reduce((s, f) => s + f.riskScore, 0) / findings.length : 0
   const avgRisk = Math.round(avgRiskRaw)
-  const avgRiskLabel = totalCount > 0 ? getRiskLabel(avgRisk, lang) : ''
+  const avgRiskLabel = findings.length > 0 ? getRiskLabel(avgRisk, lang) : ''
 
   const lastFinding = findings[0]
   const lastDateLabel = lastFinding

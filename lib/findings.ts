@@ -55,6 +55,14 @@ export interface ApiFinding {
 export interface ApiAlertsResponse {
   total: number
   filters: Record<string, string | undefined>
+  pageInfo?: {
+    total: number
+    page: number
+    pageSize: number
+    totalPages: number
+    totalValue: number
+    citiesCount: number
+  }
   items: ApiFinding[]
 }
 

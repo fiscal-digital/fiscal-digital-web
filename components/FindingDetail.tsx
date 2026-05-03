@@ -206,6 +206,7 @@ export default function FindingDetail({
         <PdfPreview
           source={finding.source}
           cachedPdfUrl={finding.cachedPdfUrl}
+          pdfProxyUrl={finding.pdfProxyUrl}
           excerpt={evidence?.excerpt}
           date={evidence?.date}
           locale={locale}

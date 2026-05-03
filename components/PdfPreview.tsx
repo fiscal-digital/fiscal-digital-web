@@ -24,13 +24,17 @@ import { ArrowSquareOut, FilePdf, Eye, X as XIcon } from '@phosphor-icons/react'
 interface PdfPreviewProps {
   source: string
   /**
-   * URL do PDF no nosso cache CDN (gazettes.fiscaldigital.org).
-   * Se presente, o iframe usa essa URL — temos controle de headers
-   * (Content-Disposition: inline, X-Frame-Options: SAMEORIGIN) para
-   * que o browser realmente exiba inline em vez de baixar.
-   * Quando ausente, fallback para o source URL do QD direto.
+   * URL CDN direta — pode dar 404 se ainda não cacheado.
+   * Mantida para retrocompatibilidade; preferir pdfProxyUrl.
    */
   cachedPdfUrl?: string | null
+  /**
+   * Lazy cache on-demand. Sempre funciona: na primeira visualização,
+   * a Lambda API baixa do QD, sobe para S3 e redireciona para o CDN.
+   * Próximas visualizações vão direto pro CDN. Em caso de erro,
+   * redirect transparente para a source URL do QD.
+   */
+  pdfProxyUrl?: string | null
   excerpt?: string
   date?: string
   /** Locale para labels — defaults to 'pt-br'. */
@@ -73,12 +77,14 @@ function formatDate(iso: string, locale: 'pt-br' | 'en'): string {
   }
 }
 
-export default function PdfPreview({ source, cachedPdfUrl, excerpt, date, locale = 'pt-br' }: PdfPreviewProps) {
+export default function PdfPreview({ source, cachedPdfUrl, pdfProxyUrl, excerpt, date, locale = 'pt-br' }: PdfPreviewProps) {
   const [showInline, setShowInline] = useState(false)
   const t = labels[locale]
-  // Preferir cache CDN quando disponível — temos controle de headers,
-  // navegador exibe inline ao invés de baixar.
-  const iframeSrc = cachedPdfUrl ?? source
+  // Ordem de preferência:
+  // 1. pdfProxyUrl — lazy cache, sempre funciona (popula on-demand)
+  // 2. cachedPdfUrl — CDN direta (mais rápido, pode dar 404 se não cacheado)
+  // 3. source — QD direto (sempre funciona, mas browser pode forçar download)
+  const iframeSrc = pdfProxyUrl ?? cachedPdfUrl ?? source
 
   return (
     <section className="rounded-xl border border-brand-gray/15 bg-white p-5 shadow-sm">

@@ -39,10 +39,17 @@ export interface ApiFinding {
   fiscalId?: string
   /**
    * URL do PDF no cache CDN (gazettes.fiscaldigital.org). Derivado pelo
-   * backend a partir do source QD. Pode ser null se não houver cache.
-   * Site usa para renderizar iframe inline com headers controlados.
+   * backend a partir do source QD. Pode estar 404 se ainda não foi cacheado
+   * pelo backfill — preferir pdfProxyUrl no iframe.
    */
   cachedPdfUrl?: string | null
+  /**
+   * Lazy cache on-demand — endpoint /pdf?source=... que sempre funciona:
+   * cache hit redireciona pro CDN; cache miss baixa do QD, sobe para S3 e
+   * redireciona pro CDN; erro cai em redirect para QD direto. Primeira
+   * visualização popula o cache, próximas batem direto no CDN.
+   */
+  pdfProxyUrl?: string | null
 }
 
 export interface ApiAlertsResponse {

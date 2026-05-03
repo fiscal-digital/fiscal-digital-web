@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 
 export const dynamic = 'force-static'
+export const revalidate = 3600
 
 const SITE = 'https://fiscaldigital.org'
 

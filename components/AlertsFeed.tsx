@@ -3,10 +3,21 @@
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { ArrowSquareOut, ArrowRight, Warning, WarningCircle } from '@phosphor-icons/react'
+import { ArrowSquareOut, ArrowRight, Warning, WarningCircle, Bell, CurrencyDollar, MapPin } from '@phosphor-icons/react'
 import { getRiskLevel, getRiskLabel } from '@/lib/brand'
 import { API_URL } from '@/lib/api'
 import { FINDING_TYPE_LABELS, findingIdToSlug } from '@/lib/findings'
+
+// pageInfo global vindo do /alerts — KPIs usam isso (não a lista local de items
+// que pode estar paginada/filtrada).
+interface PageInfo {
+  total: number
+  page: number
+  pageSize: number
+  totalPages: number
+  totalValue: number
+  citiesCount: number
+}
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -123,47 +134,68 @@ function SkeletonCard() {
 // ── KPIs ──────────────────────────────────────────────────────────────────────
 
 interface KpiBarProps {
-  findings: Finding[]
+  pageInfo: PageInfo | null
+  fallback: Finding[]
   locale: 'pt-br' | 'en'
   t: ReturnType<typeof useTranslations<'alertas'>>
 }
 
-function KpiBar({ findings, locale, t }: KpiBarProps) {
+/**
+ * KpiBar — números globais (sobre o conjunto inteiro filtrado, não só a página
+ * visível). Usa pageInfo do API; cai em fallback computado dos items se a API
+ * antiga ainda estiver respondendo sem pageInfo.
+ *
+ * Layout: 3 cards horizontais com ícone + label + valor grande. Mobile empilha.
+ */
+function KpiBar({ pageInfo, fallback, locale, t }: KpiBarProps) {
   const stats = useMemo(() => {
-    const totalValue = findings.reduce((sum, f) => sum + (f.value ?? 0), 0)
-    const cities = new Set(findings.map(f => f.cityId)).size
-    return { count: findings.length, totalValue, cities }
-  }, [findings])
+    if (pageInfo) {
+      return {
+        count: pageInfo.total,
+        totalValue: pageInfo.totalValue,
+        cities: pageInfo.citiesCount,
+      }
+    }
+    // Fallback: API antiga sem pageInfo
+    const totalValue = fallback.reduce((sum, f) => sum + (f.value ?? 0), 0)
+    const cities = new Set(fallback.map(f => f.cityId)).size
+    return { count: fallback.length, totalValue, cities }
+  }, [pageInfo, fallback])
 
   if (stats.count === 0) return null
 
   return (
-    <dl className="mb-6 grid gap-3 rounded-xl border border-brand-gray/15 bg-white p-4 sm:grid-cols-3">
-      <div>
-        <dt className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
-          {t('kpi.alerts')}
-        </dt>
-        <dd className="mt-1 font-mono text-2xl font-bold text-brand-ink tabular-nums">
-          {stats.count}
-        </dd>
-      </div>
-      <div>
-        <dt className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
-          {t('kpi.totalValue')}
-        </dt>
-        <dd className="mt-1 font-mono text-2xl font-bold text-brand-ink tabular-nums">
-          {stats.totalValue > 0 ? formatCompactBrl(stats.totalValue) : '—'}
-        </dd>
-      </div>
-      <div>
-        <dt className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
-          {t('kpi.cities')}
-        </dt>
-        <dd className="mt-1 font-mono text-2xl font-bold text-brand-ink tabular-nums">
-          {stats.cities}
-        </dd>
-      </div>
+    <dl className="mb-6 grid gap-3 sm:grid-cols-3">
+      <KpiCard
+        icon={<Bell size={18} weight="bold" className="text-brand-teal" />}
+        label={t('kpi.alerts')}
+        value={stats.count.toLocaleString(locale === 'pt-br' ? 'pt-BR' : 'en-US')}
+      />
+      <KpiCard
+        icon={<CurrencyDollar size={18} weight="bold" className="text-brand-teal" />}
+        label={t('kpi.totalValue')}
+        value={stats.totalValue > 0 ? formatCompactBrl(stats.totalValue) : '—'}
+      />
+      <KpiCard
+        icon={<MapPin size={18} weight="bold" className="text-brand-teal" />}
+        label={t('kpi.cities')}
+        value={stats.cities.toLocaleString(locale === 'pt-br' ? 'pt-BR' : 'en-US')}
+      />
     </dl>
+  )
+}
+
+function KpiCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-brand-gray/15 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
+      <dt className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand-gray">
+        {icon}
+        <span>{label}</span>
+      </dt>
+      <dd className="font-mono text-3xl font-bold text-brand-ink tabular-nums sm:text-4xl">
+        {value}
+      </dd>
+    </div>
   )
 }
 
@@ -309,6 +341,7 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
   const lang: 'pt-br' | 'en' = locale === 'en' ? 'en' : 'pt-br'
 
   const [findings, setFindings] = useState<Finding[]>([])
+  const [pageInfo, setPageInfo] = useState<PageInfo | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [stateFilter, setStateFilter] = useState('')
@@ -329,9 +362,10 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         return res.json()
       })
-      .then((data: Finding[] | { items?: Finding[] }) => {
+      .then((data: Finding[] | { items?: Finding[]; pageInfo?: PageInfo }) => {
         const items = Array.isArray(data) ? data : (data.items ?? [])
         setFindings(items)
+        setPageInfo(Array.isArray(data) ? null : (data.pageInfo ?? null))
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false))
@@ -354,7 +388,7 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
   return (
     <div>
       {/* UH-WEB-010: KPIs agregados — total alertas, valor envolvido, cidades distintas */}
-      {!loading && !error && <KpiBar findings={findings} locale={lang} t={t} />}
+      {!loading && !error && <KpiBar pageInfo={pageInfo} fallback={findings} locale={lang} t={t} />}
 
       {/* Filters */}
       <div className="mb-6 flex flex-wrap gap-3">

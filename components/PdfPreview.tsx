@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { ArrowSquareOut, FilePdf, Eye, X as XIcon } from '@phosphor-icons/react'
+import { API_URL } from '@/lib/api'
 
 /**
  * PdfPreview — Componente híbrido de visualização do diário oficial.
@@ -80,11 +81,15 @@ function formatDate(iso: string, locale: 'pt-br' | 'en'): string {
 export default function PdfPreview({ source, cachedPdfUrl, pdfProxyUrl, excerpt, date, locale = 'pt-br' }: PdfPreviewProps) {
   const [showInline, setShowInline] = useState(false)
   const t = labels[locale]
+  // Constrói pdfProxyUrl no client a partir do API_URL real (env de build),
+  // independente do fallback do backend (que aponta para api.fiscaldigital.org
+  // ainda não provisionado — INF-API-001).
+  const proxyHere = source ? `${API_URL}/pdf?source=${encodeURIComponent(source)}` : null
   // Ordem de preferência:
-  // 1. pdfProxyUrl — lazy cache, sempre funciona (popula on-demand)
+  // 1. proxyHere/pdfProxyUrl — lazy cache, sempre funciona (popula on-demand)
   // 2. cachedPdfUrl — CDN direta (mais rápido, pode dar 404 se não cacheado)
   // 3. source — QD direto (sempre funciona, mas browser pode forçar download)
-  const iframeSrc = pdfProxyUrl ?? cachedPdfUrl ?? source
+  const iframeSrc = proxyHere ?? pdfProxyUrl ?? cachedPdfUrl ?? source
 
   return (
     <section className="rounded-xl border border-brand-gray/15 bg-white p-5 shadow-sm">

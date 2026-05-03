@@ -13,11 +13,15 @@ type Props = {
   params: Promise<{ locale: string; id: string }>
 }
 
-// SSG: pré-renderiza os 50 findings mais recentes em build-time.
-// IDs fora desse conjunto retornam 404 (dynamicParams: false) — visíveis via feed.
-// Limitar a 50 mantém build rápido mesmo com milhares de findings futuros.
+// SSG: pré-renderiza até 500 findings mais recentes em build-time.
+// IDs fora desse conjunto retornam 404 (dynamicParams: false). Em volume
+// alto, o ideal é migrar para ISR (INF-WEB-001 no backlog) — por enquanto
+// 500 cobre boa parte. Build agendado deve rodar diariamente para cobrir
+// novos findings que o pipeline gerar.
+const SSG_LIMIT = 500
+
 export async function generateStaticParams() {
-  const findings = await fetchAlerts({ limit: 50 })
+  const findings = await fetchAlerts({ limit: SSG_LIMIT })
   const ids = findings.map((f) => findingIdToSlug(f.id))
   return routing.locales.flatMap((locale) => ids.map((id) => ({ locale, id })))
 }
@@ -27,7 +31,7 @@ export const dynamicParams = false
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, id } = await params
   const findingId = slugToFindingId(id)
-  const findings = await fetchAlerts({ limit: 50 })
+  const findings = await fetchAlerts({ limit: SSG_LIMIT })
   const finding = findings.find((f) => f.id === findingId)
 
   if (!finding) {
@@ -55,7 +59,7 @@ export default async function AlertaPage({ params }: Props) {
   setRequestLocale(locale)
 
   const findingId = slugToFindingId(id)
-  const findings = await fetchAlerts({ limit: 50 })
+  const findings = await fetchAlerts({ limit: SSG_LIMIT })
   const finding = findings.find((f) => f.id === findingId)
 
   if (!finding) notFound()

@@ -74,7 +74,15 @@
       "legend_active": "Em produção",
       "legend_planned": "Planejada (aguarda Querido Diário)",
       "badge_active_alt": "Em produção",
-      "badge_planned_alt": "Planejada"
+      "badge_planned_alt": "Planejada",
+      "top_title": "Cidades em destaque",
+      "top_subtitle": "Onde estamos detectando mais sinais — ranking por achados publicados",
+      "findings_one": "1 achado",
+      "findings_other": "{count} achados",
+      "no_findings_yet": "Sem achados ainda",
+      "region_summary": "{cities} cidades · {findings}",
+      "all_cities": "Todas as cidades cobertas",
+      "see_city": "Ver cidade"
     },
     "section_open_source": "Código aberto",
     "open_source": {

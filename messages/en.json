@@ -74,7 +74,15 @@
       "legend_active": "In production",
       "legend_planned": "Planned (awaiting Querido Diário)",
       "badge_active_alt": "In production",
-      "badge_planned_alt": "Planned"
+      "badge_planned_alt": "Planned",
+      "top_title": "Cities in focus",
+      "top_subtitle": "Where we're spotting most signals — ranked by published findings",
+      "findings_one": "1 finding",
+      "findings_other": "{count} findings",
+      "no_findings_yet": "No findings yet",
+      "region_summary": "{cities} cities · {findings}",
+      "all_cities": "All cities covered",
+      "see_city": "View city"
     },
     "section_open_source": "Open source",
     "open_source": {

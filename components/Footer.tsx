@@ -113,16 +113,6 @@ export default async function Footer({ locale }: Props) {
           <p>
             Fiscal Digital{' '}
             {t.rich('ombros', {
-              cernyn: (chunks) => (
-                <a
-                  href="https://cernyn.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-colors hover:text-brand-teal"
-                >
-                  {chunks}
-                </a>
-              ),
               serenata: (chunks) => (
                 <a
                   href="https://serenata.ai"

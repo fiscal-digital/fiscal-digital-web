@@ -33,14 +33,44 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
 
-      - name: Deploy to S3
-        run: aws s3 sync out/ s3://fiscal-digital-web-prod --delete --cache-control "public, max-age=300"
+      # Arquivos estáticos hashed — TTL longo imutável
+      - name: Sync static assets to S3
+        run: |
+          aws s3 sync .open-next/assets s3://${{ vars.S3_CACHE_BUCKET }}/_next-static \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable"
 
+      # Cache ISR pré-aquecido em build (páginas top-50 pré-renderizadas)
+      - name: Sync ISR cache to S3
+        run: |
+          aws s3 sync .open-next/cache s3://${{ vars.S3_CACHE_BUCKET }}/cache \
+            --delete
+
+      # Deploy Lambda principal (server function)
+      - name: Deploy server Lambda
+        run: |
+          cd .open-next/server-functions/default
+          zip -r ../../../server-function.zip .
+          cd ../../..
+          aws lambda update-function-code \
+            --function-name ${{ vars.LAMBDA_FN_NAME }} \
+            --zip-file fileb://server-function.zip \
+            --region us-east-1
+
+      # Deploy Lambda de revalidação (worker SQS do ISR)
+      - name: Deploy revalidation Lambda
+        run: |
+          cd .open-next/revalidation-function
+          zip -r ../../revalidation-function.zip .
+          cd ../..
+          aws lambda update-function-code \
+            --function-name ${{ vars.LAMBDA_REVALIDATE_FN_NAME }} \
+            --zip-file fileb://revalidation-function.zip \
+            --region us-east-1
+
+      # Invalidação seletiva — NÃO invalida /_next/static/* (hashed, imutável)
       - name: Invalidate CloudFront
         run: |
-          DIST_ID=$(aws cloudfront list-distributions \
-            --query "DistributionList.Items[?Comment=='fiscal-digital-web-prod'].Id" \
-            --output text)
           aws cloudfront create-invalidation \
-            --distribution-id "$DIST_ID" \
-            --paths "/*"
+            --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/" "/pt-br/*" "/en/*"

@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import type { Metadata } from 'next'
 import { setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
@@ -13,24 +14,29 @@ type Props = {
   params: Promise<{ locale: string; id: string }>
 }
 
-// SSG: pré-renderiza até 10000 findings mais recentes em build-time.
-// IDs fora desse conjunto retornam 404 (dynamicParams: false). Paliativo
-// até INF-WEB-001 (ISR via @opennextjs/aws) entrar — em prod hoje só temos
-// 622 publicáveis e reanalyze gera ~10-20/dia, então 10k cobre bem.
-const SSG_LIMIT = 10000
+// ISR: pré-renderiza top 50 mais recentes em build-time.
+// Findings além desse conjunto são gerados on-demand via ISR (dynamicParams: true — default).
+// revalidate=300 → stale-while-revalidate de 5 min para todos (pré e on-demand).
+const SSG_LIMIT = 50
+
+export const revalidate = 300
+
+// cache() de React evita chamar a API 3x por request (generateStaticParams,
+// generateMetadata e o componente principal fazem fetch do mesmo endpoint).
+const getCachedAlerts = cache(async () => fetchAlerts({ size: SSG_LIMIT }))
 
 export async function generateStaticParams() {
-  const findings = await fetchAlerts({ size: SSG_LIMIT })
+  const findings = await getCachedAlerts()
   const ids = findings.map((f) => findingIdToSlug(f.id))
   return routing.locales.flatMap((locale) => ids.map((id) => ({ locale, id })))
 }
 
-export const dynamicParams = false
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, id } = await params
   const findingId = slugToFindingId(id)
-  const findings = await fetchAlerts({ size: SSG_LIMIT })
+
+  // On-demand ISR: busca o finding individual via API (não limitado aos top 50).
+  const findings = await fetchAlerts({ size: 1000 })
   const finding = findings.find((f) => f.id === findingId)
 
   if (!finding) {
@@ -58,7 +64,9 @@ export default async function AlertaPage({ params }: Props) {
   setRequestLocale(locale)
 
   const findingId = slugToFindingId(id)
-  const findings = await fetchAlerts({ size: SSG_LIMIT })
+
+  // On-demand ISR: busca amplo para encontrar qualquer finding publicado.
+  const findings = await fetchAlerts({ size: 1000 })
   const finding = findings.find((f) => f.id === findingId)
 
   if (!finding) notFound()

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { ArrowSquareOut, ArrowRight, Warning, WarningCircle, Bell, CurrencyDollar, MapPin } from '@phosphor-icons/react'
+import { ArrowSquareOut, ArrowRight, Warning, WarningCircle, Bell, CurrencyDollar, MapPin, RssSimple } from '@phosphor-icons/react'
 import { getRiskLevel, getRiskLabel } from '@/lib/brand'
 import { API_URL } from '@/lib/api'
 import { FINDING_TYPE_LABELS, findingIdToSlug } from '@/lib/findings'
@@ -354,48 +354,63 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
       {/* UH-WEB-010: KPIs agregados — total alertas, valor envolvido, cidades distintas */}
       {!loading && !error && <KpiBar pageInfo={pageInfo} fallback={findings} locale={lang} t={t} />}
 
-      {/* Filters */}
-      <div className="mb-6 flex flex-wrap gap-3">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="filter-state" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
-            {t('filters.state')}
-          </label>
-          <select
-            id="filter-state"
-            value={stateFilter}
-            onChange={(e) => setStateFilter(e.target.value)}
-            className="rounded-md border border-brand-gray/25 bg-white px-3 py-2 text-sm text-brand-ink focus:border-brand-teal focus:outline-none focus:ring-1 focus:ring-brand-teal"
-          >
-            <option value="">{t('filters.all')}</option>
-            {BR_STATES.map((s) => (
-              <option key={s} value={s}>{s}</option>
-            ))}
-          </select>
+      {/* Toolbar — filtros + RSS subscribe (substituiu sidebar lateral que
+          desperdiçava espaço imenso na direita). Sticky em scroll. */}
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-3 rounded-xl border border-brand-gray/15 bg-white p-3 shadow-sm">
+        <div className="flex flex-wrap items-end gap-3">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="filter-state" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
+              {t('filters.state')}
+            </label>
+            <select
+              id="filter-state"
+              value={stateFilter}
+              onChange={(e) => setStateFilter(e.target.value)}
+              className="rounded-md border border-brand-gray/25 bg-white px-3 py-2 text-sm text-brand-ink focus:border-brand-teal focus:outline-none focus:ring-1 focus:ring-brand-teal"
+            >
+              <option value="">{t('filters.all')}</option>
+              {BR_STATES.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="filter-type" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
+              {t('filters.type')}
+            </label>
+            <select
+              id="filter-type"
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="rounded-md border border-brand-gray/25 bg-white px-3 py-2 text-sm text-brand-ink focus:border-brand-teal focus:outline-none focus:ring-1 focus:ring-brand-teal"
+            >
+              <option value="">{t('filters.all')}</option>
+              {ALERT_TYPES.map((type) => (
+                <option key={type} value={type}>{typeLabel(type)}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="filter-type" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
-            {t('filters.type')}
-          </label>
-          <select
-            id="filter-type"
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="rounded-md border border-brand-gray/25 bg-white px-3 py-2 text-sm text-brand-ink focus:border-brand-teal focus:outline-none focus:ring-1 focus:ring-brand-teal"
-          >
-            <option value="">{t('filters.all')}</option>
-            {ALERT_TYPES.map((type) => (
-              <option key={type} value={type}>{typeLabel(type)}</option>
-            ))}
-          </select>
-        </div>
+        {/* RSS subscribe — vira link compacto na toolbar */}
+        <a
+          href={`${API_URL}/rss${stateFilter ? `?state=${stateFilter}` : ''}${typeFilter ? `${stateFilter ? '&' : '?'}type=${typeFilter}` : ''}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-md border border-brand-amber/40 bg-brand-amber/10 px-3 py-2 text-xs font-semibold text-brand-ink transition-colors hover:bg-brand-amber/20"
+        >
+          <RssSimple size={14} weight="fill" className="text-brand-amber" />
+          {lang === 'pt-br' ? 'Assinar RSS' : 'Subscribe RSS'}
+        </a>
       </div>
 
       {/* Content */}
       {loading && (
         <div>
           <p className="sr-only">{t('loading')}</p>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <SkeletonCard />
             <SkeletonCard />
             <SkeletonCard />
             <SkeletonCard />
@@ -425,7 +440,7 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
       )}
 
       {!loading && !error && findings.length > 0 && (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {findings.map((f) => (
             <FindingCard
               key={f.id}

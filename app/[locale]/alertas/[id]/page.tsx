@@ -13,12 +13,11 @@ type Props = {
   params: Promise<{ locale: string; id: string }>
 }
 
-// SSG: pré-renderiza até 500 findings mais recentes em build-time.
-// IDs fora desse conjunto retornam 404 (dynamicParams: false). Em volume
-// alto, o ideal é migrar para ISR (INF-WEB-001 no backlog) — por enquanto
-// 500 cobre boa parte. Build agendado deve rodar diariamente para cobrir
-// novos findings que o pipeline gerar.
-const SSG_LIMIT = 500
+// SSG: pré-renderiza até 2000 findings mais recentes em build-time.
+// IDs fora desse conjunto retornam 404 (dynamicParams: false). Reanalyze
+// gerou 1.286+ publicáveis hoje. Solução definitiva é INF-WEB-001 (ISR);
+// até lá, mantemos limite alto + rebuild do site após cada reanalyze.
+const SSG_LIMIT = 2000
 
 export async function generateStaticParams() {
   const findings = await fetchAlerts({ limit: SSG_LIMIT })

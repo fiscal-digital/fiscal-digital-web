@@ -1,7 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
 import AlertsFeed from '@/components/AlertsFeed'
-import RssSubscribe from '@/components/RssSubscribe'
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -39,9 +38,9 @@ export default async function AlertasPage({ params }: Props) {
 
   return (
     <main className="min-h-dvh bg-brand-paper">
-      {/* Page header — UH-WEB-009: removido eyebrow redundante (nav já tem logo+marca) */}
+      {/* Page header — compacto, full width */}
       <section className="bg-brand-teal px-6 py-12 text-brand-paper sm:py-16">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-7xl">
           <h1 className="mb-3 text-balance text-3xl font-bold tracking-tight sm:text-4xl">
             {t('title')}
           </h1>
@@ -51,20 +50,12 @@ export default async function AlertasPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Content */}
-      <section className="px-6 py-12">
-        <div className="mx-auto max-w-5xl">
-          <div className="grid gap-8 lg:grid-cols-[1fr_280px]">
-            {/* Feed */}
-            <div>
-              <AlertsFeed locale={locale} />
-            </div>
-
-            {/* Sidebar */}
-            <aside className="space-y-6">
-              <RssSubscribe />
-            </aside>
-          </div>
+      {/* Feed full width — KPIs + toolbar (filtros + RSS) + grid 3-4 colunas
+          gerenciados internamente pelo AlertsFeed. Removida sidebar lateral
+          que desperdiçava espaço — RSS virou item da toolbar. */}
+      <section className="px-6 py-10">
+        <div className="mx-auto max-w-7xl">
+          <AlertsFeed locale={locale} />
         </div>
       </section>
     </main>

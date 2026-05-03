@@ -163,6 +163,13 @@ export default function HighlightsCarousel({ locale }: Props) {
   const { items } = state
 
   return (
+    <div>
+      <div className="mb-8 text-center">
+        <h2 className="mb-3 text-3xl font-bold tracking-tight text-brand-teal">
+          {t('title')}
+        </h2>
+        <p className="text-sm text-brand-gray">{t('subtitle')}</p>
+      </div>
     <div
       role="region"
       aria-roledescription="carousel"
@@ -288,6 +295,7 @@ export default function HighlightsCarousel({ locale }: Props) {
           </div>
         </div>
       )}
+    </div>
     </div>
   )
 }

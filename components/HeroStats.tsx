@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from 'react'
 import { API_URL } from '@/lib/api'
+import { activeCount, totalCount } from '@/lib/cities'
 
-const USD_TO_BRL = 5.4
-
+// Mesma API que StatsCounter — números devem bater entre Hero e seção "Em números".
+// Antes este componente lia estimatedCostUsd (removido do backend ao mover
+// conversão para BRL único). Resultado: mostrava "R$ 0".
 interface StatsApiResponse {
   totalFindings: number
   totalGazettesProcessed: number | null
-  estimatedCostUsd: number
+  estimatedCostBrl: number
 }
 
 interface Props {
@@ -19,18 +21,23 @@ const labels = {
   'pt-br': {
     findings: 'Achados publicados',
     gazettes: 'Diários analisados',
+    cities: 'Cidades monitoradas',
     cost: 'Custo operacional total',
   },
   en: {
     findings: 'Published findings',
     gazettes: 'Gazettes analyzed',
+    cities: 'Cities monitored',
     cost: 'Total operational cost',
   },
 }
 
-function fmt(n: number, k: number): string {
-  if (k >= 1000) return `${(k / 1000).toFixed(0)}k`
-  return String(n)
+function formatNumber(n: number): string {
+  return n.toLocaleString('pt-BR')
+}
+
+function formatBrl(n: number): string {
+  return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 }
 
 export default function HeroStats({ locale }: Props) {
@@ -45,24 +52,31 @@ export default function HeroStats({ locale }: Props) {
       .catch(() => {})
   }, [])
 
-  const gazettes = stats?.totalGazettesProcessed ?? 0
-  const findings = stats?.totalFindings ?? 0
-  const costBrl = Math.round((stats?.estimatedCostUsd ?? 0) * USD_TO_BRL)
+  const citiesActive = activeCount()
+  const citiesTotal = totalCount()
+  const citiesValue = citiesTotal > citiesActive
+    ? `${citiesActive} / ${citiesTotal}`
+    : String(citiesActive)
 
   const items = [
     {
       key: 'findings',
-      value: stats ? String(findings) : null,
+      value: stats ? formatNumber(stats.totalFindings ?? 0) : null,
       label: l.findings,
     },
     {
       key: 'gazettes',
-      value: stats ? fmt(gazettes, gazettes) : null,
+      value: stats ? formatNumber(stats.totalGazettesProcessed ?? 0) : null,
       label: l.gazettes,
     },
     {
+      key: 'cities',
+      value: citiesValue,
+      label: l.cities,
+    },
+    {
       key: 'cost',
-      value: stats ? `R$ ${costBrl}` : null,
+      value: stats ? formatBrl(stats.estimatedCostBrl ?? 0) : null,
       label: l.cost,
     },
   ]
@@ -73,7 +87,7 @@ export default function HeroStats({ locale }: Props) {
         {items.map((item) => (
           <div key={item.key}>
             {item.value == null ? (
-              <div className="mb-1 h-8 w-20 animate-pulse rounded bg-brand-paper/20" />
+              <div className="mb-1 h-8 w-32 animate-pulse rounded bg-brand-paper/20" />
             ) : (
               <p className="font-mono text-3xl font-bold tabular-nums text-brand-paper">
                 {item.value}

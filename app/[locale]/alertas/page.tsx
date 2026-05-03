@@ -2,6 +2,8 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
 import AlertsFeed from '@/components/AlertsFeed'
 
+export const revalidate = 300
+
 type Props = {
   params: Promise<{ locale: string }>
 }

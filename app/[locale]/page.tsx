@@ -1,6 +1,8 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
 import Link from 'next/link'
+
+export const revalidate = 600
 import StatsCounter from '@/components/StatsCounter'
 import HeroStats from '@/components/HeroStats'
 import FourFiscais from '@/components/FourFiscais'

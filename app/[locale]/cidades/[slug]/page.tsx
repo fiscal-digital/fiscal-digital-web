@@ -23,7 +23,10 @@ type Props = {
   params: Promise<{ locale: string; slug: string }>
 }
 
-// SSG: gera páginas para TODAS as cidades active (mesmo sem findings ainda).
+export const revalidate = 600
+
+// ISR: pré-renderiza todas as cidades active. dynamicParams é true (default) —
+// slugs de cidades ainda não ativas também são aceitos on-demand via ISR.
 export async function generateStaticParams() {
   const slugs = Object.values(CITIES)
     .filter((c) => c.active)

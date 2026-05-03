@@ -4,12 +4,13 @@ import Link from 'next/link'
 import StatsCounter from '@/components/StatsCounter'
 import HeroStats from '@/components/HeroStats'
 import FourFiscais from '@/components/FourFiscais'
-import FeaturedAlert from '@/components/FeaturedAlert'
 import CitiesMap from '@/components/CitiesMap'
 import EcosystemSection from '@/components/home/EcosystemSection'
 import OpenSourceSection from '@/components/home/OpenSourceSection'
 import NewsletterSection from '@/components/home/NewsletterSection'
 import ContributeSection from '@/components/home/ContributeSection'
+import HowItWorks from '@/components/home/HowItWorks'
+import HighlightsCarousel from '@/components/home/HighlightsCarousel'
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -119,46 +120,23 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      {/* 5. Alerta em destaque */}
+      {/* 5. Destaques — carrossel de alertas recentes com link p/ detalhe */}
       <section
         id="destaque"
         className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
       >
-        <div className="mx-auto max-w-4xl">
-          <div className="mb-10 text-center">
-            <h2 className="mb-3 text-3xl font-bold tracking-tight text-brand-teal">
-              {t('section_featured')}
-            </h2>
-            <p className="text-sm text-brand-gray">{t('featured_desc')}</p>
-          </div>
-          <FeaturedAlert locale={locale} />
+        <div className="mx-auto max-w-6xl">
+          <HighlightsCarousel locale={locale as 'pt-br' | 'en'} />
         </div>
       </section>
 
-      {/* 6. Como funciona */}
+      {/* 6. Como funciona — 4 passos didáticos com contexto cidadão */}
       <section
         id="como-funciona"
         className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
       >
-        <div className="mx-auto max-w-4xl">
-          <h2 className="mb-10 text-center text-3xl font-bold tracking-tight text-brand-teal">
-            {t('section_how')}
-          </h2>
-          <div className="grid gap-10 sm:grid-cols-3">
-            {(['collect', 'analyze', 'alert'] as const).map((step, i) => (
-              <div key={step} className="text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-brand-teal font-mono text-lg font-bold text-brand-paper">
-                  {i + 1}
-                </div>
-                <h3 className="mb-2 font-semibold text-brand-ink">
-                  {t(`step_${step}`)}
-                </h3>
-                <p className="text-sm leading-relaxed text-brand-gray">
-                  {t(`step_${step}_desc`)}
-                </p>
-              </div>
-            ))}
-          </div>
+        <div className="mx-auto max-w-6xl">
+          <HowItWorks locale={locale as 'pt-br' | 'en'} />
         </div>
       </section>
 

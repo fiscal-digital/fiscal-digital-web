@@ -88,7 +88,7 @@
       "step_extract_what": "Modelo de IA identifica CNPJ, valores, nome do contrato e secretaria envolvida.",
       "step_extract_why": "Transformar PDF em dado estruturado é o que permite cruzar informações em escala.",
       "step_analyze_title": "Análise",
-      "step_analyze_what": "10 Fiscais aplicam regras legais — por exemplo: "aditivo acima de 25% viola Art. 125 da Lei 14.133".",
+      "step_analyze_what": "10 Fiscais aplicam regras legais — por exemplo, aditivo acima de 25% viola o Art. 125 da Lei 14.133.",
       "step_analyze_why": "Cada Fiscal vigia uma fronteira legal específica, com critério documentado e base legal explícita.",
       "step_alert_title": "Alerta",
       "step_alert_what": "Achados com risco ≥ 60 e confiança ≥ 0,70 viram cards públicos com link para o diário original.",

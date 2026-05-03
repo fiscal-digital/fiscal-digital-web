@@ -89,7 +89,26 @@ export default function PdfPreview({ source, cachedPdfUrl, pdfProxyUrl, excerpt,
   // 1. proxyHere/pdfProxyUrl — lazy cache, sempre funciona (popula on-demand)
   // 2. cachedPdfUrl — CDN direta (mais rápido, pode dar 404 se não cacheado)
   // 3. source — QD direto (sempre funciona, mas browser pode forçar download)
-  const iframeSrc = proxyHere ?? pdfProxyUrl ?? cachedPdfUrl ?? source
+  const baseIframeSrc = proxyHere ?? pdfProxyUrl ?? cachedPdfUrl ?? source
+
+  // PDF URL fragment para destacar o excerpt no viewer:
+  // - Chrome/Edge (PDFium): `#search=texto` faz Find dentro do PDF
+  // - Adobe Reader / muitos viewers: também respeitam #search ou #page=
+  // - Outros (Safari): ignoram silenciosamente
+  // Pegamos primeiras ~80 chars do excerpt sanitizadas (sem newlines, aspas
+  // problemáticas) — query muito longa fica unreliable.
+  const searchFragment = (() => {
+    if (!excerpt) return ''
+    const cleaned = excerpt
+      .replace(/[\r\n\t]+/g, ' ')
+      .replace(/["“”‘’]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 80)
+    if (!cleaned) return ''
+    return `#search=${encodeURIComponent(cleaned)}`
+  })()
+  const iframeSrc = `${baseIframeSrc}${searchFragment}`
 
   return (
     <section className="rounded-xl border border-brand-gray/15 bg-white p-5 shadow-sm">

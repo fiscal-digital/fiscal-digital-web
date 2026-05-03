@@ -4,12 +4,12 @@ import createNextIntlPlugin from 'next-intl/plugin'
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
 
 const nextConfig: NextConfig = {
-  // Static export para S3 + CloudFront
-  // Em produção, CloudFront Function faz redirect / → /pt com base em Accept-Language
-  output: 'export',
+  // ISR via @opennextjs/aws — output: 'export' removido.
+  // Deployment: Lambda Function URL + S3 cache + CloudFront (ver INF-WEB-001).
+  // CloudFront Function redirect-pt-to-pt-br mantida no edge (Frente 2 do INF-WEB-001).
   trailingSlash: true,
   images: {
-    // static export não tem servidor de otimização — pré-otimizar em build ou usar CDN
+    // Image optimization Lambda omitida por ora — MVP aceita sem otimização.
     unoptimized: true,
   },
 }

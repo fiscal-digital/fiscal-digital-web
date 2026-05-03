@@ -3,16 +3,13 @@
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { API_URL } from '@/lib/api'
-import { USD_TO_BRL } from '@/lib/api'
 
 // Schema da API /stats — espelha packages/api/src/index.ts StatsResponse.
-// Antes este componente declarava { gazettes, findings, costUsd } e a API
-// retornava { totalGazettesProcessed, totalFindings, estimatedCostUsd } —
-// resultado: contadores ao vivo do Roadmap mostravam 0. Corrigido alinhando.
+// Custo já vem em BRL (moeda única do projeto, não traduzida).
 interface ApiStats {
   totalGazettesProcessed?: number | null
   totalFindings?: number
-  estimatedCostUsd?: number
+  estimatedCostBrl?: number
   lastFindingAt?: string | null
 }
 
@@ -107,7 +104,7 @@ export default function RoadmapStats() {
     }
   }
 
-  const costBrl = (stats?.estimatedCostUsd ?? 0) * USD_TO_BRL
+  const costBrl = stats?.estimatedCostBrl ?? 0
 
   if (error) {
     return (

@@ -5,15 +5,13 @@ import { useTranslations } from 'next-intl'
 import { API_URL } from '@/lib/api'
 import { activeCount, totalCount } from '@/lib/cities'
 
-// USD_TO_BRL agora vem de lib/api.ts (centralizado, evita divergência com
-// outros componentes — antes Roadmap usava 5.75 e este 5.4).
-import { USD_TO_BRL as _USD_TO_BRL } from '@/lib/api'
-const USD_TO_BRL = _USD_TO_BRL
+// Backend retorna estimatedCostBrl direto. Site só exibe — moeda única é BRL,
+// não traduz para outros locales. Sem conversão aqui.
 
 interface StatsApiResponse {
   totalFindings: number
   totalGazettesProcessed: number | null
-  estimatedCostUsd: number
+  estimatedCostBrl: number
   lastFindingAt: string | null
   uptimeDays: number
 }
@@ -124,7 +122,7 @@ export default function StatsCounter() {
 
   const gazettes = stats?.totalGazettesProcessed ?? 0
   const findings = stats?.totalFindings ?? 0
-  const costBrl = (stats?.estimatedCostUsd ?? 0) * USD_TO_BRL
+  const costBrl = stats?.estimatedCostBrl ?? 0
 
   if (error && !stats) {
     return (

@@ -4,13 +4,8 @@ export const API_URL =
   process.env.NEXT_PUBLIC_API_URL ??
   'https://7vvbdbxwfz4h57j7dfk65wpux40gqayb.lambda-url.us-east-1.on.aws'
 
-/**
- * Cotação USD→BRL fixa usada nos componentes de stats (StatsCounter,
- * RoadmapStats). Centralizado aqui para evitar divergência (antes:
- * 5.4 num, 5.75 noutro). Atualizar manualmente se variação > 5%.
- * Origem: BCB PTAX, próximo do deploy de 2026-05-02.
- */
-export const USD_TO_BRL = 5.4
+// Conversão USD→BRL agora é responsabilidade do backend (único lugar).
+// Site recebe estimatedCostBrl direto — moeda única, não traduzida.
 
 /**
  * Fetch alerts em build-time (server-side, dentro de generateStaticParams /

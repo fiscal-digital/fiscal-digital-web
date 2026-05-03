@@ -2,24 +2,27 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
-import { CaretLeft, RssSimple, Buildings, Clock, ChartBar } from '@phosphor-icons/react/dist/ssr'
+import {
+  CaretLeft,
+  RssSimple,
+  Buildings,
+  Clock,
+  ChartBar,
+  CurrencyDollar,
+  Tag,
+  Gauge,
+} from '@phosphor-icons/react/dist/ssr'
 import { routing } from '@/i18n/routing'
-import { CITIES, getCityBySlug, regionOf, REGION_LABELS, type City } from '@/lib/cities'
+import { CITIES, getCityBySlug, regionOf, REGION_LABELS } from '@/lib/cities'
 import { fetchAlerts, API_URL } from '@/lib/api'
 import { findingTypeLabel, findingIdToSlug, formatCurrency, formatDate } from '@/lib/findings'
-import { getRiskLevel } from '@/lib/brand'
+import { getRiskLevel, getRiskLabel } from '@/lib/brand'
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>
 }
 
 // SSG: gera páginas para TODAS as cidades active (mesmo sem findings ainda).
-// A home exibe 50 cidades; cada link precisa abrir uma página real, mesmo que
-// vazia ("Sem alertas detectados ainda" já é tratado abaixo). Filtrar por
-// findingsCount>0 deixava 44 cidades com 404. Quando passar de ~200 cidades,
-// reavaliar para evitar build lento.
-// Fonte canônica de cidades: lib/cities (build-time, sempre disponível).
-// API /cities é hint de findings, mas não bloqueia geração das páginas.
 export async function generateStaticParams() {
   const slugs = Object.values(CITIES)
     .filter((c) => c.active)
@@ -59,6 +62,20 @@ function riskBadgeClass(score: number): string {
   return 'bg-brand-gray text-white'
 }
 
+function riskAccentClass(score: number): string {
+  const level = getRiskLevel(score)
+  if (level === 'critical') return 'border-risk-critical/30 bg-risk-critical/5'
+  if (level === 'alert')    return 'border-risk-alert/30 bg-risk-alert/5'
+  if (level === 'low')      return 'border-risk-low/30 bg-risk-low/5'
+  return 'border-brand-gray/15 bg-brand-paper'
+}
+
+function formatCompactBrl(value: number): string {
+  if (value >= 1_000_000) return `R$ ${(value / 1_000_000).toFixed(1).replace('.', ',')}M`
+  if (value >= 1_000) return `R$ ${(value / 1_000).toFixed(0)}k`
+  return `R$ ${value.toFixed(0)}`
+}
+
 export default async function CidadePage({ params }: Props) {
   const { locale, slug } = await params
   if (!routing.locales.includes(locale as 'pt-br' | 'en')) notFound()
@@ -70,26 +87,39 @@ export default async function CidadePage({ params }: Props) {
   const findings = await fetchAlerts({ city: city.cityId, limit: 200 })
   const region = regionOf(city.uf)
   const isPt = locale === 'pt-br'
+  const lang: 'pt-br' | 'en' = isPt ? 'pt-br' : 'en'
 
-  // Stats
+  // ── Stats ─────────────────────────────────────────────────────────────────
   const totalCount = findings.length
+  const totalValue = findings.reduce((sum, f) => sum + (f.value ?? 0), 0)
+  const typesDetected = new Set(findings.map((f) => f.type)).size
+  const avgRiskRaw =
+    totalCount > 0 ? findings.reduce((s, f) => s + f.riskScore, 0) / totalCount : 0
+  const avgRisk = Math.round(avgRiskRaw)
+  const avgRiskLabel = totalCount > 0 ? getRiskLabel(avgRisk, lang) : ''
+
   const lastFinding = findings[0]
   const lastDateLabel = lastFinding
-    ? formatDate(lastFinding.createdAt, locale as 'pt-br' | 'en')
+    ? formatDate(lastFinding.createdAt, lang)
     : (isPt ? 'Sem alertas' : 'No alerts')
-  // Top secretaria
+
   const secCounts = findings.reduce<Record<string, number>>((acc, f) => {
     if (f.secretaria) acc[f.secretaria] = (acc[f.secretaria] ?? 0) + 1
     return acc
   }, {})
-  const topSec = Object.entries(secCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? '—'
+  const topSec = Object.entries(secCounts).sort((a, b) => b[1] - a[1])[0]?.[0]
 
   const t = {
     back: isPt ? 'Voltar' : 'Back',
     rss: isPt ? 'RSS desta cidade' : 'City RSS feed',
     statTotal: isPt ? 'Achados publicados' : 'Published findings',
+    statValue: isPt ? 'Valor envolvido' : 'Total amount',
+    statTypes: isPt ? 'Tipos detectados' : 'Types detected',
+    statAvgRisk: isPt ? 'Risco médio' : 'Average risk',
     statLast: isPt ? 'Último alerta' : 'Last alert',
     statTopSec: isPt ? 'Secretaria mais frequente' : 'Top department',
+    typesUnit: (n: number) =>
+      isPt ? (n === 1 ? 'tipo' : 'tipos') : (n === 1 ? 'type' : 'types'),
     feedTitle: isPt ? 'Achados em ' + city.name : 'Findings in ' + city.name,
     empty: isPt
       ? `Sem alertas detectados em ${city.name} ainda.`
@@ -102,6 +132,7 @@ export default async function CidadePage({ params }: Props) {
       : 'City mapped, no active coverage from Querido Diário yet.',
     region: isPt ? 'Região' : 'Region',
     state: isPt ? 'Estado' : 'State',
+    valueEmpty: isPt ? 'sem valor monetário' : 'no monetary value',
   }
 
   return (
@@ -126,7 +157,7 @@ export default async function CidadePage({ params }: Props) {
                 {region && (
                   <>
                     {' · '}
-                    {t.region}: {REGION_LABELS[region][locale as 'pt-br' | 'en']}
+                    {t.region}: {REGION_LABELS[region][lang]}
                   </>
                 )}
               </p>
@@ -149,27 +180,58 @@ export default async function CidadePage({ params }: Props) {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="border-b border-brand-gray/10 bg-white px-6 py-8">
-        <div className="mx-auto grid max-w-5xl gap-4 sm:grid-cols-3">
-          <StatCard
-            icon={<ChartBar size={18} weight="bold" className="text-brand-teal" />}
-            label={t.statTotal}
-            value={String(totalCount)}
-          />
-          <StatCard
-            icon={<Clock size={18} weight="bold" className="text-brand-teal" />}
-            label={t.statLast}
-            value={lastDateLabel}
-          />
-          <StatCard
-            icon={<Buildings size={18} weight="bold" className="text-brand-teal" />}
-            label={t.statTopSec}
-            value={topSec}
-            mono={topSec !== '—'}
-          />
-        </div>
-      </section>
+      {/* UH-WEB-013 — Big Numbers (4 KPIs + linha contextual). Omitido quando 0 findings. */}
+      {totalCount > 0 && (
+        <section className="border-b border-brand-gray/10 bg-white px-6 py-8">
+          <div className="mx-auto max-w-5xl space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <KpiCard
+                icon={<ChartBar size={18} weight="bold" className="text-brand-teal" />}
+                label={t.statTotal}
+                value={String(totalCount)}
+              />
+              <KpiCard
+                icon={<CurrencyDollar size={18} weight="bold" className="text-brand-teal" />}
+                label={t.statValue}
+                value={totalValue > 0 ? formatCompactBrl(totalValue) : '—'}
+                hint={totalValue === 0 ? t.valueEmpty : undefined}
+                title={
+                  totalValue > 0
+                    ? formatCurrency(totalValue, lang)
+                    : undefined
+                }
+              />
+              <KpiCard
+                icon={<Tag size={18} weight="bold" className="text-brand-teal" />}
+                label={t.statTypes}
+                value={`${typesDetected} ${t.typesUnit(typesDetected)}`}
+              />
+              <KpiCard
+                icon={<Gauge size={18} weight="bold" className="text-brand-teal" />}
+                label={t.statAvgRisk}
+                value={`${avgRisk} — ${avgRiskLabel}`}
+                accentClass={riskAccentClass(avgRisk)}
+              />
+            </div>
+
+            {/* Linha contextual — último alerta + secretaria (omitida se vazia) */}
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-brand-gray">
+              <span className="inline-flex items-center gap-1.5">
+                <Clock size={14} weight="bold" className="text-brand-gray/60" />
+                {t.statLast}:{' '}
+                <span className="font-mono text-brand-ink">{lastDateLabel}</span>
+              </span>
+              {topSec && (
+                <span className="inline-flex items-center gap-1.5">
+                  <Buildings size={14} weight="bold" className="text-brand-gray/60" />
+                  {t.statTopSec}:{' '}
+                  <span className="font-medium text-brand-ink">{topSec}</span>
+                </span>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Feed */}
       <section className="px-6 py-12">
@@ -195,7 +257,7 @@ export default async function CidadePage({ params }: Props) {
                         {isPt ? 'Risco' : 'Risk'} {f.riskScore}
                       </span>
                       <span className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
-                        {findingTypeLabel(f.type, locale as 'pt-br' | 'en')}
+                        {findingTypeLabel(f.type, lang)}
                       </span>
                     </div>
                     {f.narrative && (
@@ -205,10 +267,10 @@ export default async function CidadePage({ params }: Props) {
                     )}
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-brand-gray">
                       {f.value != null && (
-                        <span className="font-mono">{formatCurrency(f.value, locale as 'pt-br' | 'en')}</span>
+                        <span className="font-mono">{formatCurrency(f.value, lang)}</span>
                       )}
                       {f.secretaria && <span>{f.secretaria}</span>}
-                      <span className="ml-auto font-mono">{formatDate(f.createdAt, locale as 'pt-br' | 'en')}</span>
+                      <span className="ml-auto font-mono">{formatDate(f.createdAt, lang)}</span>
                     </div>
                   </Link>
                 </li>
@@ -221,26 +283,36 @@ export default async function CidadePage({ params }: Props) {
   )
 }
 
-function StatCard({
+// ── KpiCard ────────────────────────────────────────────────────────────────
+function KpiCard({
   icon,
   label,
   value,
-  mono = false,
+  hint,
+  title,
+  accentClass,
 }: {
   icon: React.ReactNode
   label: string
   value: string
-  mono?: boolean
+  hint?: string
+  title?: string
+  accentClass?: string
 }) {
+  const base = 'rounded-xl border p-4 transition-colors'
+  const accent = accentClass ?? 'border-brand-gray/15 bg-brand-paper'
   return (
-    <div className="rounded-xl border border-brand-gray/15 bg-brand-paper p-4">
+    <div className={`${base} ${accent}`} title={title}>
       <div className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-brand-gray">
         {icon}
         {label}
       </div>
-      <p className={`text-lg font-bold text-brand-ink ${mono ? 'font-mono text-base' : ''}`}>
+      <p className="font-mono text-2xl font-bold tabular-nums text-brand-ink">
         {value}
       </p>
+      {hint && (
+        <p className="mt-0.5 text-xs text-brand-gray/70">{hint}</p>
+      )}
     </div>
   )
 }

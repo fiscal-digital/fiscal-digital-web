@@ -84,18 +84,24 @@ export default function HighlightsCarousel({ locale }: Props) {
 
   const total = state.status === 'ok' ? state.items.length : 0
 
+  // Scroll APENAS horizontal dentro do container — nunca usar scrollIntoView,
+  // que faz a página inteira pular verticalmente para trazer o slide à
+  // viewport (bug crítico no auto-play: a cada 6s a home pulava de scroll).
+  const scrollToSlide = useCallback((index: number) => {
+    const list = listRef.current
+    if (!list) return
+    const slide = list.children[index] as HTMLElement | undefined
+    if (!slide) return
+    list.scrollTo({ left: slide.offsetLeft - list.offsetLeft, behavior: 'smooth' })
+  }, [])
+
   const goTo = useCallback(
     (index: number) => {
       const next = (index + total) % total
       setCurrent(next)
-      // Scroll the slide into view
-      const list = listRef.current
-      if (list) {
-        const slide = list.children[next] as HTMLElement | undefined
-        slide?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
-      }
+      scrollToSlide(next)
     },
-    [total],
+    [total, scrollToSlide],
   )
 
   const goPrev = useCallback(() => goTo(current - 1), [current, goTo])
@@ -107,11 +113,7 @@ export default function HighlightsCarousel({ locale }: Props) {
     autoplayRef.current = setInterval(() => {
       setCurrent((prev) => {
         const next = (prev + 1) % total
-        const list = listRef.current
-        if (list) {
-          const slide = list.children[next] as HTMLElement | undefined
-          slide?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
-        }
+        scrollToSlide(next)
         return next
       })
     }, AUTOPLAY_DELAY)

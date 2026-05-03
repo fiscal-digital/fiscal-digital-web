@@ -6,7 +6,10 @@ import HeroStats from '@/components/HeroStats'
 import FourFiscais from '@/components/FourFiscais'
 import FeaturedAlert from '@/components/FeaturedAlert'
 import CitiesMap from '@/components/CitiesMap'
-import NewsletterForm from '@/components/NewsletterForm'
+import EcosystemSection from '@/components/home/EcosystemSection'
+import OpenSourceSection from '@/components/home/OpenSourceSection'
+import NewsletterSection from '@/components/home/NewsletterSection'
+import ContributeSection from '@/components/home/ContributeSection'
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -176,118 +179,16 @@ export default async function HomePage({ params }: Props) {
       </section>
 
       {/* 8. Ecossistema */}
-      <section
-        id="ecossistema"
-        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
-      >
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="mb-4 text-3xl font-bold tracking-tight text-brand-teal">
-            {t('section_ecosystem')}
-          </h2>
-          <p className="mb-12 text-brand-gray">
-            {t('ecosystem_desc')}
-          </p>
-          <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-center">
-            {[
-              { name: 'Serenata de Amor', url: 'https://serenata.ai', desc: 'Federal (CEAP)' },
-              { name: 'Querido Diário', url: 'https://queridodiario.ok.org.br', desc: 'Municipal (dados abertos)' },
-              { name: 'Fiscal Digital', url: '#', desc: 'Municipal (alertas)' },
-            ].map((p) => (
-              <a
-                key={p.name}
-                href={p.url}
-                target={p.url !== '#' ? '_blank' : undefined}
-                rel="noopener noreferrer"
-                className="flex flex-col rounded-lg border border-brand-gray/20 px-6 py-4 text-center transition-shadow hover:shadow-md"
-              >
-                <span className="font-semibold text-brand-ink">{p.name}</span>
-                <span className="text-xs text-brand-gray">{p.desc}</span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
+      <EcosystemSection locale={locale} />
 
       {/* 9. Open source */}
-      <section
-        id="open-source"
-        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
-      >
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="mb-4 text-3xl font-bold tracking-tight text-brand-teal">
-            {t('section_open_source')}
-          </h2>
-          <p className="mb-8 text-brand-gray">{t('open_source.desc')}</p>
-          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <a
-              href="https://github.com/fiscal-digital"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg bg-brand-ink px-6 py-3 font-semibold text-brand-paper transition-opacity hover:opacity-90"
-            >
-              {t('open_source.cta_github')}
-              <span aria-hidden="true">→</span>
-            </a>
-            <span
-              className="inline-flex items-center gap-2 rounded-pill border border-brand-gray/25 px-3 py-1.5 text-xs text-brand-gray"
-              aria-label={t('open_source.license_label')}
-            >
-              <span className="font-mono font-semibold text-brand-teal">MIT</span>
-              <span>·</span>
-              <span>{t('open_source.license_label')}</span>
-            </span>
-          </div>
-        </div>
-      </section>
+      <OpenSourceSection locale={locale} />
 
       {/* 10. Newsletter — captura via API /newsletter */}
-      <section
-        id="newsletter"
-        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
-      >
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="mb-3 text-3xl font-bold tracking-tight text-brand-teal">
-            {t('section_newsletter')}
-          </h2>
-          <p className="mb-6 text-brand-gray">{t('newsletter.desc')}</p>
-          <NewsletterForm source="home" locale={locale as 'pt-br' | 'en'} />
-        </div>
-      </section>
+      <NewsletterSection locale={locale} />
 
       {/* 11. Contribua */}
-      <section
-        id="contribua"
-        className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
-      >
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="mb-4 text-3xl font-bold tracking-tight text-brand-teal">
-            {t('section_contribute')}
-          </h2>
-          <p className="mb-6 text-brand-gray">
-            {t('contribute_desc')}
-          </p>
-          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <a
-              href="https://github.com/fiscal-digital/fiscal-digital/issues/new/choose"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md bg-brand-teal px-5 py-3 text-sm font-semibold text-brand-paper transition-opacity hover:opacity-90"
-            >
-              {t('contribute_cta_issue')}
-            </a>
-            <Link
-              href={`/${locale}/apoie`}
-              prefetch
-              className="inline-flex items-center gap-2 rounded-md border border-brand-teal px-5 py-3 text-sm font-semibold text-brand-teal transition-colors hover:bg-brand-teal hover:text-brand-paper"
-            >
-              {t('contribute_cta_apoie')}
-            </Link>
-          </div>
-          <p className="mt-5 text-xs text-brand-gray">
-            {t('contribute_email')}
-          </p>
-        </div>
-      </section>
+      <ContributeSection locale={locale} />
     </main>
   )
 }

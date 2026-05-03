@@ -5,6 +5,14 @@ export const API_URL =
   'https://7vvbdbxwfz4h57j7dfk65wpux40gqayb.lambda-url.us-east-1.on.aws'
 
 /**
+ * Cotação USD→BRL fixa usada nos componentes de stats (StatsCounter,
+ * RoadmapStats). Centralizado aqui para evitar divergência (antes:
+ * 5.4 num, 5.75 noutro). Atualizar manualmente se variação > 5%.
+ * Origem: BCB PTAX, próximo do deploy de 2026-05-02.
+ */
+export const USD_TO_BRL = 5.4
+
+/**
  * Fetch alerts em build-time (server-side, dentro de generateStaticParams /
  * pages). Tolerante a falha — se a API estiver fora durante o build, retorna
  * lista vazia e o site builda com páginas estáticas mínimas.

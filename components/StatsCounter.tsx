@@ -5,9 +5,10 @@ import { useTranslations } from 'next-intl'
 import { API_URL } from '@/lib/api'
 import { activeCount, totalCount } from '@/lib/cities'
 
-// Cotação USD→BRL fixada para o MVP. Atualizar manualmente quando a variação
-// for relevante (>5%). Origem: BCB PTAX, próximo do deploy de 2026-05-02.
-const USD_TO_BRL = 5.4
+// USD_TO_BRL agora vem de lib/api.ts (centralizado, evita divergência com
+// outros componentes — antes Roadmap usava 5.75 e este 5.4).
+import { USD_TO_BRL as _USD_TO_BRL } from '@/lib/api'
+const USD_TO_BRL = _USD_TO_BRL
 
 interface StatsApiResponse {
   totalFindings: number

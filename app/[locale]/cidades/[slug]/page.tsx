@@ -15,7 +15,8 @@ import {
 import { routing } from '@/i18n/routing'
 import { CITIES, getCityBySlug, regionOf, REGION_LABELS } from '@/lib/cities'
 import { fetchAlerts, API_URL } from '@/lib/api'
-import { findingTypeLabel, findingIdToSlug, formatCurrency, formatDate } from '@/lib/findings'
+import { findingTypeLabel, formatCurrency, formatDate } from '@/lib/findings'
+import CityAlertsList from '@/components/CityAlertsList'
 import { getRiskLevel, getRiskLabel } from '@/lib/brand'
 
 type Props = {
@@ -233,50 +234,13 @@ export default async function CidadePage({ params }: Props) {
         </section>
       )}
 
-      {/* Feed */}
+      {/* Feed — client-side fetch via API real, sem depender de SSG cache */}
       <section className="px-6 py-12">
         <div className="mx-auto max-w-5xl">
           <h2 className="mb-6 text-xl font-bold tracking-tight text-brand-ink">
             {t.feedTitle}
           </h2>
-          {findings.length === 0 ? (
-            <div className="rounded-xl border border-brand-gray/15 bg-white px-6 py-12 text-center">
-              <p className="font-semibold text-brand-ink">{t.empty}</p>
-              <p className="mt-2 text-sm text-brand-gray">{t.emptyDesc}</p>
-            </div>
-          ) : (
-            <ul className="grid gap-4 sm:grid-cols-2">
-              {findings.map((f) => (
-                <li key={f.id}>
-                  <Link
-                    href={`/${locale}/alertas/${findingIdToSlug(f.id)}`}
-                    className="block rounded-xl border border-brand-gray/15 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
-                  >
-                    <div className="mb-2 flex flex-wrap items-center gap-2">
-                      <span className={`rounded-pill px-2.5 py-0.5 text-xs font-semibold ${riskBadgeClass(f.riskScore)}`}>
-                        {isPt ? 'Risco' : 'Risk'} {f.riskScore}
-                      </span>
-                      <span className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
-                        {findingTypeLabel(f.type, lang)}
-                      </span>
-                    </div>
-                    {f.narrative && (
-                      <p className="mb-3 line-clamp-3 text-sm text-brand-gray">
-                        {f.narrative.replace(/[#*]/g, '').trim()}
-                      </p>
-                    )}
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-brand-gray">
-                      {f.value != null && (
-                        <span className="font-mono">{formatCurrency(f.value, lang)}</span>
-                      )}
-                      {f.secretaria && <span>{f.secretaria}</span>}
-                      <span className="ml-auto font-mono">{formatDate(f.createdAt, lang)}</span>
-                    </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+          <CityAlertsList cityId={city.cityId} cityName={city.name} locale={lang} />
         </div>
       </section>
     </main>

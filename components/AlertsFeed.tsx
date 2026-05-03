@@ -209,18 +209,14 @@ interface CardProps {
 }
 
 function FindingCard({ finding, typeLabel, t, locale }: CardProps) {
-  const riskLabel = getRiskLabel(finding.riskScore, locale)
   const detailHref = `/${locale}/alertas/${findingIdToSlug(finding.id)}`
-
-  // UH-WEB-008: backfill quando gap entre data do diário e detecção > 30 dias
   const gazetteDate = finding.evidence?.[0]?.date
-  const isBackfill = gapDaysBetween(gazetteDate, finding.createdAt) > BACKFILL_GAP_DAYS
 
+  // Card limpo, hierarquia: tipo+risco | cidade·secretaria | valor (se houver)
+  // | narrativa truncada elegante | rodapé com data + CTA. Sem badge "Backfill"
+  // — o que importa para o usuário é a data do diário (mostrada no rodapé).
   return (
-    <article className="group relative flex flex-col rounded-xl border border-brand-gray/15 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
-      {/* BUG-WEB-003: card inteiro vira link clicável para a página de detalhe.
-          Usamos overlay invisível em vez de wrapper <Link> para preservar
-          links internos no footer (PDF, fornecedor) sem nesting de <a>. */}
+    <article className="group relative flex flex-col rounded-xl border border-brand-gray/15 bg-white p-5 shadow-sm transition-shadow hover:border-brand-teal/40 hover:shadow-md">
       <Link
         href={detailHref}
         aria-label={`${typeLabel(finding.type)} — ${finding.city}`}
@@ -229,102 +225,70 @@ function FindingCard({ finding, typeLabel, t, locale }: CardProps) {
         <span className="sr-only">{t('card.viewFull')}</span>
       </Link>
 
-      {/* Header: badges */}
+      {/* Linha 1: tipo + risco */}
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <span className={`rounded-pill px-2.5 py-0.5 text-xs font-semibold ${typeBadgeClass(finding.type)}`}>
           {typeLabel(finding.type)}
         </span>
         <span className={`rounded-pill px-2.5 py-0.5 text-xs font-semibold ${riskBadgeClass(finding.riskScore)}`}>
-          {t('card.riskScore')} {finding.riskScore} — {riskLabel}
+          {t('card.riskScore')} {finding.riskScore}
         </span>
-        {isBackfill && (
-          <span
-            className="rounded-pill border border-brand-gray/25 bg-brand-paper px-2.5 py-0.5 text-xs font-semibold text-brand-gray"
-            title={
-              locale === 'pt-br'
-                ? 'Diário oficial é anterior — achado detectado em backfill histórico'
-                : 'Official gazette predates detection — historical backfill'
-            }
-          >
-            {t('card.backfill')}
-          </span>
+      </div>
+
+      {/* Linha 2: cidade · secretaria · contrato (compacto) */}
+      <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-sm">
+        <span className="font-semibold text-brand-ink">{finding.city}</span>
+        <span className="font-mono text-xs text-brand-gray">{finding.state}</span>
+        {finding.secretaria && (
+          <>
+            <span aria-hidden="true" className="text-brand-gray/40">·</span>
+            <span className="text-xs text-brand-gray">{finding.secretaria}</span>
+          </>
+        )}
+        {finding.contractNumber && (
+          <>
+            <span aria-hidden="true" className="text-brand-gray/40">·</span>
+            <span className="font-mono text-xs text-brand-gray">
+              {locale === 'pt-br' ? 'Contrato ' : 'Contract '}{finding.contractNumber}
+            </span>
+          </>
         )}
       </div>
 
-      {/* City + state */}
-      <p className="mb-1 text-sm font-semibold text-brand-ink">
-        {finding.city} · <span className="text-brand-gray">{finding.state}</span>
-      </p>
+      {/* Valor em destaque quando relevante */}
+      {finding.value != null && (
+        <p className="mb-3 font-mono text-base font-bold text-brand-ink">
+          {formatCurrency(finding.value, locale)}
+        </p>
+      )}
 
-      {/* Subtítulo desambiguador — secretaria + contrato + CNPJ formatado */}
-      {(finding.secretaria || finding.contractNumber || finding.cnpj) && (
-        <p className="mb-2 flex flex-wrap gap-x-2 gap-y-0.5 text-xs text-brand-gray">
-          {finding.secretaria && (
-            <span className="font-semibold text-brand-ink">{finding.secretaria}</span>
-          )}
-          {finding.contractNumber && (
-            <span className="font-mono">
-              <span className="text-brand-gray/70">{locale === 'pt-br' ? 'Contrato ' : 'Contract '}</span>
-              {finding.contractNumber}
+      {/* Narrativa truncada — line-clamp-3 com balance pra quebrar bem */}
+      {finding.narrative && (
+        <p className="mb-4 line-clamp-3 text-sm leading-relaxed text-brand-gray text-pretty">
+          {finding.narrative.replace(/[#*]/g, '').replace(/\s+/g, ' ').trim()}
+        </p>
+      )}
+
+      {/* Rodapé: data do diário (referência cidadã) · confidence pequeno · CTA */}
+      <div className="mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-brand-gray/10 pt-3">
+        <div className="flex flex-col gap-0.5 text-xs text-brand-gray">
+          {gazetteDate && (
+            <span>
+              {locale === 'pt-br' ? 'Diário: ' : 'Gazette: '}
+              <span className="font-mono text-brand-ink">{formatDate(gazetteDate, locale)}</span>
             </span>
           )}
-          {finding.cnpj && (
-            <span className="font-mono text-brand-gray/80">{finding.cnpj}</span>
-          )}
-        </p>
-      )}
-
-      {/* Narrative */}
-      {finding.narrative && (
-        <p className="mb-3 text-sm leading-relaxed text-brand-gray">
-          {truncate(finding.narrative, 150)}
-        </p>
-      )}
-
-      {/* Metadata row */}
-      <dl className="mb-4 flex flex-wrap gap-x-4 gap-y-1 text-xs text-brand-gray">
-        {finding.value != null && (
-          <div className="flex gap-1">
-            <dt className="font-medium">{t('card.value')}:</dt>
-            <dd className="font-mono">{formatCurrency(finding.value, locale)}</dd>
-          </div>
-        )}
-        {finding.legalBasis && (
-          <div className="flex gap-1">
-            <dt className="font-medium">{locale === 'pt-br' ? 'Base legal' : 'Legal basis'}:</dt>
-            <dd>{finding.legalBasis}</dd>
-          </div>
-        )}
-        <div className="flex gap-1">
-          <dt className="font-medium">{t('card.date')}:</dt>
-          <dd className="font-mono">{formatDate(finding.createdAt, locale)}</dd>
+          <span className="text-brand-gray/70">
+            {t('card.confidence')}: {Math.round(finding.confidence * 100)}%
+          </span>
         </div>
-      </dl>
-
-      {/* Footer: confidence + actions
-          BUG-WEB-003: ação primária = página de detalhe; PDF é secundário */}
-      <div className="mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-brand-gray/10 pt-3">
-        <span className="text-xs text-brand-gray">
-          {t('card.confidence')}: {Math.round(finding.confidence * 100)}%
-        </span>
-        <div className="relative z-20 flex items-center gap-3">
-          <a
-            href={finding.source}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs font-semibold text-brand-gray hover:text-brand-teal"
-          >
-            {t('card.viewGazette')}
-            <ArrowSquareOut size={11} weight="bold" />
-          </a>
-          <Link
-            href={detailHref}
-            className="inline-flex items-center gap-1.5 rounded-md bg-brand-teal px-3 py-1.5 text-xs font-semibold text-brand-paper transition-opacity hover:opacity-90"
-          >
-            {t('card.viewFull')}
-            <ArrowRight size={12} weight="bold" />
-          </Link>
-        </div>
+        <Link
+          href={detailHref}
+          className="relative z-20 inline-flex items-center gap-1.5 rounded-md bg-brand-teal px-3 py-2 text-xs font-semibold text-brand-paper transition-opacity hover:opacity-90"
+        >
+          {t('card.viewFull')}
+          <ArrowRight size={12} weight="bold" />
+        </Link>
       </div>
     </article>
   )

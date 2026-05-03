@@ -3,15 +3,17 @@
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { API_URL } from '@/lib/api'
+import { USD_TO_BRL } from '@/lib/api'
 
-const USD_TO_BRL = 5.75
-
+// Schema da API /stats — espelha packages/api/src/index.ts StatsResponse.
+// Antes este componente declarava { gazettes, findings, costUsd } e a API
+// retornava { totalGazettesProcessed, totalFindings, estimatedCostUsd } —
+// resultado: contadores ao vivo do Roadmap mostravam 0. Corrigido alinhando.
 interface ApiStats {
-  gazettes?: number
-  findings?: number
-  costUsd?: number
-  costBrl?: number
-  lastRunAt?: string
+  totalGazettesProcessed?: number | null
+  totalFindings?: number
+  estimatedCostUsd?: number
+  lastFindingAt?: string | null
 }
 
 function Skeleton() {
@@ -105,8 +107,7 @@ export default function RoadmapStats() {
     }
   }
 
-  const costBrl =
-    stats?.costBrl ?? (stats?.costUsd != null ? stats.costUsd * USD_TO_BRL : 0)
+  const costBrl = (stats?.estimatedCostUsd ?? 0) * USD_TO_BRL
 
   if (error) {
     return (
@@ -118,13 +119,13 @@ export default function RoadmapStats() {
     <div className="rounded-lg border border-brand-gray/20 bg-brand-paper">
       <StatRow
         label={t('costs_live_gazettes')}
-        value={formatNumber(stats?.gazettes ?? 0)}
+        value={formatNumber(stats?.totalGazettesProcessed ?? 0)}
         loading={loading}
         mono
       />
       <StatRow
         label={t('costs_live_alerts')}
-        value={formatNumber(stats?.findings ?? 0)}
+        value={formatNumber(stats?.totalFindings ?? 0)}
         loading={loading}
         mono
       />
@@ -136,7 +137,7 @@ export default function RoadmapStats() {
       />
       <StatRow
         label={t('costs_live_last_run')}
-        value={formatDate(stats?.lastRunAt)}
+        value={formatDate(stats?.lastFindingAt ?? undefined)}
         loading={loading}
       />
     </div>

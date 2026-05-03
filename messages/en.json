@@ -78,6 +78,31 @@
       "empty_title": "First alerts in May 2026",
       "empty_desc": "The pipeline is backfilling the Caxias do Sul municipal administration (2021–present). The first public findings will appear here."
     },
+    "how": {
+      "title": "How it works",
+      "subtitle": "From gazette publication to alert — in under 24 hours",
+      "step_collect_title": "Collect",
+      "step_collect_what": "Querido Diário retrieves the official municipal gazettes published that day.",
+      "step_collect_why": "Official gazettes publish municipal acts every business day — that is where public spending becomes law. No one reads it all.",
+      "step_extract_title": "Extract",
+      "step_extract_what": "An AI model identifies company IDs (CNPJ), amounts, contract names, and the department involved.",
+      "step_extract_why": "Turning a PDF into structured data is what makes cross-referencing at scale possible.",
+      "step_analyze_title": "Analyze",
+      "step_analyze_what": "10 Fiscal Agents apply legal rules — for example, an amendment above 25% violates Art. 125 of Law 14.133.",
+      "step_analyze_why": "Each Agent watches a specific legal boundary, with documented criteria and explicit legal basis.",
+      "step_alert_title": "Alert",
+      "step_alert_what": "Findings with risk ≥ 60 and confidence ≥ 0.70 become public cards linked to the original gazette.",
+      "step_alert_why": "The thresholds ensure only findings with solid evidence are published — minimizing false positives."
+    },
+    "highlights": {
+      "title": "Featured",
+      "subtitle": "Recent findings to explore",
+      "prev_aria": "Previous alert",
+      "next_aria": "Next alert",
+      "position": "{current} of {total}",
+      "empty": "No highlights right now",
+      "error": "Could not load highlights"
+    },
     "section_cities": "Coverage",
     "cities_desc": "Cities already registered in Fiscal Digital, grouped by region.",
     "cities": {

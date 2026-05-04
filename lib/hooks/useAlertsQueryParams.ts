@@ -10,8 +10,8 @@ export interface AlertsParams {
   state: string
   city: string
   type: string
-  riskMin: number
-  riskMax: number
+  yearMin: number
+  yearMax: number
   sort: SortOption
   page: number
   limit: number
@@ -22,14 +22,15 @@ export function useAlertsQueryParams() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
+  const currentYear = new Date().getFullYear()
 
   const params: AlertsParams = {
     search: searchParams.get('search') ?? '',
     state: searchParams.get('state') ?? '',
     city: searchParams.get('city') ?? '',
     type: searchParams.get('type') ?? '',
-    riskMin: parseInt(searchParams.get('riskMin') ?? '0', 10),
-    riskMax: parseInt(searchParams.get('riskMax') ?? '100', 10),
+    yearMin: parseInt(searchParams.get('yearMin') ?? '2021', 10),
+    yearMax: parseInt(searchParams.get('yearMax') ?? String(currentYear), 10),
     sort: (searchParams.get('sort') ?? 'dateDesc') as SortOption,
     page: parseInt(searchParams.get('page') ?? '1', 10),
     limit: parseInt(searchParams.get('limit') ?? '20', 10),

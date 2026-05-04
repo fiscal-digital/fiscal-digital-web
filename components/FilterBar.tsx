@@ -14,15 +14,15 @@ interface FilterBarProps {
   state: string
   city: string
   type: string
-  riskMin: number
-  riskMax: number
-  onFilterChange: (filters: { state?: string; city?: string; type?: string; riskMin?: number; riskMax?: number }) => void
+  yearMin: number
+  yearMax: number
+  onFilterChange: (filters: { state?: string; city?: string; type?: string; yearMin?: number; yearMax?: number }) => void
   allLabel: string
 }
 
-export function FilterBar({ state, city, type, riskMin, riskMax, onFilterChange, allLabel }: FilterBarProps) {
-  const [tempRiskMin, setTempRiskMin] = useState(String(riskMin))
-  const [tempRiskMax, setTempRiskMax] = useState(String(riskMax))
+export function FilterBar({ state, city, type, yearMin, yearMax, onFilterChange, allLabel }: FilterBarProps) {
+  const currentYear = new Date().getFullYear()
+  const availableYears = [2021, 2022, 2023, 2024, 2025, 2026].filter(y => y <= currentYear)
 
   const availableCities = useMemo(() => {
     if (!state) return []
@@ -37,13 +37,6 @@ export function FilterBar({ state, city, type, riskMin, riskMax, onFilterChange,
       onFilterChange({ city: '' })
     }
   }, [state, city, availableCities, onFilterChange])
-
-  const handleRiskApply = () => {
-    onFilterChange({
-      riskMin: parseInt(tempRiskMin, 10),
-      riskMax: parseInt(tempRiskMax, 10),
-    })
-  }
 
   // All finding types
   const ALERT_TYPES = [
@@ -127,41 +120,41 @@ export function FilterBar({ state, city, type, riskMin, riskMax, onFilterChange,
         </select>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-end gap-2">
         <div className="flex flex-col gap-1">
-          <label htmlFor="risk-min" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
-            Risco mín
+          <label htmlFor="year-min" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
+            Ano (De)
           </label>
-          <input
-            id="risk-min"
-            type="number"
-            min="0"
-            max="100"
-            value={tempRiskMin}
-            onChange={(e) => setTempRiskMin(e.target.value)}
-            className="w-16 rounded-md border border-brand-gray/25 bg-white px-2 py-2 text-sm text-brand-ink focus:border-brand-teal focus:outline-none focus:ring-1 focus:ring-brand-teal"
-          />
+          <select
+            id="year-min"
+            value={yearMin}
+            onChange={(e) => onFilterChange({ yearMin: parseInt(e.target.value, 10) })}
+            className="rounded-md border border-brand-gray/25 bg-white px-3 py-2 text-sm text-brand-ink focus:border-brand-teal focus:outline-none focus:ring-1 focus:ring-brand-teal"
+          >
+            {availableYears.map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="flex flex-col gap-1">
-          <label htmlFor="risk-max" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
-            Máx
+          <label htmlFor="year-max" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
+            Até
           </label>
-          <input
-            id="risk-max"
-            type="number"
-            min="0"
-            max="100"
-            value={tempRiskMax}
-            onChange={(e) => setTempRiskMax(e.target.value)}
-            className="w-16 rounded-md border border-brand-gray/25 bg-white px-2 py-2 text-sm text-brand-ink focus:border-brand-teal focus:outline-none focus:ring-1 focus:ring-brand-teal"
-          />
+          <select
+            id="year-max"
+            value={yearMax}
+            onChange={(e) => onFilterChange({ yearMax: parseInt(e.target.value, 10) })}
+            className="rounded-md border border-brand-gray/25 bg-white px-3 py-2 text-sm text-brand-ink focus:border-brand-teal focus:outline-none focus:ring-1 focus:ring-brand-teal"
+          >
+            {availableYears.map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
         </div>
-        <button
-          onClick={handleRiskApply}
-          className="mt-5 rounded-md border border-brand-teal/40 bg-brand-teal/10 px-2 py-2 text-xs font-semibold text-brand-teal transition-colors hover:bg-brand-teal/20"
-        >
-          Aplicar
-        </button>
       </div>
     </div>
   )

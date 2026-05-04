@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 627" role="img" aria-label="Fiscal Digital — Post LinkedIn">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0D4F4A"/>
+      <stop offset="1" stop-color="#082826"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="627" fill="url(#bg)"/>
+
+  <!-- moldura interna sutil -->
+  <rect x="32" y="32" width="1136" height="497" rx="18" fill="none" stroke="#F8F5EE" stroke-opacity="0.07" stroke-width="1.5"/>
+
+  <!-- wordmark topo -->
+  <g transform="translate(64,64)">
+    <g transform="scale(0.46)">
+      <rect width="100" height="100" rx="22" fill="#F8F5EE"/>
+      <rect x="22" y="28" width="56" height="6" rx="2" fill="#0D4F4A"/>
+      <rect x="22" y="47" width="34" height="6" rx="2" fill="#0D4F4A"/>
+      <rect x="22" y="66" width="56" height="6" rx="2" fill="#0D4F4A"/>
+      <rect x="62" y="45" width="16" height="10" rx="2" fill="#F5B700"/>
+    </g>
+    <text x="62" y="36" font-family="Inter, Segoe UI, system-ui, sans-serif" font-size="28" font-weight="700" fill="#F8F5EE" letter-spacing="-0.6">
+      Fiscal <tspan font-weight="400">Digital</tspan>
+    </text>
+  </g>
+
+  <!-- selo MIT no canto direito -->
+  <g transform="translate(1136,76)">
+    <rect x="-128" y="-22" width="128" height="32" rx="16" fill="#F8F5EE" fill-opacity="0.10" stroke="#F8F5EE" stroke-opacity="0.18" stroke-width="1"/>
+    <text x="-64" y="-1" font-family="Inter, Segoe UI, system-ui, sans-serif" font-size="13" font-weight="700" fill="#F8F5EE" text-anchor="middle" letter-spacing="1.4">
+      OPEN SOURCE · MIT
+    </text>
+  </g>
+
+  <!-- eyebrow âmbar -->
+  <text x="64" y="190" font-family="Inter, Segoe UI, system-ui, sans-serif" font-size="16" font-weight="700" fill="#F5B700" letter-spacing="3">
+    FISCALIZAÇÃO AGÊNTICA  ·  OPEN SOURCE  ·  24/7
+  </text>
+
+  <!-- headline em duas linhas -->
+  <g font-family="Inter, Segoe UI, system-ui, sans-serif" fill="#F8F5EE">
+    <text x="64" y="266" font-size="62" font-weight="800" letter-spacing="-2">
+      10 agentes autônomos
+    </text>
+    <text x="64" y="334" font-size="62" font-weight="800" letter-spacing="-2">
+      em <tspan fill="#F5B700">50 cidades</tspan> brasileiras.
+    </text>
+  </g>
+
+  <!-- subhead -->
+  <g font-family="Inter, Segoe UI, system-ui, sans-serif" fill="#F8F5EE" opacity="0.88">
+    <text x="64" y="384" font-size="20" font-weight="400">
+      Cada agente tem domínio próprio, lê diários oficiais, cruza
+    </text>
+    <text x="64" y="412" font-size="20" font-weight="400">
+      contratos e gera alertas verificáveis. Toda fonte citada.
+    </text>
+  </g>
+
+  <!-- stats -->
+  <g font-family="JetBrains Mono, Consolas, monospace" fill="#F8F5EE">
+    <text x="64" y="468" font-size="18" font-weight="700" letter-spacing="1.6">
+      <tspan fill="#F5B700">50</tspan> CIDADES   ·   <tspan fill="#F5B700">617</tspan> ALERTAS PUBLICADOS   ·   <tspan fill="#F5B700">R$ 559 MI</tspan> ANALISADOS
+    </text>
+  </g>
+
+  <!-- stack técnico (credibilidade) -->
+  <g font-family="JetBrains Mono, Consolas, monospace" font-size="13" fill="#F8F5EE" opacity="0.55" letter-spacing="1.4">
+    <text x="64" y="500" font-weight="500">
+      AWS LAMBDA  ·  TYPESCRIPT  ·  TERRAFORM  ·  DYNAMODB
+    </text>
+  </g>
+
+  <!-- CTA âmbar -->
+  <rect x="0" y="547" width="1200" height="80" fill="#F5B700"/>
+  <text x="64" y="599" font-family="Inter, Segoe UI, system-ui, sans-serif" font-size="32" font-weight="800" fill="#0D4F4A" letter-spacing="-0.6">
+    APOIE A FISCALIZAÇÃO AGÊNTICA
+  </text>
+  <text x="1136" y="599" font-family="Inter, Segoe UI, system-ui, sans-serif" font-size="20" font-weight="700" fill="#0D4F4A" text-anchor="end" letter-spacing="0.4">
+    catarse.me/fiscaldigitalbr  →
+  </text>
+</svg>

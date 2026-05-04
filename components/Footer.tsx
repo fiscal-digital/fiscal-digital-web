@@ -89,9 +89,7 @@ export default async function Footer({ locale }: Props) {
                   <li key={`${section.heading}:${link.label}`}>
                     {link.comingSoon ? (
                       <span className="inline-flex items-center gap-1.5 text-brand-gray/60">
-                        <span className="line-through decoration-1 decoration-brand-gray/40">
-                          {link.label}
-                        </span>
+                        <span>{link.label}</span>
                         <span className="rounded-pill border border-brand-gray/25 bg-brand-paper px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-gray/80">
                           {t('coming_soon')}
                         </span>

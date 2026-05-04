@@ -5,8 +5,8 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { CaretLeft } from '@phosphor-icons/react/dist/ssr'
 import { routing } from '@/i18n/routing'
-import { fetchAlerts } from '@/lib/api'
-import { findingIdToSlug, slugToFindingId, findingTypeLabel } from '@/lib/findings'
+import { fetchAlerts, fetchFindingById } from '@/lib/api'
+import { findingIdToSlug, findingTypeLabel } from '@/lib/findings'
 import FindingDetail from '@/components/FindingDetail'
 import ShareButton from './ShareButton'
 
@@ -33,11 +33,10 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, id } = await params
-  const findingId = slugToFindingId(id)
 
-  // On-demand ISR: busca o finding individual via API (não limitado aos top 50).
-  const findings = await fetchAlerts({ size: 1000 })
-  const finding = findings.find((f) => f.id === findingId)
+  // GetItem O(1) por slug — funciona para qualquer finding publicado, não só
+  // os primeiros 200 (limite da paginação /alerts).
+  const finding = await fetchFindingById(id)
 
   if (!finding) {
     return { title: locale === 'pt' ? 'Alerta — Fiscal Digital' : 'Alert — Fiscal Digital' }
@@ -63,11 +62,9 @@ export default async function AlertaPage({ params }: Props) {
   if (!routing.locales.includes(locale as 'pt' | 'en')) notFound()
   setRequestLocale(locale)
 
-  const findingId = slugToFindingId(id)
-
-  // On-demand ISR: busca amplo para encontrar qualquer finding publicado.
-  const findings = await fetchAlerts({ size: 1000 })
-  const finding = findings.find((f) => f.id === findingId)
+  // GetItem O(1) por slug — substitui o padrão antigo `fetchAlerts.find()`
+  // que falhava pra findings além do cap de 200 da paginação.
+  const finding = await fetchFindingById(id)
 
   if (!finding) notFound()
 

@@ -51,6 +51,34 @@ export async function fetchAlerts(params: {
 }
 
 /**
+ * Single finding por slug (base64url do `pk` FINDING#...).
+ * Usa endpoint `GET /alerts/{slug}` da API com GetItem O(1) — substitui o
+ * padrão antigo "fetchAlerts({size:1000}).find()" que só funcionava pros
+ * primeiros N findings (cap de 200 da API). Detail page agora resolve
+ * qualquer ID válido sem percorrer paginação.
+ *
+ * Retorna `null` em 404 (gate de publicação não atendido OU finding inexistente).
+ */
+export async function fetchFindingById(slug: string): Promise<ApiFinding | null> {
+  if (!slug) return null
+  const url = `${API_URL}/alerts/${encodeURIComponent(slug)}`
+  try {
+    const res = await fetch(url, {
+      next: { revalidate: 60 },
+    })
+    if (res.status === 404) return null
+    if (!res.ok) {
+      console.warn(`[fetchFindingById] HTTP ${res.status} for ${url}`)
+      return null
+    }
+    return (await res.json()) as ApiFinding
+  } catch (err) {
+    console.warn(`[fetchFindingById] failed: ${(err as Error).message}`)
+    return null
+  }
+}
+
+/**
  * Fetch com pageInfo global — para casos onde precisamos do total real,
  * não só dos items paginados. Ex: KPI "Achados publicados" na página de
  * cidade deve mostrar pageInfo.total (192), não items.length (50).

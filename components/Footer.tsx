@@ -20,7 +20,7 @@ export default async function Footer({ locale }: Props) {
 
   const sections: Array<{
     heading: string
-    links: Array<{ label: string; href: string; external?: boolean }>
+    links: Array<{ label: string; href?: string; external?: boolean; comingSoon?: boolean }>
   }> = [
     {
       heading: t('col_about'),
@@ -35,7 +35,9 @@ export default async function Footer({ locale }: Props) {
       links: [
         { label: tNav('alertas'), href: `/${locale}/alertas` },
         { label: 'RSS', href: `/${locale}/alertas/feed.xml` },
-        { label: t('api_link'), href: 'https://api.fiscaldigital.org', external: true },
+        // api.fiscaldigital.org ainda não tem cert/DNS dedicado — Lambda
+        // Function URL atende o site mas não é endpoint público polido.
+        { label: t('api_link'), comingSoon: true },
       ],
     },
     {
@@ -85,7 +87,16 @@ export default async function Footer({ locale }: Props) {
               <ul className="space-y-2 text-sm text-brand-gray">
                 {section.links.map((link) => (
                   <li key={`${section.heading}:${link.label}`}>
-                    {link.external ? (
+                    {link.comingSoon ? (
+                      <span className="inline-flex items-center gap-1.5 text-brand-gray/60">
+                        <span className="line-through decoration-1 decoration-brand-gray/40">
+                          {link.label}
+                        </span>
+                        <span className="rounded-pill border border-brand-gray/25 bg-brand-paper px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-gray/80">
+                          {t('coming_soon')}
+                        </span>
+                      </span>
+                    ) : link.external && link.href ? (
                       <a
                         href={link.href}
                         target="_blank"
@@ -94,13 +105,15 @@ export default async function Footer({ locale }: Props) {
                       >
                         {link.label}
                       </a>
-                    ) : (
+                    ) : link.href ? (
                       <Link
                         href={link.href}
                         className="transition-colors hover:text-brand-teal"
                       >
                         {link.label}
                       </Link>
+                    ) : (
+                      <span>{link.label}</span>
                     )}
                   </li>
                 ))}

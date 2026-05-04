@@ -186,10 +186,11 @@
     "col_resources": "Data Access",
     "col_community": "Get Involved",
     "col_legal": "Transparency",
-    "api_link": "Public REST API (v1.4.0)",
+    "api_link": "Public REST API",
     "license_code": "MIT — repositories",
     "license_data": "CC-BY 4.0 — alerts",
-    "retraction_policy": "When we're wrong: correction on the same channel"
+    "retraction_policy": "When we're wrong: correction on the same channel",
+    "coming_soon": "Coming soon"
   },
   "a11y": {
     "skipToMain": "Skip to main content",

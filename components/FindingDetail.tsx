@@ -60,9 +60,9 @@ export default function FindingDetail({
     finding.cnpj || finding.contractNumber || finding.legalBasis || finding.secretaria || finding.createdAt,
   )
 
-  // UH-WEB-001 — distinguir data do diário oficial (evidence[0].date) da data
-  // em que o Fiscal detectou o achado (createdAt). Quando gap > 30d, é backfill
-  // histórico (cidadão precisa entender que não é fato recente).
+  // UH-WEB-001 — quando gap entre data do diário (evidence[0].date) e a detecção
+  // (createdAt) > 30d, sinalizamos que o fato é anterior (análise retrospectiva).
+  // Em vez de jargão "backfill", mostramos a data do diário direto — auto-explicativo.
   const gazetteDate = evidence?.date
   const detectedAt = finding.createdAt
   const gapDays = (() => {
@@ -75,7 +75,19 @@ export default function FindingDetail({
       return 0
     }
   })()
-  const isBackfill = gapDays > 30
+  const isHistorical = gapDays > 30
+  const gazetteDateLabel = (() => {
+    if (!gazetteDate) return ''
+    try {
+      const d = new Date(gazetteDate)
+      return d.toLocaleDateString(isPt ? 'pt-BR' : 'en-US', {
+        month: 'short',
+        year: 'numeric',
+      }).replace('.', '')
+    } catch {
+      return ''
+    }
+  })()
 
   return (
     <article className="space-y-6">
@@ -90,14 +102,14 @@ export default function FindingDetail({
         <span className="rounded-pill bg-brand-gray/10 px-3 py-1 text-xs font-semibold text-brand-gray">
           {isPt ? 'Confiança' : 'Confidence'} {Math.round(finding.confidence * 100)}%
         </span>
-        {isBackfill && (
+        {isHistorical && gazetteDateLabel && (
           <span
             className="rounded-pill border border-brand-gray/25 bg-brand-paper px-3 py-1 text-xs font-semibold text-brand-gray"
             title={isPt
-              ? `Diário oficial publicado há ${gapDays} dias. Achado detectado posteriormente em backfill histórico.`
-              : `Official gazette published ${gapDays} days ago. Finding detected later in historical backfill.`}
+              ? `Documento publicado em ${gazetteDate ? new Date(gazetteDate).toLocaleDateString('pt-BR') : ''}. Identificado pela análise retrospectiva do diário oficial.`
+              : `Document published on ${gazetteDate ? new Date(gazetteDate).toLocaleDateString('en-US') : ''}. Detected by retrospective analysis of the official gazette.`}
           >
-            {isPt ? 'Backfill histórico' : 'Historical backfill'}
+            {isPt ? `Diário de ${gazetteDateLabel}` : `Gazette from ${gazetteDateLabel}`}
           </span>
         )}
       </div>

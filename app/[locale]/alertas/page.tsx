@@ -1,6 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
-import AlertsFeed from '@/components/AlertsFeed'
+import AlertsFeedClient from '@/components/AlertsFeedClient'
 
 export const revalidate = 60
 
@@ -53,11 +53,11 @@ export default async function AlertasPage({ params }: Props) {
       </section>
 
       {/* Feed full width — KPIs + toolbar (filtros + RSS) + grid 3-4 colunas
-          gerenciados internamente pelo AlertsFeed. Removida sidebar lateral
+          gerenciados internamente pelo AlertsFeedClient. Removida sidebar lateral
           que desperdiçava espaço — RSS virou item da toolbar. */}
       <section className="px-6 py-10">
         <div className="mx-auto max-w-7xl">
-          <AlertsFeed locale={locale} />
+          <AlertsFeedClient locale={locale} />
         </div>
       </section>
     </main>

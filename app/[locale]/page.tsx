@@ -97,7 +97,7 @@ export default async function HomePage({ params }: Props) {
         id="indicadores"
         className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
       >
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-6xl">
           <div className="mb-10 text-center">
             <h2 className="mb-3 text-3xl font-bold tracking-tight text-brand-teal">
               {t('section_indicators')}

@@ -1,4 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import Link from 'next/link'
 import type { Metadata } from 'next'
 
 type Props = {
@@ -34,6 +35,31 @@ export default async function TransparenciaPage({ params }: Props) {
           <p className="max-w-2xl text-base opacity-80 sm:text-lg">
             {t('subtitle')}
           </p>
+        </div>
+      </section>
+
+      {/* Atalho para custos de operação */}
+      <section className="bg-brand-paper px-6 py-10">
+        <div className="mx-auto max-w-3xl">
+          <Link
+            href={`/${locale}/transparencia/custos`}
+            className="flex flex-col gap-1 rounded-lg border border-brand-gray/20 bg-brand-paper p-6 transition hover:border-brand-amber sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div>
+              <p className="mb-1 font-mono text-xs uppercase tracking-wider text-brand-amber">
+                {t('costs_link_label')}
+              </p>
+              <p className="text-lg font-semibold text-brand-teal">
+                {t('costs_link_title')}
+              </p>
+              <p className="mt-1 text-sm text-brand-gray">
+                {t('costs_link_desc')}
+              </p>
+            </div>
+            <span className="flex-shrink-0 font-mono text-sm text-brand-amber">
+              {t('costs_link_cta')} →
+            </span>
+          </Link>
         </div>
       </section>
 

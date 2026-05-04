@@ -105,8 +105,8 @@ export default async function ComparacoesPage({ params }: Props) {
 
   return (
     <main className="min-h-dvh bg-brand-paper">
-      <section className="bg-brand-teal px-6 py-12 text-brand-paper">
-        <div className="mx-auto max-w-5xl">
+      <section className="bg-brand-teal px-6 py-16 text-brand-paper">
+        <div className="mx-auto max-w-7xl">
           <Link
             href={`/${locale}`}
             className="inline-flex items-center gap-1 text-sm font-semibold text-brand-amber hover:underline"

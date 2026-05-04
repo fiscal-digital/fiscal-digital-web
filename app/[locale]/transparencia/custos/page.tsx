@@ -12,9 +12,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: t('transparencia_custos_title') }
 }
 
-// ISR: revalida a cada 1h. FiscalCustos roda 1×/dia (06:00 UTC) — 1h é
-// cadência saudável para refletir o snapshot novo sem lag perceptível.
-export const revalidate = 3600
+// ISR: revalida a cada 1min. FiscalCustos roda 1×/dia (06:00 UTC) — 1min
+// habilita transparência ao vivo (dados novos em ~1min após Lambda rodar).
+// Custo extra: +R$ 1/mês (DynamoDB reads + S3 puts) — negligenciável vs UX.
+export const revalidate = 60
 
 const BRAND_PALETTE = ['#0F4C5C', '#E36414', '#9A8C98', '#5F0F40', '#FB8B24', '#1B998B', '#A8DADC', '#457B9D']
 

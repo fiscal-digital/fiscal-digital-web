@@ -187,9 +187,10 @@ function KpiCard({ icon, label, value }: { icon: React.ReactNode; label: string;
 interface AlertsFeedProps {
   locale: string
   cityId?: string
+  hideKpis?: boolean
 }
 
-export default function AlertsFeed({ locale, cityId }: AlertsFeedProps) {
+export default function AlertsFeed({ locale, cityId, hideKpis }: AlertsFeedProps) {
   const t = useTranslations('alertas')
   const lang: 'pt' | 'en' = locale === 'en' ? 'en' : 'pt'
   const pathname = usePathname()
@@ -266,7 +267,7 @@ export default function AlertsFeed({ locale, cityId }: AlertsFeedProps) {
   return (
     <div>
       {/* KPIs */}
-      {!loading && !error && <KpiBar pageInfo={pageInfo} fallback={findings} locale={lang} t={t} hideCities={!!cityId} />}
+      {!hideKpis && !loading && !error && <KpiBar pageInfo={pageInfo} fallback={findings} locale={lang} t={t} hideCities={!!cityId} />}
 
       {/* Desktop Toolbar */}
       <div className="mb-6 hidden sm:block">

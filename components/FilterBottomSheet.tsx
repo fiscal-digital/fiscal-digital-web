@@ -1,12 +1,12 @@
 'use client'
 
 import { X } from '@phosphor-icons/react'
-import { FilterBar } from './FilterBar'
+import { FilterBar, type FilterUpdate } from './FilterBar'
 
 interface FilterBottomSheetProps {
   isOpen: boolean
   filters: { state: string; city: string; type: string; yearMin: number; yearMax: number }
-  onFilterChange: (filters: any) => void
+  onFilterChange: (filters: FilterUpdate) => void
   onClose: () => void
 }
 

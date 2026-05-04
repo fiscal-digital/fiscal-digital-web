@@ -153,7 +153,7 @@
       "success": "Done! You'll get the first alert in your inbox.",
       "invalid": "Invalid email. Check the format.",
       "error": "We couldn't subscribe you right now. Please try again shortly.",
-      "privacy": "No spam. One-click unsubscribe. You can also reach us at lineu@fiscaldigital.org any time."
+      "privacy": "No spam. One-click unsubscribe. You can also reach us at lineu[at]fiscaldigital.org any time."
     },
     "section_contribute": "Want to contribute to the project?",
     "contribute_desc": "Every contribution helps — code, data, ideas, or financial support. Here is how to start.",

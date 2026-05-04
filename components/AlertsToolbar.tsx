@@ -2,7 +2,7 @@
 
 import { RssSimple } from '@phosphor-icons/react'
 import { SearchBar } from './SearchBar'
-import { FilterBar } from './FilterBar'
+import { FilterBar, type FilterUpdate } from './FilterBar'
 import { SortDropdown } from './SortDropdown'
 import { LimitSelector } from './LimitSelector'
 import { ViewToggle } from './ViewToggle'
@@ -16,7 +16,7 @@ interface AlertsToolbarProps {
   limit: number
   view: ViewOption
   onSearchChange: (search: string) => void
-  onFilterChange: (filters: any) => void
+  onFilterChange: (filters: FilterUpdate) => void
   onSortChange: (sort: SortOption) => void
   onLimitChange: (limit: number) => void
   onViewChange: (view: ViewOption) => void

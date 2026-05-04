@@ -128,9 +128,10 @@ interface KpiBarProps {
   fallback: Finding[]
   locale: 'pt' | 'en'
   t: ReturnType<typeof useTranslations<'alertas'>>
+  hideCities?: boolean
 }
 
-function KpiBar({ pageInfo, fallback, locale, t }: KpiBarProps) {
+function KpiBar({ pageInfo, fallback, locale, t, hideCities }: KpiBarProps) {
   const stats = useMemo(() => {
     if (pageInfo) {
       return {
@@ -147,7 +148,7 @@ function KpiBar({ pageInfo, fallback, locale, t }: KpiBarProps) {
   if (stats.count === 0) return null
 
   return (
-    <dl className="mb-6 grid gap-3 sm:grid-cols-3">
+    <dl className={`mb-6 grid gap-3 ${hideCities ? 'sm:grid-cols-2' : 'sm:grid-cols-3'}`}>
       <KpiCard
         icon={<Bell size={18} weight="bold" className="text-brand-teal" />}
         label={t('kpi.alerts')}
@@ -158,11 +159,13 @@ function KpiBar({ pageInfo, fallback, locale, t }: KpiBarProps) {
         label={t('kpi.totalValue')}
         value={stats.totalValue > 0 ? formatCompactBrl(stats.totalValue) : '—'}
       />
-      <KpiCard
-        icon={<MapPin size={18} weight="bold" className="text-brand-teal" />}
-        label={t('kpi.cities')}
-        value={stats.cities.toLocaleString(locale === 'pt' ? 'pt-BR' : 'en-US')}
-      />
+      {!hideCities && (
+        <KpiCard
+          icon={<MapPin size={18} weight="bold" className="text-brand-teal" />}
+          label={t('kpi.cities')}
+          value={stats.cities.toLocaleString(locale === 'pt' ? 'pt-BR' : 'en-US')}
+        />
+      )}
     </dl>
   )
 }
@@ -183,9 +186,10 @@ function KpiCard({ icon, label, value }: { icon: React.ReactNode; label: string;
 
 interface AlertsFeedProps {
   locale: string
+  cityId?: string
 }
 
-export default function AlertsFeed({ locale }: AlertsFeedProps) {
+export default function AlertsFeed({ locale, cityId }: AlertsFeedProps) {
   const t = useTranslations('alertas')
   const lang: 'pt' | 'en' = locale === 'en' ? 'en' : 'pt'
   const pathname = usePathname()
@@ -205,8 +209,12 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
 
     const controller = new AbortController()
     const qs = new URLSearchParams()
-    if (params.state) qs.set('state', params.state)
-    if (params.city) qs.set('city', params.city)
+    if (cityId) {
+      qs.set('city', cityId)
+    } else {
+      if (params.state) qs.set('state', params.state)
+      if (params.city) qs.set('city', params.city)
+    }
     if (params.type) qs.set('type', params.type)
 
     const url = `${API_URL}/alerts${qs.size > 0 ? `?${qs.toString()}` : ''}`
@@ -229,7 +237,7 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
       .finally(() => setLoading(false))
 
     return () => controller.abort()
-  }, [params.state, params.city, params.type])
+  }, [cityId, params.state, params.city, params.type])
 
   // Filter, sort, paginate
   const filtered = useMemo(() => {
@@ -258,7 +266,7 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
   return (
     <div>
       {/* KPIs */}
-      {!loading && !error && <KpiBar pageInfo={pageInfo} fallback={findings} locale={lang} t={t} />}
+      {!loading && !error && <KpiBar pageInfo={pageInfo} fallback={findings} locale={lang} t={t} hideCities={!!cityId} />}
 
       {/* Desktop Toolbar */}
       <div className="mb-6 hidden sm:block">
@@ -280,6 +288,7 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
           onLimitChange={(l) => setParams({ limit: l, page: 1 })}
           onViewChange={(v) => setParams({ view: v })}
           stateFilter={params.state}
+          hideLocation={!!cityId}
         />
       </div>
 

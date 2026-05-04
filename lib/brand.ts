@@ -13,7 +13,7 @@ export function getRiskColor(score: number): string {
   return colors.risk[getRiskLevel(score)].hex
 }
 
-export function getRiskLabel(score: number, locale: 'pt' | 'en' = 'pt'): string {
+export function getRiskLabel(score: number, locale: 'pt-br' | 'en-us' = 'pt-br'): string {
   return colors.risk[getRiskLevel(score)].label[locale]
 }
 

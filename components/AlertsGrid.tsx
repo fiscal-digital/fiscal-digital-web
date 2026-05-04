@@ -13,7 +13,7 @@ interface AlertsGridProps {
 export function AlertsGrid({ findings, typeLabel }: AlertsGridProps) {
   const t = useTranslations('alertas')
   const pathname = usePathname()
-  const locale = pathname.split('/')[1] || 'pt'
+  const locale = pathname.split('/')[1] || 'pt-br'
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -23,7 +23,7 @@ export function AlertsGrid({ findings, typeLabel }: AlertsGridProps) {
           finding={f}
           typeLabel={typeLabel}
           t={t}
-          locale={locale as 'pt' | 'en'}
+          locale={locale as 'pt-br' | 'en-us'}
         />
       ))}
     </div>

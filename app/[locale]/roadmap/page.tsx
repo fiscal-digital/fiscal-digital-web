@@ -135,7 +135,7 @@ export default async function RoadmapPage({ params }: Props) {
     planned: t('status_planned'),
   }
 
-  const infraTable = locale === 'pt' ? INFRA_TABLE : INFRA_TABLE_EN
+  const infraTable = locale === 'pt-br' ? INFRA_TABLE : INFRA_TABLE_EN
 
   return (
     <main className="min-h-dvh bg-brand-paper">

@@ -21,6 +21,7 @@ interface AlertsToolbarProps {
   onLimitChange: (limit: number) => void
   onViewChange: (view: ViewOption) => void
   stateFilter: string
+  hideLocation?: boolean
 }
 
 const SORT_OPTIONS: Array<{ label: string; value: SortOption }> = [
@@ -46,6 +47,7 @@ export function AlertsToolbar({
   onLimitChange,
   onViewChange,
   stateFilter,
+  hideLocation,
 }: AlertsToolbarProps) {
   const rssUrl = (() => {
     const p = new URLSearchParams()
@@ -83,6 +85,7 @@ export function AlertsToolbar({
           yearMax={filters.yearMax}
           onFilterChange={onFilterChange}
           allLabel="Todas"
+          hideLocation={hideLocation}
         />
 
         <div className="flex gap-3">

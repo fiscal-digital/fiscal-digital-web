@@ -4,7 +4,6 @@ import { setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import {
   CaretLeft,
-  RssSimple,
   Buildings,
   Clock,
   ChartBar,
@@ -14,9 +13,10 @@ import {
 } from '@phosphor-icons/react/dist/ssr'
 import { routing } from '@/i18n/routing'
 import { CITIES, getCityBySlug, regionOf, REGION_LABELS } from '@/lib/cities'
-import { fetchAlertsWithTotal, API_URL } from '@/lib/api'
+import { fetchAlertsWithTotal } from '@/lib/api'
 import { formatCurrency, formatDate } from '@/lib/findings'
 import AlertsFeedClient from '@/components/AlertsFeedClient'
+import ShareButton from '@/components/ShareButton'
 import { getRiskLevel, getRiskLabel } from '@/lib/brand'
 
 type Props = {
@@ -118,7 +118,11 @@ export default async function CidadePage({ params }: Props) {
 
   const t = {
     back: isPt ? 'Voltar' : 'Back',
-    rss: isPt ? 'RSS desta cidade' : 'City RSS feed',
+    share: isPt ? 'Compartilhar' : 'Share',
+    shareLabel: isPt ? `Compartilhar ${city.name}` : `Share ${city.name}`,
+    shareText: isPt
+      ? `Achados de fiscalização em ${city.name}/${city.uf}`
+      : `Oversight findings in ${city.name}/${city.uf}`,
     statTotal: isPt ? 'Achados publicados' : 'Published findings',
     statValue: isPt ? 'Valor envolvido' : 'Total amount',
     statTypes: isPt ? 'Tipos detectados' : 'Types detected',
@@ -167,15 +171,12 @@ export default async function CidadePage({ params }: Props) {
                 </p>
               )}
             </div>
-            <a
-              href={`${API_URL}/rss?city=${city.cityId}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-md bg-brand-amber px-3 py-2 text-xs font-semibold text-brand-ink transition-opacity hover:opacity-90"
-            >
-              <RssSimple size={14} weight="fill" />
-              {t.rss}
-            </a>
+            <ShareButton
+              title={`${city.name} — Fiscal Digital`}
+              text={t.shareText}
+              label={t.shareLabel}
+              locale={lang}
+            />
           </div>
         </div>
       </section>
@@ -183,7 +184,7 @@ export default async function CidadePage({ params }: Props) {
       {/* UH-WEB-013 — Big Numbers (4 KPIs + linha contextual). Omitido quando 0 findings. */}
       {totalCount > 0 && (
         <section className="border-b border-brand-gray/10 bg-white px-6 py-8">
-          <div className="mx-auto max-w-5xl space-y-4">
+          <div className="mx-auto max-w-7xl space-y-4">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <KpiCard
                 icon={<ChartBar size={18} weight="bold" className="text-brand-teal" />}

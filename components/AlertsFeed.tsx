@@ -79,15 +79,19 @@ function matchesSearch(finding: Finding, query: string): boolean {
 
 function applySorting(findings: Finding[], sortBy: string): Finding[] {
   const sorted = [...findings]
+  const getGazetteDate = (f: Finding): number => {
+    const gazetteDate = f.evidence?.[0]?.date
+    return gazetteDate ? new Date(gazetteDate).getTime() : 0
+  }
   switch (sortBy) {
     case 'riskDesc':
       return sorted.sort((a, b) => b.riskScore - a.riskScore)
     case 'riskAsc':
       return sorted.sort((a, b) => a.riskScore - b.riskScore)
     case 'dateDesc':
-      return sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      return sorted.sort((a, b) => getGazetteDate(b) - getGazetteDate(a))
     case 'dateAsc':
-      return sorted.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      return sorted.sort((a, b) => getGazetteDate(a) - getGazetteDate(b))
     case 'valueDesc':
       return sorted.sort((a, b) => (b.value ?? 0) - (a.value ?? 0))
     case 'valueAsc':
@@ -222,13 +226,18 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
 
   // Filter, sort, paginate
   const filtered = useMemo(() => {
-    let result = findings.filter(
-      (f) =>
-        matchesSearch(f, params.search) && f.riskScore >= params.riskMin && f.riskScore <= params.riskMax
-    )
+    let result = findings.filter((f) => {
+      if (!matchesSearch(f, params.search)) return false
+      // Filter by gazette year (evidence[0] is the primary source)
+      if (f.evidence?.[0]?.date) {
+        const gazetteYear = parseInt(f.evidence[0].date.split('-')[0], 10)
+        if (gazetteYear < params.yearMin || gazetteYear > params.yearMax) return false
+      }
+      return true
+    })
     result = applySorting(result, params.sort)
     return result
-  }, [findings, params.search, params.riskMin, params.riskMax, params.sort])
+  }, [findings, params.search, params.yearMin, params.yearMax, params.sort])
 
   const totalCount = filtered.length
   const totalPages = Math.ceil(totalCount / params.limit)
@@ -252,8 +261,8 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
             state: params.state,
             city: params.city,
             type: params.type,
-            riskMin: params.riskMin,
-            riskMax: params.riskMax,
+            yearMin: params.yearMin,
+            yearMax: params.yearMax,
           }}
           sort={params.sort}
           limit={params.limit}
@@ -283,8 +292,8 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
           state: params.state,
           city: params.city,
           type: params.type,
-          riskMin: params.riskMin,
-          riskMax: params.riskMax,
+          yearMin: params.yearMin,
+          yearMax: params.yearMax,
         }}
         onFilterChange={(f) => {
           setParams({ ...f, page: 1 })

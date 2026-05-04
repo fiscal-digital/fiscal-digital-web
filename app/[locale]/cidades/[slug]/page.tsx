@@ -218,6 +218,9 @@ export default async function CidadePage({ params }: Props) {
                 label={t.statAvgRisk}
                 value={`${avgRisk} — ${avgRiskLabel}`}
                 accentClass={riskAccentClass(avgRisk)}
+                title={isPt
+                  ? `Média ponderada das pontuações dos achados publicados em ${city.name}, escala 0–100. 80–100 = Alerta crítico; 60–79 = Alerta.`
+                  : `Weighted average of the published findings' risk scores in ${city.name}, 0–100 scale. 80–100 = Critical alert; 60–79 = Alert.`}
               />
             </div>
 

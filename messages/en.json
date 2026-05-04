@@ -216,6 +216,8 @@
       "state": "State",
       "city": "City",
       "type": "Type",
+      "yearMin": "Year (From)",
+      "yearMax": "To",
       "all": "All",
       "cityDisabled": "Select a state"
     },
@@ -223,7 +225,6 @@
       "source": "View source",
       "viewFull": "View full alert",
       "viewGazette": "Official gazette",
-      "backfill": "Historical backfill",
       "riskScore": "Risk",
       "date": "Detected",
       "secretaria": "Department",

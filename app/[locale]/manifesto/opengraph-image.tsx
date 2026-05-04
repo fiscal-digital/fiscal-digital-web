@@ -14,7 +14,7 @@ export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
 
 const COPY: OgCopy = {
-  'pt-br': {
+  'pt': {
     eyebrow: 'Manifesto',
     title: 'Por que fiscalizar municípios é o trabalho mais urgente.',
     sub: 'Princípios, método e limites do Fiscal Digital.',

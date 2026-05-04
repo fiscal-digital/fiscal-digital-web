@@ -18,7 +18,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
-  const isPt = locale === 'pt-br'
+  const isPt = locale === 'pt'
   return {
     title: isPt
       ? 'Comparações entre cidades — Fiscal Digital'
@@ -40,11 +40,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  */
 export default async function ComparacoesPage({ params }: Props) {
   const { locale } = await params
-  if (!routing.locales.includes(locale as 'pt-br' | 'en')) notFound()
+  if (!routing.locales.includes(locale as 'pt' | 'en')) notFound()
   setRequestLocale(locale)
 
   const findings = await fetchAlerts({ limit: 200 })
-  const isPt = locale === 'pt-br'
+  const isPt = locale === 'pt'
 
   // ── Aggregations ────────────────────────────────────────────────────────
   const byCity = new Map<string, { name: string; uf: string; cityId: string; count: number; sumRisk: number }>()
@@ -164,7 +164,7 @@ export default async function ComparacoesPage({ params }: Props) {
               <Section title={t.typeDist}>
                 <Bars
                   rows={typeStats.map((x) => ({
-                    label: findingTypeLabel(x.type, locale as 'pt-br' | 'en'),
+                    label: findingTypeLabel(x.type, locale as 'pt' | 'en'),
                     value: (x.count / totalTypes) * 100,
                     valueLabel: `${x.count} (${Math.round((x.count / totalTypes) * 100)}%)`,
                   }))}

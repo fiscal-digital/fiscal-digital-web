@@ -81,7 +81,7 @@ export default async function FeaturedAlert({ locale }: Props) {
   })()
 
   const riskScore = finding.riskScore ?? 0
-  const riskLabel = getRiskLabel(riskScore, locale === 'en' ? 'en' : 'pt-br')
+  const riskLabel = getRiskLabel(riskScore, locale === 'en' ? 'en' : 'pt')
 
   return (
     <article className="mx-auto max-w-3xl rounded-xl border border-brand-gray/15 bg-white p-6 shadow-md">

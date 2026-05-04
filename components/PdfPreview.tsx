@@ -38,12 +38,12 @@ interface PdfPreviewProps {
   pdfProxyUrl?: string | null
   excerpt?: string
   date?: string
-  /** Locale para labels — defaults to 'pt-br'. */
-  locale?: 'pt-br' | 'en'
+  /** Locale para labels — defaults to 'pt'. */
+  locale?: 'pt' | 'en'
 }
 
 const labels = {
-  'pt-br': {
+  'pt': {
     excerpt: 'Trecho citado',
     sourceLabel: 'Fonte: Querido Diário',
     open: 'Abrir no Querido Diário',
@@ -65,10 +65,10 @@ const labels = {
   },
 } as const
 
-function formatDate(iso: string, locale: 'pt-br' | 'en'): string {
+function formatDate(iso: string, locale: 'pt' | 'en'): string {
   try {
     const d = new Date(iso)
-    return d.toLocaleDateString(locale === 'pt-br' ? 'pt-BR' : 'en-US', {
+    return d.toLocaleDateString(locale === 'pt' ? 'pt-BR' : 'en-US', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -78,7 +78,7 @@ function formatDate(iso: string, locale: 'pt-br' | 'en'): string {
   }
 }
 
-export default function PdfPreview({ source, cachedPdfUrl, pdfProxyUrl, excerpt, date, locale = 'pt-br' }: PdfPreviewProps) {
+export default function PdfPreview({ source, cachedPdfUrl, pdfProxyUrl, excerpt, date, locale = 'pt' }: PdfPreviewProps) {
   const [showInline, setShowInline] = useState(false)
   const t = labels[locale]
   // Constrói pdfProxyUrl no client a partir do API_URL real (env de build),

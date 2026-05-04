@@ -18,7 +18,7 @@ interface Props {
 }
 
 const labels = {
-  'pt-br': {
+  'pt': {
     findings: 'Achados publicados',
     gazettes: 'Diários analisados',
     cities: 'Cidades monitoradas',
@@ -42,7 +42,7 @@ function formatBrl(n: number): string {
 
 export default function HeroStats({ locale }: Props) {
   const [stats, setStats] = useState<StatsApiResponse | null>(null)
-  const lang = locale === 'en' ? 'en' : 'pt-br'
+  const lang = locale === 'en' ? 'en' : 'pt'
   const l = labels[lang]
 
   useEffect(() => {

@@ -25,7 +25,7 @@ interface Finding {
 interface Props {
   cityId: string
   cityName: string
-  locale: 'pt-br' | 'en'
+  locale: 'pt' | 'en'
 }
 
 function riskBadgeClass(score: number): string {
@@ -37,7 +37,7 @@ function riskBadgeClass(score: number): string {
 }
 
 const labels = {
-  'pt-br': {
+  'pt': {
     loading: 'Carregando alertas…',
     empty: (city: string) => `Sem alertas detectados em ${city} ainda.`,
     emptyDesc: 'Os Fiscais monitoram diariamente o diário oficial. Volte em breve.',

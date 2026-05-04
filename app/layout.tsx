@@ -73,7 +73,7 @@ const websiteJsonLd = {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: `${SITE_URL}/pt-br/alertas?q={search_term_string}`,
+      urlTemplate: `${SITE_URL}/pt/alertas?q={search_term_string}`,
     },
     'query-input': 'required name=search_term_string',
   },

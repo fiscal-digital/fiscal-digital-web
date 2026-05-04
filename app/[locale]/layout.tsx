@@ -21,11 +21,11 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
-  const isPt = locale === 'pt-br'
+  const isPt = locale === 'pt'
   return {
     alternates: {
-      canonical: isPt ? '/pt-br' : '/en',
-      languages: { 'pt-br': '/pt-br', en: '/en' },
+      canonical: isPt ? '/pt' : '/en',
+      languages: { 'pt': '/pt', en: '/en' },
     },
   }
 }
@@ -44,7 +44,7 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <html
-      lang={locale}
+      lang={locale === 'pt' ? 'pt-BR' : 'en-US'}
       className={`${inter.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >

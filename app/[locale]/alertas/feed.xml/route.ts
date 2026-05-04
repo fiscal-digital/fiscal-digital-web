@@ -21,7 +21,7 @@ export const revalidate = 60
 
 // Pré-render para cada locale
 export function generateStaticParams() {
-  return [{ locale: 'pt-br' }, { locale: 'en' }]
+  return [{ locale: 'pt' }, { locale: 'en' }]
 }
 
 export async function GET() {

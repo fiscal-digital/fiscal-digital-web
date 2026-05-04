@@ -8,7 +8,7 @@ export const OG_CONTENT_TYPE = 'image/png'
 type Locale = (typeof routing.locales)[number]
 
 export interface OgCopy {
-  'pt-br': { eyebrow: string; title: string; sub: string }
+  'pt': { eyebrow: string; title: string; sub: string }
   en: { eyebrow: string; title: string; sub: string }
 }
 

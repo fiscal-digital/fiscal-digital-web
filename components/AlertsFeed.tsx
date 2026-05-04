@@ -57,8 +57,8 @@ const BACKFILL_GAP_DAYS = 30
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function formatCurrency(value: number, locale: 'pt-br' | 'en'): string {
-  return value.toLocaleString(locale === 'pt-br' ? 'pt-BR' : 'en-US', {
+function formatCurrency(value: number, locale: 'pt' | 'en'): string {
+  return value.toLocaleString(locale === 'pt' ? 'pt-BR' : 'en-US', {
     style: 'currency',
     currency: 'BRL',
   })
@@ -70,9 +70,9 @@ function formatCompactBrl(value: number): string {
   return `R$ ${value.toFixed(0)}`
 }
 
-function formatDate(iso: string, locale: 'pt-br' | 'en'): string {
+function formatDate(iso: string, locale: 'pt' | 'en'): string {
   const d = new Date(iso)
-  return d.toLocaleDateString(locale === 'pt-br' ? 'pt-BR' : 'en-US', {
+  return d.toLocaleDateString(locale === 'pt' ? 'pt-BR' : 'en-US', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -136,7 +136,7 @@ function SkeletonCard() {
 interface KpiBarProps {
   pageInfo: PageInfo | null
   fallback: Finding[]
-  locale: 'pt-br' | 'en'
+  locale: 'pt' | 'en'
   t: ReturnType<typeof useTranslations<'alertas'>>
 }
 
@@ -169,7 +169,7 @@ function KpiBar({ pageInfo, fallback, locale, t }: KpiBarProps) {
       <KpiCard
         icon={<Bell size={18} weight="bold" className="text-brand-teal" />}
         label={t('kpi.alerts')}
-        value={stats.count.toLocaleString(locale === 'pt-br' ? 'pt-BR' : 'en-US')}
+        value={stats.count.toLocaleString(locale === 'pt' ? 'pt-BR' : 'en-US')}
       />
       <KpiCard
         icon={<CurrencyDollar size={18} weight="bold" className="text-brand-teal" />}
@@ -179,7 +179,7 @@ function KpiBar({ pageInfo, fallback, locale, t }: KpiBarProps) {
       <KpiCard
         icon={<MapPin size={18} weight="bold" className="text-brand-teal" />}
         label={t('kpi.cities')}
-        value={stats.cities.toLocaleString(locale === 'pt-br' ? 'pt-BR' : 'en-US')}
+        value={stats.cities.toLocaleString(locale === 'pt' ? 'pt-BR' : 'en-US')}
       />
     </dl>
   )
@@ -205,7 +205,7 @@ interface CardProps {
   finding: Finding
   typeLabel: (type: string) => string
   t: ReturnType<typeof useTranslations<'alertas'>>
-  locale: 'pt-br' | 'en'
+  locale: 'pt' | 'en'
 }
 
 function FindingCard({ finding, typeLabel, t, locale }: CardProps) {
@@ -249,7 +249,7 @@ function FindingCard({ finding, typeLabel, t, locale }: CardProps) {
           <>
             <span aria-hidden="true" className="text-brand-gray/40">·</span>
             <span className="font-mono text-xs text-brand-gray">
-              {locale === 'pt-br' ? 'Contrato ' : 'Contract '}{finding.contractNumber}
+              {locale === 'pt' ? 'Contrato ' : 'Contract '}{finding.contractNumber}
             </span>
           </>
         )}
@@ -274,7 +274,7 @@ function FindingCard({ finding, typeLabel, t, locale }: CardProps) {
         <div className="flex flex-col gap-0.5 text-xs text-brand-gray">
           {gazetteDate && (
             <span>
-              {locale === 'pt-br' ? 'Diário: ' : 'Gazette: '}
+              {locale === 'pt' ? 'Diário: ' : 'Gazette: '}
               <span className="font-mono text-brand-ink">{formatDate(gazetteDate, locale)}</span>
             </span>
           )}
@@ -302,7 +302,7 @@ interface AlertsFeedProps {
 
 export default function AlertsFeed({ locale }: AlertsFeedProps) {
   const t = useTranslations('alertas')
-  const lang: 'pt-br' | 'en' = locale === 'en' ? 'en' : 'pt-br'
+  const lang: 'pt' | 'en' = locale === 'en' ? 'en' : 'pt'
 
   const [findings, setFindings] = useState<Finding[]>([])
   const [pageInfo, setPageInfo] = useState<PageInfo | null>(null)
@@ -401,7 +401,7 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
           className="inline-flex items-center gap-1.5 rounded-md border border-brand-amber/40 bg-brand-amber/10 px-3 py-2 text-xs font-semibold text-brand-ink transition-colors hover:bg-brand-amber/20"
         >
           <RssSimple size={14} weight="fill" className="text-brand-amber" />
-          {lang === 'pt-br' ? 'Assinar RSS' : 'Subscribe RSS'}
+          {lang === 'pt' ? 'Assinar RSS' : 'Subscribe RSS'}
         </a>
       </div>
 

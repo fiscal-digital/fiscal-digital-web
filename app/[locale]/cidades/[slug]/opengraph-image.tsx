@@ -68,7 +68,7 @@ export default async function Image({ params }: Props) {
 
   const findingsCount = cityId ? await fetchFindingsCount(cityId) : null
 
-  const isPt = locale === 'pt-br'
+  const isPt = locale === 'pt'
 
   const eyebrow = isPt
     ? 'Fiscal Digital · Fiscalização Municipal'

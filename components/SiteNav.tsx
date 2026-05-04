@@ -41,8 +41,8 @@ export default function SiteNav({ locale }: Props) {
 
   // Substitui o segmento de locale, preservando o resto da rota
   // /pt/alertas?x=1 → /en/alertas?x=1
-  const otherLocale = locale === 'pt-br' ? 'en' : 'pt-br'
-  const swappedPathname = pathname.replace(/^\/(pt-br|en)(?=\/|$)/, `/${otherLocale}`)
+  const otherLocale = locale === 'pt' ? 'en' : 'pt'
+  const swappedPathname = pathname.replace(/^\/(pt|en)(?=\/|$)/, `/${otherLocale}`)
   const langTogglePath = swappedPathname === pathname ? `/${otherLocale}` : swappedPathname
 
   // Fecha menu ao mudar de rota
@@ -121,10 +121,10 @@ export default function SiteNav({ locale }: Props) {
             <Link
               href={langTogglePath}
               hrefLang={otherLocale}
-              aria-label={tA11y('switchLanguage', { lang: otherLocale === 'pt-br' ? 'PT' : otherLocale.toUpperCase() })}
+              aria-label={tA11y('switchLanguage', { lang: otherLocale === 'pt' ? 'PT' : otherLocale.toUpperCase() })}
               className="text-xs text-brand-gray/60 transition-colors hover:text-brand-gray"
             >
-              {otherLocale === 'pt-br' ? 'PT' : otherLocale.toUpperCase()}
+              {otherLocale === 'pt' ? 'PT' : otherLocale.toUpperCase()}
             </Link>
           </li>
         </ul>
@@ -176,10 +176,10 @@ export default function SiteNav({ locale }: Props) {
               <Link
                 href={langTogglePath}
                 hrefLang={otherLocale}
-                aria-label={tA11y('switchLanguage', { lang: otherLocale === 'pt-br' ? 'PT' : otherLocale.toUpperCase() })}
+                aria-label={tA11y('switchLanguage', { lang: otherLocale === 'pt' ? 'PT' : otherLocale.toUpperCase() })}
                 className="inline-block py-2 text-xs text-brand-gray/60 hover:text-brand-gray"
               >
-                {otherLocale === 'en' ? 'English' : 'Português'} ({otherLocale === 'pt-br' ? 'PT' : otherLocale.toUpperCase()})
+                {otherLocale === 'en' ? 'English' : 'Português'} ({otherLocale === 'pt' ? 'PT' : otherLocale.toUpperCase()})
               </Link>
             </li>
             <li>

@@ -14,7 +14,7 @@ export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
 
 const COPY: OgCopy = {
-  'pt-br': {
+  'pt': {
     eyebrow: 'Apoie',
     title: 'Independência custa dinheiro. E é barata.',
     sub: 'Apoie no Catarse — recorrente, transparente, deduzível.',

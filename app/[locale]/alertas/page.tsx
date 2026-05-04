@@ -11,17 +11,17 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'meta' })
-  const isPt = locale === 'pt-br'
-  const path = isPt ? '/pt-br/alertas' : '/en/alertas'
+  const isPt = locale === 'pt'
+  const path = isPt ? '/pt/alertas' : '/en/alertas'
   return {
     title: t('alertas_title'),
     description: t('alertas_description'),
     alternates: {
       canonical: path,
       languages: {
-        'pt-br': '/pt-br/alertas',
+        'pt': '/pt/alertas',
         en: '/en/alertas',
-        'x-default': '/pt-br/alertas',
+        'x-default': '/pt/alertas',
       },
     },
     openGraph: {

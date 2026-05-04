@@ -8,7 +8,7 @@ import { API_URL } from '@/lib/api'
 interface Props {
   /** Origem da inscrição (ex: 'home', 'apoie', 'sobre') — vai junto no payload. */
   source?: string
-  locale: 'pt-br' | 'en'
+  locale: 'pt' | 'en'
 }
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'

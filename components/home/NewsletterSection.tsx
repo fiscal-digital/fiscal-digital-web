@@ -42,7 +42,7 @@ export default async function NewsletterSection({ locale }: Props) {
           ))}
         </ul>
 
-        <NewsletterForm source="home" locale={locale as 'pt-br' | 'en'} />
+        <NewsletterForm source="home" locale={locale as 'pt' | 'en'} />
       </div>
     </section>
   )

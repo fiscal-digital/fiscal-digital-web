@@ -42,7 +42,7 @@ export default async function CitiesMap({ locale }: Props) {
   const grouped = citiesByRegion()
   const activeN = activeCount()
   const totalN = totalCount()
-  const lang: 'pt-br' | 'en' = locale === 'en' ? 'en' : 'pt-br'
+  const lang: 'pt' | 'en' = locale === 'en' ? 'en' : 'pt'
 
   // UH-WEB-014 — busca stats de findings por cidade do /cities API
   const statsMap = await fetchCityStats()
@@ -71,7 +71,7 @@ export default async function CitiesMap({ locale }: Props) {
   // Para o grid completo: ordena por findings desc, depois nome asc
   const sortedAll = [...withStats].sort((a, b) => {
     if (b.findings !== a.findings) return b.findings - a.findings
-    return a.city.name.localeCompare(b.city.name, lang === 'pt-br' ? 'pt-BR' : 'en-US')
+    return a.city.name.localeCompare(b.city.name, lang === 'pt' ? 'pt-BR' : 'en-US')
   })
 
   const findingsLabel = (n: number): string =>
@@ -225,7 +225,7 @@ export default async function CitiesMap({ locale }: Props) {
             >
               N
             </span>
-            {lang === 'pt-br' ? 'Achados publicados' : 'Published findings'}
+            {lang === 'pt' ? 'Achados publicados' : 'Published findings'}
           </span>
         </div>
       </section>

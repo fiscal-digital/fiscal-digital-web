@@ -40,7 +40,7 @@ function typeBadgeClass(type: string): string {
 
 interface FindingDetailProps {
   finding: ApiFinding
-  locale: 'pt-br' | 'en'
+  locale: 'pt' | 'en'
   showPdf?: boolean
   hideCity?: boolean
 }
@@ -51,7 +51,7 @@ export default function FindingDetail({
   showPdf = true,
   hideCity = false,
 }: FindingDetailProps) {
-  const isPt = locale === 'pt-br'
+  const isPt = locale === 'pt'
   const riskLabel = getRiskLabel(finding.riskScore, locale)
   const evidence = finding.evidence?.[0]
   const cityHref = `/${locale}/cidades/${slugForCityId(finding.cityId)}`

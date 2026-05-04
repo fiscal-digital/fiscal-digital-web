@@ -591,6 +591,15 @@
       "threshold_confidence_val": "0,70",
       "threshold_reference": "Valor referencial / repasses",
       "threshold_reference_val": "R$ 600.000 / 3 ou mais em 12 meses"
+    },
+    "label_operational": "Agente operacional",
+    "custos": {
+      "name": "FiscalCustos",
+      "role": "Transparência interna de custos da operação",
+      "description": "Diariamente às 03:00 BRT, este agente consulta o AWS Cost Explorer com granularidade diária por serviço, converte os valores para BRL pela cotação PTAX do Banco Central e publica o resultado em /transparencia/custos. Diferente dos demais Fiscais — que fiscalizam gastos públicos municipais — o FiscalCustos fiscaliza nossos próprios custos. O mesmo padrão de verificabilidade que aplicamos aos contratos públicos aplicamos a nós mesmos.",
+      "threshold_label": "Sinaliza variação relevante",
+      "threshold_value": "Mês corrente vs. mês anterior > 20% (alerta visual amber).",
+      "cta": "Ver custos atualizados"
     }
   },
   "roadmap": {

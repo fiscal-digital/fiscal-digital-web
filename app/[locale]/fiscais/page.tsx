@@ -1,4 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import Link from 'next/link'
 import type { Metadata } from 'next'
 import FiscalCard, { type FiscalCardProps, type FiscalId } from '@/components/FiscalCard'
 
@@ -148,6 +149,38 @@ export default async function FiscaisPage({ params }: Props) {
               <FiscalCard key={id} {...buildCard(id)} />
             ))}
           </div>
+
+          {/* Agentes operacionais — categoria distinta dos fiscais de fiscalização legal */}
+          <p className="mb-4 mt-12 text-xs font-semibold uppercase tracking-widest text-brand-amber">
+            {t('label_operational')}
+          </p>
+          <article className="rounded-xl border border-brand-teal/30 bg-white p-6 shadow-sm">
+            <div className="flex items-start gap-4">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-teal text-brand-paper">
+                {/* CurrencyDollar icon — inline SVG (server component) */}
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+                  <path d="M152,120H136V56h8a32,32,0,0,1,32,32,8,8,0,0,0,16,0,48.05,48.05,0,0,0-48-48h-8V24a8,8,0,0,0-16,0V40h-8a48,48,0,0,0,0,96h8v64H104a32,32,0,0,1-32-32,8,8,0,0,0-16,0,48.05,48.05,0,0,0,48,48h16v16a8,8,0,0,0,16,0V216h16a48,48,0,0,0,0-96Zm-40,0a32,32,0,0,1,0-64h8v64Zm40,80H136V136h16a32,32,0,0,1,0,64Z"/>
+                </svg>
+              </span>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-xl font-bold text-brand-ink">{t('custos.name')}</h2>
+                <p className="mt-1 text-sm text-brand-gray">{t('custos.role')}</p>
+                <p className="mt-4 text-sm leading-relaxed text-brand-ink">{t('custos.description')}</p>
+                <p className="mt-4 border-t border-brand-gray/10 pt-3 text-xs leading-relaxed text-brand-gray">
+                  <span className="font-semibold uppercase tracking-wide">{t('custos.threshold_label')}:</span>{' '}
+                  {t('custos.threshold_value')}
+                </p>
+                <p className="mt-3">
+                  <Link
+                    href={`/${locale}/transparencia/custos`}
+                    className="font-mono text-sm text-brand-teal underline-offset-4 hover:underline"
+                  >
+                    {t('custos.cta')} →
+                  </Link>
+                </p>
+              </div>
+            </div>
+          </article>
 
           <p className="mt-8 text-sm text-brand-gray">
             {locale === 'pt-br'

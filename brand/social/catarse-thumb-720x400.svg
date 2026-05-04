@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" aria-label="Fiscal Digital — Apoie no Catarse">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0D4F4A"/>
+      <stop offset="1" stop-color="#082826"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="720" height="400" fill="url(#bg)"/>
+
+  <!-- moldura interna sutil -->
+  <rect x="20" y="20" width="680" height="306" rx="14" fill="none" stroke="#F8F5EE" stroke-opacity="0.07" stroke-width="1.5"/>
+
+  <!-- wordmark topo -->
+  <g transform="translate(36,38)">
+    <g transform="scale(0.34)">
+      <rect width="100" height="100" rx="22" fill="#F8F5EE"/>
+      <rect x="22" y="28" width="56" height="6" rx="2" fill="#0D4F4A"/>
+      <rect x="22" y="47" width="34" height="6" rx="2" fill="#0D4F4A"/>
+      <rect x="22" y="66" width="56" height="6" rx="2" fill="#0D4F4A"/>
+      <rect x="62" y="45" width="16" height="10" rx="2" fill="#F5B700"/>
+    </g>
+    <text x="46" y="27" font-family="Inter, Segoe UI, system-ui, sans-serif" font-size="20" font-weight="700" fill="#F8F5EE" letter-spacing="-0.4">
+      Fiscal <tspan font-weight="400">Digital</tspan>
+    </text>
+  </g>
+
+  <!-- eyebrow âmbar -->
+  <text x="36" y="118" font-family="Inter, Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" fill="#F5B700" letter-spacing="2.4">
+    INTELIGÊNCIA ARTIFICIAL  ·  CÓDIGO ABERTO  ·  24/7
+  </text>
+
+  <!-- headline em duas linhas -->
+  <g font-family="Inter, Segoe UI, system-ui, sans-serif" fill="#F8F5EE">
+    <text x="36" y="172" font-size="40" font-weight="800" letter-spacing="-1.4">
+      10 agentes de IA
+    </text>
+    <text x="36" y="216" font-size="40" font-weight="800" letter-spacing="-1.4">
+      fiscalizando <tspan fill="#F5B700">sua cidade</tspan>.
+    </text>
+  </g>
+
+  <!-- subhead -->
+  <g font-family="Inter, Segoe UI, system-ui, sans-serif" fill="#F8F5EE" opacity="0.86">
+    <text x="36" y="252" font-size="15" font-weight="400">
+      Leem diários oficiais, cruzam contratos e geram
+    </text>
+    <text x="36" y="272" font-size="15" font-weight="400">
+      alertas verificáveis. Toda fonte citada.
+    </text>
+  </g>
+
+  <!-- stats com números em âmbar -->
+  <g font-family="JetBrains Mono, Consolas, monospace" fill="#F8F5EE">
+    <text x="36" y="310" font-size="13" font-weight="700" letter-spacing="1.3">
+      <tspan fill="#F5B700">50</tspan> CIDADES   ·   <tspan fill="#F5B700">617</tspan> ALERTAS   ·   <tspan fill="#F5B700">R$ 559 MI</tspan> ANALISADOS
+    </text>
+  </g>
+
+  <!-- CTA âmbar -->
+  <rect x="0" y="340" width="720" height="60" fill="#F5B700"/>
+  <text x="36" y="378" font-family="Inter, Segoe UI, system-ui, sans-serif" font-size="22" font-weight="800" fill="#0D4F4A" letter-spacing="-0.4">
+    APOIE NO CATARSE
+  </text>
+  <text x="684" y="378" font-family="Inter, Segoe UI, system-ui, sans-serif" font-size="14" font-weight="700" fill="#0D4F4A" text-anchor="end" letter-spacing="0.3">
+    catarse.me/fiscaldigitalbr  →
+  </text>
+</svg>

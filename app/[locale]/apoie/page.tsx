@@ -66,13 +66,14 @@ export default async function ApoiePage({ params }: Props) {
             <p className="mb-8 text-sm leading-relaxed opacity-70">
               {t('catarse_model')}
             </p>
-            <span
-              aria-disabled="true"
-              className="inline-block cursor-not-allowed rounded-lg bg-brand-amber/40 px-8 py-4 font-semibold text-brand-ink/70"
-              title={t('catarse_soon')}
+            <a
+              href="https://www.catarse.me/fiscaldigitalbr?project_id=201341"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block rounded-lg bg-brand-amber px-8 py-4 font-semibold text-brand-ink transition-opacity hover:opacity-90"
             >
-              {t('catarse_cta')} — {t('catarse_soon')}
-            </span>
+              {t('catarse_cta')}
+            </a>
           </div>
         </div>
       </section>

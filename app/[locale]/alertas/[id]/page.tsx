@@ -39,10 +39,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const finding = await fetchFindingById(id)
 
   if (!finding) {
-    return { title: locale === 'pt' ? 'Alerta — Fiscal Digital' : 'Alert — Fiscal Digital' }
+    return { title: locale === 'pt-br' ? 'Alerta — Fiscal Digital' : 'Alert — Fiscal Digital' }
   }
 
-  const typeLabel = findingTypeLabel(finding.type, locale as 'pt' | 'en')
+  const typeLabel = findingTypeLabel(finding.type, locale as 'pt-br' | 'en-us')
   const title = `[${typeLabel}] em ${finding.city} — Fiscal Digital`
   const description = (finding.narrative ?? finding.legalBasis ?? '')
     .replace(/\s+/g, ' ')
@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function AlertaPage({ params }: Props) {
   const { locale, id } = await params
-  if (!routing.locales.includes(locale as 'pt' | 'en')) notFound()
+  if (!routing.locales.includes(locale as 'pt-br' | 'en-us')) notFound()
   setRequestLocale(locale)
 
   // GetItem O(1) por slug — substitui o padrão antigo `fetchAlerts.find()`
@@ -69,19 +69,19 @@ export default async function AlertaPage({ params }: Props) {
   if (!finding) notFound()
 
   const t = {
-    'pt': {
+    'pt-br': {
       back: 'Voltar para alertas',
       shareLabel: 'Compartilhar este alerta',
       shareTitle: 'Compartilhar',
       foundInSource: 'Achado pela engine do Fiscal Digital com base no diário oficial publicado pela Prefeitura.',
     },
-    en: {
+    'en-us': {
       back: 'Back to alerts',
       shareLabel: 'Share this alert',
       shareTitle: 'Share',
       foundInSource: 'Detected by the Fiscal Digital engine based on the official gazette published by the City Hall.',
     },
-  }[locale as 'pt' | 'en']
+  }[locale as 'pt-br' | 'en-us']
 
   return (
     <main className="min-h-dvh bg-brand-paper">
@@ -96,7 +96,7 @@ export default async function AlertaPage({ params }: Props) {
             {t.back}
           </Link>
           <h1 className="mt-3 text-balance text-2xl font-bold tracking-tight sm:text-3xl">
-            {findingTypeLabel(finding.type, locale as 'pt' | 'en')} — {finding.city}
+            {findingTypeLabel(finding.type, locale as 'pt-br' | 'en-us')} — {finding.city}
           </h1>
           <p className="mt-2 text-sm opacity-70">{t.foundInSource}</p>
         </div>
@@ -105,16 +105,16 @@ export default async function AlertaPage({ params }: Props) {
       {/* Detail content */}
       <section className="px-6 py-12">
         <div className="mx-auto max-w-3xl">
-          <FindingDetail finding={finding} locale={locale as 'pt' | 'en'} />
+          <FindingDetail finding={finding} locale={locale as 'pt-br' | 'en-us'} />
 
           {/* Share */}
           <div className="mt-10 flex items-center justify-between border-t border-brand-gray/10 pt-6">
             <p className="text-xs text-brand-gray">{t.shareTitle}</p>
             <ShareButton
-              title={`${findingTypeLabel(finding.type, locale as 'pt' | 'en')} — ${finding.city}`}
+              title={`${findingTypeLabel(finding.type, locale as 'pt-br' | 'en-us')} — ${finding.city}`}
               text={(finding.narrative ?? '').slice(0, 200)}
               label={t.shareLabel}
-              locale={locale as 'pt' | 'en'}
+              locale={locale as 'pt-br' | 'en-us'}
             />
           </div>
         </div>

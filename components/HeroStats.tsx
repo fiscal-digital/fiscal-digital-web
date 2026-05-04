@@ -21,13 +21,13 @@ interface Props {
 }
 
 const labels = {
-  'pt': {
+  'pt-br': {
     findings: 'Achados publicados',
     gazettes: 'Diários analisados',
     cities: 'Cidades monitoradas',
     cost: 'Custo real de operação',
   },
-  en: {
+  'en-us': {
     findings: 'Published findings',
     gazettes: 'Gazettes analyzed',
     cities: 'Cities monitored',
@@ -47,7 +47,7 @@ export default function HeroStats({ locale }: Props) {
   const [stats, setStats] = useState<StatsApiResponse | null>(null)
   const [cost, setCost] = useState<CostMtdResponse | null>(null)
   const [costFailed, setCostFailed] = useState(false)
-  const lang = locale === 'en' ? 'en' : 'pt'
+  const lang = locale === 'en-us' ? 'en-us' : 'pt-br'
   const l = labels[lang]
 
   useEffect(() => {

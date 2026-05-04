@@ -179,17 +179,17 @@
     }
   },
   "footer": {
-    "tagline": "Autonomous oversight of Brazilian municipal public spending.",
-    "licenca": "MIT (code) · CC-BY 4.0 (data and alerts)",
-    "ombros": "© 2026. Inspired and powered by <serenata>Serenata de Amor</serenata> and <qd>Querido Diário</qd>",
-    "col_about": "About",
-    "col_resources": "Resources",
-    "col_community": "Community",
-    "col_legal": "Legal",
-    "api_link": "Public API (coming soon)",
-    "license_code": "MIT — code",
-    "license_data": "CC-BY 4.0 — data and alerts",
-    "retraction_policy": "Retraction policy"
+    "tagline": "Reads 50 cities' official gazettes, identifies risk patterns, publishes verifiable alerts. 100% transparent, 100% open source.",
+    "licenca": "Code MIT | Data and alerts CC-BY 4.0 | Unrestricted access",
+    "ombros": "© 2026. We don't compete. We extend Brazilian civic infrastructure: <serenata>Serenata de Amor</serenata> (federal) + <qd>Querido Diário</qd> (municipal infrastructure)",
+    "col_about": "Project",
+    "col_resources": "Data Access",
+    "col_community": "Get Involved",
+    "col_legal": "Transparency",
+    "api_link": "Public REST API (v1.4.0)",
+    "license_code": "MIT — repositories",
+    "license_data": "CC-BY 4.0 — alerts",
+    "retraction_policy": "When we're wrong: correction on the same channel"
   },
   "a11y": {
     "skipToMain": "Skip to main content",

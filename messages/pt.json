@@ -179,17 +179,17 @@
     }
   },
   "footer": {
-    "tagline": "Fiscalização autônoma de gastos públicos municipais no Brasil.",
-    "licenca": "MIT (código) · CC-BY 4.0 (dados e alertas)",
-    "ombros": "© 2026. Inspirado e potencializado por <serenata>Serenata de Amor</serenata> e <qd>Querido Diário</qd>",
-    "col_about": "Sobre",
-    "col_resources": "Recursos",
-    "col_community": "Comunidade",
-    "col_legal": "Legal",
-    "api_link": "API pública (em breve)",
-    "license_code": "MIT — código",
-    "license_data": "CC-BY 4.0 — dados e alertas",
-    "retraction_policy": "Política de retratação"
+    "tagline": "Lê diários oficiais de 50 cidades, identifica padrões de risco, publica alertas verificáveis. 100% transparente, 100% open source.",
+    "licenca": "Código MIT | Dados e alertas CC-BY 4.0 | Acesso irrestrito",
+    "ombros": "© 2026. Não competimos. Estendemos o ecossistema cívico brasileiro: <serenata>Serenata de Amor</serenata> (federal) + <qd>Querido Diário</qd> (infraestrutura municipal)",
+    "col_about": "Projeto",
+    "col_resources": "Acesso aos Dados",
+    "col_community": "Participe",
+    "col_legal": "Transparência",
+    "api_link": "API REST pública (v1.4.0)",
+    "license_code": "MIT — repositórios",
+    "license_data": "CC-BY 4.0 — alertas",
+    "retraction_policy": "Quando erramos: correção no mesmo canal"
   },
   "a11y": {
     "skipToMain": "Pular para o conteúdo principal",

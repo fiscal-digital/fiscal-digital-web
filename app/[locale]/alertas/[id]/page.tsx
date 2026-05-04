@@ -86,7 +86,7 @@ export default async function AlertaPage({ params }: Props) {
   return (
     <main className="min-h-dvh bg-brand-paper">
       {/* Header strip */}
-      <section className="bg-brand-teal px-6 py-10 text-brand-paper">
+      <section className="bg-brand-teal px-6 py-12 text-brand-paper">
         <div className="mx-auto max-w-3xl">
           <Link
             href={`/${locale}/alertas`}

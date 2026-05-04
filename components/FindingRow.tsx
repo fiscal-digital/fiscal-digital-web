@@ -25,9 +25,9 @@ export function FindingRow({ finding, typeLabel, locale }: FindingRowProps) {
 
   return (
     <tr className="border-b border-brand-gray/15 hover:bg-brand-gray/5 transition-colors">
-      <td className="px-4 py-3 text-sm font-semibold text-brand-ink">{typeLabel(finding.type)}</td>
-      <td className="px-4 py-3 text-sm text-brand-gray">{finding.city}</td>
-      <td className="px-4 py-3 text-sm">
+      <td className="min-w-[140px] px-4 py-3 text-sm font-semibold text-brand-ink">{typeLabel(finding.type)}</td>
+      <td className="min-w-[100px] px-4 py-3 text-sm text-brand-gray">{finding.city}</td>
+      <td className="min-w-[90px] px-4 py-3 text-sm">
         <span
           className={`rounded-pill px-2.5 py-0.5 text-xs font-semibold ${riskBadgeClass(finding.riskScore)}`}
           title={locale === 'en'
@@ -37,15 +37,15 @@ export function FindingRow({ finding, typeLabel, locale }: FindingRowProps) {
           {getRiskLabel(finding.riskScore, locale)}
         </span>
       </td>
-      {finding.value != null && (
-        <td className="px-4 py-3 text-sm font-mono text-brand-ink">
-          R$ {finding.value.toLocaleString(locale === 'pt' ? 'pt-BR' : 'en-US')}
-        </td>
-      )}
-      <td className="px-4 py-3 text-sm text-brand-gray line-clamp-1">
-        {finding.narrative ? finding.narrative.replace(/[#*]/g, '').substring(0, 100) + '…' : '—'}
+      <td className="min-w-[120px] px-4 py-3 text-sm font-mono text-brand-ink">
+        {finding.value != null
+          ? `R$ ${finding.value.toLocaleString(locale === 'pt' ? 'pt-BR' : 'en-US')}`
+          : '—'}
       </td>
-      <td className="px-4 py-3 text-right">
+      <td className="min-w-[300px] px-4 py-3 text-sm text-brand-gray">
+        {finding.narrative ? finding.narrative.replace(/[#*]/g, '').substring(0, 150) : '—'}
+      </td>
+      <td className="min-w-[70px] px-4 py-3 text-right">
         <Link
           href={detailHref}
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-teal hover:opacity-75 transition-opacity"

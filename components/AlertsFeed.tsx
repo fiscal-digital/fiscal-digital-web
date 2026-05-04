@@ -1,24 +1,19 @@
 'use client'
 
-import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { ArrowSquareOut, ArrowRight, Warning, WarningCircle, Bell, CurrencyDollar, MapPin, RssSimple } from '@phosphor-icons/react'
-import { getRiskLevel, getRiskLabel } from '@/lib/brand'
+import { usePathname } from 'next/navigation'
+import { Warning, WarningCircle, Bell, CurrencyDollar, MapPin } from '@phosphor-icons/react'
+import { useAlertsQueryParams } from '@/lib/hooks/useAlertsQueryParams'
 import { API_URL } from '@/lib/api'
-import { CITIES } from '@/lib/cities'
-import { FINDING_TYPE_LABELS, findingIdToSlug } from '@/lib/findings'
-
-// pageInfo global vindo do /alerts — KPIs usam isso (não a lista local de items
-// que pode estar paginada/filtrada).
-interface PageInfo {
-  total: number
-  page: number
-  pageSize: number
-  totalPages: number
-  totalValue: number
-  citiesCount: number
-}
+import { findingTypeLabel, FINDING_TYPE_LABELS } from '@/lib/findings'
+import { SearchBar } from './SearchBar'
+import { AlertsToolbar } from './AlertsToolbar'
+import { MobileFilterButton } from './MobileFilterButton'
+import { FilterBottomSheet } from './FilterBottomSheet'
+import { AlertsGrid } from './AlertsGrid'
+import { AlertsList } from './AlertsList'
+import { PaginationControls } from './PaginationControls'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -38,32 +33,19 @@ export interface Finding {
   narrative?: string
   source: string
   createdAt: string
-  // BUG-WEB-004 / UH-WEB-008: API expõe evidence[].date — usado para detectar backfill
   evidence?: Array<{ source: string; excerpt: string; date: string }>
 }
 
-// ── Constants ─────────────────────────────────────────────────────────────────
-
-const BR_STATES = [
-  'AC', 'AL', 'AM', 'AP', 'BA', 'CE', 'DF', 'ES', 'GO',
-  'MA', 'MG', 'MS', 'MT', 'PA', 'PB', 'PE', 'PI', 'PR',
-  'RJ', 'RN', 'RO', 'RR', 'RS', 'SC', 'SE', 'SP', 'TO',
-]
-
-// BUG-WEB-004: lista de tipos vem do source de verdade (lib/findings).
-// Antes era array hardcoded de 8; hoje cobre os 18 tipos catalogados.
-const ALERT_TYPES = Object.keys(FINDING_TYPE_LABELS)
-
-const BACKFILL_GAP_DAYS = 30
+interface PageInfo {
+  total: number
+  page: number
+  pageSize: number
+  totalPages: number
+  totalValue: number
+  citiesCount: number
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-function formatCurrency(value: number, locale: 'pt' | 'en'): string {
-  return value.toLocaleString(locale === 'pt' ? 'pt-BR' : 'en-US', {
-    style: 'currency',
-    currency: 'BRL',
-  })
-}
 
 function formatCompactBrl(value: number): string {
   if (value >= 1_000_000) return `R$ ${(value / 1_000_000).toFixed(1).replace('.', ',')}M`
@@ -71,45 +53,48 @@ function formatCompactBrl(value: number): string {
   return `R$ ${value.toFixed(0)}`
 }
 
-function formatDate(iso: string, locale: 'pt' | 'en'): string {
-  const d = new Date(iso)
-  return d.toLocaleDateString(locale === 'pt' ? 'pt-BR' : 'en-US', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  })
+function normalizeText(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .trim()
 }
 
-function truncate(text: string, maxLen: number): string {
-  if (text.length <= maxLen) return text
-  return text.slice(0, maxLen).trimEnd() + '…'
+function matchesSearch(finding: Finding, query: string): boolean {
+  if (!query) return true
+  const normalized = normalizeText(query)
+
+  const fieldsToSearch = [
+    finding.city,
+    finding.cnpj || '',
+    finding.contractNumber || '',
+    finding.narrative || '',
+    finding.secretaria || '',
+    findingTypeLabel(finding.type, 'pt'),
+  ]
+
+  return fieldsToSearch.some((f) => normalizeText(f).includes(normalized))
 }
 
-function gapDaysBetween(gazetteIso?: string, detectedIso?: string): number {
-  if (!gazetteIso || !detectedIso) return 0
-  try {
-    const g = new Date(gazetteIso).getTime()
-    const d = new Date(detectedIso).getTime()
-    return Math.floor((d - g) / 86400000)
-  } catch {
-    return 0
+function applySorting(findings: Finding[], sortBy: string): Finding[] {
+  const sorted = [...findings]
+  switch (sortBy) {
+    case 'riskDesc':
+      return sorted.sort((a, b) => b.riskScore - a.riskScore)
+    case 'riskAsc':
+      return sorted.sort((a, b) => a.riskScore - b.riskScore)
+    case 'dateDesc':
+      return sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    case 'dateAsc':
+      return sorted.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+    case 'valueDesc':
+      return sorted.sort((a, b) => (b.value ?? 0) - (a.value ?? 0))
+    case 'valueAsc':
+      return sorted.sort((a, b) => (a.value ?? 0) - (b.value ?? 0))
+    default:
+      return sorted
   }
-}
-
-function riskBadgeClass(score: number): string {
-  const level = getRiskLevel(score)
-  if (level === 'critical') return 'bg-risk-critical text-white'
-  if (level === 'alert')    return 'bg-risk-alert text-brand-ink'
-  if (level === 'low')      return 'bg-risk-low text-white'
-  return 'bg-brand-gray text-white'
-}
-
-function typeBadgeClass(type: string): string {
-  const red = ['dispensa_irregular', 'fracionamento', 'cnpj_jovem', 'inexigibilidade_sem_justificativa', 'nepotismo_indicio']
-  const orange = ['aditivo_abusivo', 'prorrogacao_excessiva', 'concentracao_fornecedor', 'pico_nomeacoes', 'rotatividade_anormal', 'publicidade_eleitoral']
-  if (red.includes(type)) return 'bg-brand-danger/10 text-brand-danger'
-  if (orange.includes(type)) return 'bg-brand-amber/15 text-brand-ink'
-  return 'bg-brand-gray/10 text-brand-gray'
 }
 
 // ── Skeleton ──────────────────────────────────────────────────────────────────
@@ -132,7 +117,7 @@ function SkeletonCard() {
   )
 }
 
-// ── KPIs ──────────────────────────────────────────────────────────────────────
+// ── KPI Bar ───────────────────────────────────────────────────────────────────
 
 interface KpiBarProps {
   pageInfo: PageInfo | null
@@ -141,13 +126,6 @@ interface KpiBarProps {
   t: ReturnType<typeof useTranslations<'alertas'>>
 }
 
-/**
- * KpiBar — números globais (sobre o conjunto inteiro filtrado, não só a página
- * visível). Usa pageInfo do API; cai em fallback computado dos items se a API
- * antiga ainda estiver respondendo sem pageInfo.
- *
- * Layout: 3 cards horizontais com ícone + label + valor grande. Mobile empilha.
- */
 function KpiBar({ pageInfo, fallback, locale, t }: KpiBarProps) {
   const stats = useMemo(() => {
     if (pageInfo) {
@@ -157,9 +135,8 @@ function KpiBar({ pageInfo, fallback, locale, t }: KpiBarProps) {
         cities: pageInfo.citiesCount,
       }
     }
-    // Fallback: API antiga sem pageInfo
     const totalValue = fallback.reduce((sum, f) => sum + (f.value ?? 0), 0)
-    const cities = new Set(fallback.map(f => f.cityId)).size
+    const cities = new Set(fallback.map((f) => f.cityId)).size
     return { count: fallback.length, totalValue, cities }
   }, [pageInfo, fallback])
 
@@ -193,105 +170,8 @@ function KpiCard({ icon, label, value }: { icon: React.ReactNode; label: string;
         {icon}
         <span>{label}</span>
       </dt>
-      <dd className="font-mono text-3xl font-bold text-brand-ink tabular-nums sm:text-4xl">
-        {value}
-      </dd>
+      <dd className="font-mono text-3xl font-bold text-brand-ink tabular-nums sm:text-4xl">{value}</dd>
     </div>
-  )
-}
-
-// ── Finding Card ──────────────────────────────────────────────────────────────
-
-interface CardProps {
-  finding: Finding
-  typeLabel: (type: string) => string
-  t: ReturnType<typeof useTranslations<'alertas'>>
-  locale: 'pt' | 'en'
-}
-
-function FindingCard({ finding, typeLabel, t, locale }: CardProps) {
-  const detailHref = `/${locale}/alertas/${findingIdToSlug(finding.id)}`
-  const gazetteDate = finding.evidence?.[0]?.date
-
-  // Card limpo, hierarquia: tipo+risco | cidade·secretaria | valor (se houver)
-  // | narrativa truncada elegante | rodapé com data + CTA. Sem badge "Backfill"
-  // — o que importa para o usuário é a data do diário (mostrada no rodapé).
-  return (
-    <article className="group relative flex flex-col rounded-xl border border-brand-gray/15 bg-white p-5 shadow-sm transition-shadow hover:border-brand-teal/40 hover:shadow-md">
-      <Link
-        href={detailHref}
-        aria-label={`${typeLabel(finding.type)} — ${finding.city}`}
-        className="absolute inset-0 z-10 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal"
-      >
-        <span className="sr-only">{t('card.viewFull')}</span>
-      </Link>
-
-      {/* Linha 1: tipo + risco */}
-      <div className="mb-3 flex flex-wrap items-center gap-2">
-        <span className={`rounded-pill px-2.5 py-0.5 text-xs font-semibold ${typeBadgeClass(finding.type)}`}>
-          {typeLabel(finding.type)}
-        </span>
-        <span className={`rounded-pill px-2.5 py-0.5 text-xs font-semibold ${riskBadgeClass(finding.riskScore)}`}>
-          {t('card.riskScore')} {finding.riskScore}
-        </span>
-      </div>
-
-      {/* Linha 2: cidade · secretaria · contrato (compacto) */}
-      <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-sm">
-        <span className="font-semibold text-brand-ink">{finding.city}</span>
-        <span className="font-mono text-xs text-brand-gray">{finding.state}</span>
-        {finding.secretaria && (
-          <>
-            <span aria-hidden="true" className="text-brand-gray/40">·</span>
-            <span className="text-xs text-brand-gray">{finding.secretaria}</span>
-          </>
-        )}
-        {finding.contractNumber && (
-          <>
-            <span aria-hidden="true" className="text-brand-gray/40">·</span>
-            <span className="font-mono text-xs text-brand-gray">
-              {locale === 'pt' ? 'Contrato ' : 'Contract '}{finding.contractNumber}
-            </span>
-          </>
-        )}
-      </div>
-
-      {/* Valor em destaque quando relevante */}
-      {finding.value != null && (
-        <p className="mb-3 font-mono text-base font-bold text-brand-ink">
-          {formatCurrency(finding.value, locale)}
-        </p>
-      )}
-
-      {/* Narrativa truncada — line-clamp-3 com balance pra quebrar bem */}
-      {finding.narrative && (
-        <p className="mb-4 line-clamp-3 text-sm leading-relaxed text-brand-gray text-pretty">
-          {finding.narrative.replace(/[#*]/g, '').replace(/\s+/g, ' ').trim()}
-        </p>
-      )}
-
-      {/* Rodapé: data do diário (referência cidadã) · confidence pequeno · CTA */}
-      <div className="mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-brand-gray/10 pt-3">
-        <div className="flex flex-col gap-0.5 text-xs text-brand-gray">
-          {gazetteDate && (
-            <span>
-              {locale === 'pt' ? 'Diário: ' : 'Gazette: '}
-              <span className="font-mono text-brand-ink">{formatDate(gazetteDate, locale)}</span>
-            </span>
-          )}
-          <span className="text-brand-gray/70">
-            {t('card.confidence')}: {Math.round(finding.confidence * 100)}%
-          </span>
-        </div>
-        <Link
-          href={detailHref}
-          className="relative z-20 inline-flex items-center gap-1.5 rounded-md bg-brand-teal px-3 py-2 text-xs font-semibold text-brand-paper transition-opacity hover:opacity-90"
-        >
-          {t('card.viewFull')}
-          <ArrowRight size={12} weight="bold" />
-        </Link>
-      </div>
-    </article>
   )
 }
 
@@ -304,38 +184,27 @@ interface AlertsFeedProps {
 export default function AlertsFeed({ locale }: AlertsFeedProps) {
   const t = useTranslations('alertas')
   const lang: 'pt' | 'en' = locale === 'en' ? 'en' : 'pt'
+  const pathname = usePathname()
+
+  const { params, setParams } = useAlertsQueryParams()
 
   const [findings, setFindings] = useState<Finding[]>([])
   const [pageInfo, setPageInfo] = useState<PageInfo | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
-  const [stateFilter, setStateFilter] = useState('')
-  const [cityFilter, setCityFilter] = useState('')
-  const [typeFilter, setTypeFilter] = useState('')
+  const [showMobileFilters, setShowMobileFilters] = useState(false)
 
-  // Cidades ativas filtradas pelo estado selecionado, ordenadas por nome.
-  const availableCities = useMemo(() => {
-    if (!stateFilter) return []
-    return Object.values(CITIES)
-      .filter((c) => c.active && c.uf === stateFilter)
-      .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
-  }, [stateFilter])
-
-  // Reset cidade quando estado muda — cidade pode não pertencer ao novo estado.
+  // Fetch findings
   useEffect(() => {
-    setCityFilter('')
-  }, [stateFilter])
-
-  const fetchAlerts = () => {
     setLoading(true)
     setError(false)
 
-    const params = new URLSearchParams()
-    if (cityFilter) params.set('city', cityFilter)
-    else if (stateFilter) params.set('state', stateFilter)
-    if (typeFilter) params.set('type', typeFilter)
+    const qs = new URLSearchParams()
+    if (params.state) qs.set('state', params.state)
+    if (params.city) qs.set('city', params.city)
+    if (params.type) qs.set('type', params.type)
 
-    const url = `${API_URL}/alerts${params.size > 0 ? `?${params.toString()}` : ''}`
+    const url = `${API_URL}/alerts${qs.size > 0 ? `?${qs.toString()}` : ''}`
 
     fetch(url)
       .then((res) => {
@@ -343,109 +212,88 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
         return res.json()
       })
       .then((data: Finding[] | { items?: Finding[]; pageInfo?: PageInfo }) => {
-        const items = Array.isArray(data) ? data : (data.items ?? [])
+        const items = Array.isArray(data) ? data : data.items ?? []
         setFindings(items)
-        setPageInfo(Array.isArray(data) ? null : (data.pageInfo ?? null))
+        setPageInfo(Array.isArray(data) ? null : data.pageInfo ?? null)
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false))
-  }
+  }, [params.state, params.city, params.type])
 
-  useEffect(() => {
-    fetchAlerts()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stateFilter, cityFilter, typeFilter])
+  // Filter, sort, paginate
+  const filtered = useMemo(() => {
+    let result = findings.filter(
+      (f) =>
+        matchesSearch(f, params.search) && f.riskScore >= params.riskMin && f.riskScore <= params.riskMax
+    )
+    result = applySorting(result, params.sort)
+    return result
+  }, [findings, params.search, params.riskMin, params.riskMax, params.sort])
+
+  const totalCount = filtered.length
+  const totalPages = Math.ceil(totalCount / params.limit)
+  const start = (params.page - 1) * params.limit
+  const pageItems = filtered.slice(start, start + params.limit)
 
   const typeLabel = (type: string): string => {
-    const key = `types.${type}` as Parameters<typeof t>[0]
-    try {
-      return t(key)
-    } catch {
-      return type
-    }
+    return findingTypeLabel(type, lang)
   }
 
   return (
     <div>
-      {/* UH-WEB-010: KPIs agregados — total alertas, valor envolvido, cidades distintas */}
+      {/* KPIs */}
       {!loading && !error && <KpiBar pageInfo={pageInfo} fallback={findings} locale={lang} t={t} />}
 
-      {/* Toolbar — filtros + RSS subscribe (substituiu sidebar lateral que
-          desperdiçava espaço imenso na direita). Sticky em scroll. */}
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-3 rounded-xl border border-brand-gray/15 bg-white p-3 shadow-sm">
-        <div className="flex flex-wrap items-end gap-3">
-          <div className="flex flex-col gap-1">
-            <label htmlFor="filter-state" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
-              {t('filters.state')}
-            </label>
-            <select
-              id="filter-state"
-              value={stateFilter}
-              onChange={(e) => setStateFilter(e.target.value)}
-              className="rounded-md border border-brand-gray/25 bg-white px-3 py-2 text-sm text-brand-ink focus:border-brand-teal focus:outline-none focus:ring-1 focus:ring-brand-teal"
-            >
-              <option value="">{t('filters.all')}</option>
-              {BR_STATES.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label htmlFor="filter-city" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
-              {t('filters.city')}
-            </label>
-            <select
-              id="filter-city"
-              value={cityFilter}
-              onChange={(e) => setCityFilter(e.target.value)}
-              disabled={!stateFilter}
-              className="rounded-md border border-brand-gray/25 bg-white px-3 py-2 text-sm text-brand-ink focus:border-brand-teal focus:outline-none focus:ring-1 focus:ring-brand-teal disabled:cursor-not-allowed disabled:bg-brand-gray/10 disabled:text-brand-gray/60"
-            >
-              <option value="">{stateFilter ? t('filters.all') : t('filters.cityDisabled')}</option>
-              {availableCities.map((c) => (
-                <option key={c.cityId} value={c.cityId}>{c.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label htmlFor="filter-type" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
-              {t('filters.type')}
-            </label>
-            <select
-              id="filter-type"
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-              className="rounded-md border border-brand-gray/25 bg-white px-3 py-2 text-sm text-brand-ink focus:border-brand-teal focus:outline-none focus:ring-1 focus:ring-brand-teal"
-            >
-              <option value="">{t('filters.all')}</option>
-              {ALERT_TYPES.map((type) => (
-                <option key={type} value={type}>{typeLabel(type)}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* RSS subscribe — vira link compacto na toolbar */}
-        <a
-          href={(() => {
-            const p = new URLSearchParams()
-            if (cityFilter) p.set('city', cityFilter)
-            else if (stateFilter) p.set('state', stateFilter)
-            if (typeFilter) p.set('type', typeFilter)
-            return `${API_URL}/rss${p.size > 0 ? `?${p.toString()}` : ''}`
-          })()}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-md border border-brand-amber/40 bg-brand-amber/10 px-3 py-2 text-xs font-semibold text-brand-ink transition-colors hover:bg-brand-amber/20"
-        >
-          <RssSimple size={14} weight="fill" className="text-brand-amber" />
-          {lang === 'pt' ? 'Assinar RSS' : 'Subscribe RSS'}
-        </a>
+      {/* Desktop Toolbar */}
+      <div className="mb-6 hidden sm:block">
+        <AlertsToolbar
+          search={params.search}
+          filters={{
+            state: params.state,
+            city: params.city,
+            type: params.type,
+            riskMin: params.riskMin,
+            riskMax: params.riskMax,
+          }}
+          sort={params.sort}
+          limit={params.limit}
+          view={params.view}
+          onSearchChange={(s) => setParams({ search: s, page: 1 })}
+          onFilterChange={(f) => setParams({ ...f, page: 1 })}
+          onSortChange={(s) => setParams({ sort: s })}
+          onLimitChange={(l) => setParams({ limit: l, page: 1 })}
+          onViewChange={(v) => setParams({ view: v })}
+          stateFilter={params.state}
+        />
       </div>
 
-      {/* Content */}
+      {/* Mobile Toolbar */}
+      <div className="mb-6 flex gap-2 sm:hidden">
+        <SearchBar
+          value={params.search}
+          onChange={(s) => setParams({ search: s, page: 1 })}
+          placeholder="Buscar..."
+        />
+        <MobileFilterButton onClick={() => setShowMobileFilters(true)} />
+      </div>
+
+      <FilterBottomSheet
+        isOpen={showMobileFilters}
+        filters={{
+          state: params.state,
+          city: params.city,
+          type: params.type,
+          riskMin: params.riskMin,
+          riskMax: params.riskMax,
+        }}
+        onFilterChange={(f) => {
+          setParams({ ...f, page: 1 })
+          setShowMobileFilters(false)
+        }}
+        onClose={() => setShowMobileFilters(false)}
+      />
+
+      {/* Loading */}
       {loading && (
         <div>
           <p className="sr-only">{t('loading')}</p>
@@ -458,12 +306,13 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
         </div>
       )}
 
+      {/* Error */}
       {!loading && error && (
         <div className="flex flex-col items-center gap-4 rounded-xl border border-brand-danger/20 bg-brand-danger/5 px-6 py-12 text-center">
           <WarningCircle size={40} className="text-brand-danger" />
           <p className="text-brand-ink">{t('error')}</p>
           <button
-            onClick={fetchAlerts}
+            onClick={() => window.location.reload()}
             className="rounded-md bg-brand-teal px-4 py-2 text-sm font-semibold text-brand-paper transition-opacity hover:opacity-90"
           >
             {t('retry')}
@@ -471,6 +320,7 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
         </div>
       )}
 
+      {/* Empty */}
       {!loading && !error && findings.length === 0 && (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-brand-gray/15 bg-brand-paper px-6 py-12 text-center">
           <Warning size={40} className="text-brand-amber" />
@@ -479,18 +329,24 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
         </div>
       )}
 
+      {/* Content */}
       {!loading && !error && findings.length > 0 && (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {findings.map((f) => (
-            <FindingCard
-              key={f.id}
-              finding={f}
-              typeLabel={typeLabel}
-              t={t}
-              locale={lang}
-            />
-          ))}
-        </div>
+        <>
+          {params.view === 'grid' ? (
+            <AlertsGrid findings={pageItems} typeLabel={typeLabel} />
+          ) : (
+            <AlertsList findings={pageItems} typeLabel={typeLabel} />
+          )}
+
+          {/* Pagination */}
+          <PaginationControls
+            page={params.page}
+            totalPages={totalPages}
+            totalCount={totalCount}
+            limit={params.limit}
+            onPageChange={(p) => setParams({ page: p })}
+          />
+        </>
       )}
     </div>
   )

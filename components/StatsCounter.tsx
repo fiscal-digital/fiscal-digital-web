@@ -75,7 +75,7 @@ function StatCard({
         <div className="mx-auto mb-2 h-9 w-24 animate-pulse rounded bg-brand-gray/15" />
       ) : (
         <p className="mb-1 font-mono text-3xl font-bold text-brand-teal sm:text-4xl tabular-nums">
-          {format(Math.round(animated))}
+          {format(animated)}
         </p>
       )}
       <p className="text-xs uppercase tracking-wider text-brand-gray">
@@ -177,7 +177,7 @@ export default function StatsCounter() {
       <StatCard
         loading={loading}
         target={costBrl}
-        format={formatBrl}
+        format={(n) => formatBrl(Math.round(n * 100) / 100)}
         label={t('cost')}
       />
     </div>

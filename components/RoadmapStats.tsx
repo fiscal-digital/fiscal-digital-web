@@ -4,13 +4,21 @@ import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { API_URL } from '@/lib/api'
 
-// Schema da API /stats — espelha packages/api/src/index.ts StatsResponse.
-// Custo já vem em BRL (moeda única do projeto, não traduzida).
+// /stats fornece volume (gazettes + findings + lastFindingAt).
+// Custo NÃO vem do /stats (estimatedCostBrl é teórico, só inferência LLM).
+// Custo real vem de /transparencia/costs/mtd (FiscalCustos), mesma fonte que
+// HeroStats e /transparencia/custos consomem. Single source of truth.
 interface ApiStats {
   totalGazettesProcessed?: number | null
   totalFindings?: number
-  estimatedCostBrl?: number
   lastFindingAt?: string | null
+}
+
+interface CostMtd {
+  currency: 'BRL'
+  lifetimeBrl: number
+  mtdBrl: number
+  updatedAt: string | null
 }
 
 function Skeleton() {
@@ -47,6 +55,7 @@ function StatRow({
 export default function RoadmapStats() {
   const t = useTranslations('roadmap')
   const [stats, setStats] = useState<ApiStats | null>(null)
+  const [cost, setCost] = useState<CostMtd | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
@@ -55,19 +64,25 @@ export default function RoadmapStats() {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 3000)
 
-    fetch(`${API_URL}/stats`, { signal: controller.signal })
-      .then((res) => {
+    Promise.allSettled([
+      fetch(`${API_URL}/stats`, { signal: controller.signal }).then((res) => {
         if (res.status === 404) return null
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         return res.json() as Promise<ApiStats>
-      })
-      .then((data) => {
+      }),
+      fetch(`${API_URL}/transparencia/costs/mtd`, { signal: controller.signal }).then((res) => {
+        if (res.status === 503 || res.status === 404) return null
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        return res.json() as Promise<CostMtd>
+      }),
+    ])
+      .then(([statsRes, costRes]) => {
         if (cancelled) return
-        setStats(data ?? {})
-      })
-      .catch(() => {
-        if (cancelled) return
-        setError(true)
+        if (statsRes.status === 'fulfilled') setStats(statsRes.value ?? {})
+        if (costRes.status === 'fulfilled') setCost(costRes.value)
+        if (statsRes.status === 'rejected' && costRes.status === 'rejected') {
+          setError(true)
+        }
       })
       .finally(() => {
         clearTimeout(timeout)
@@ -104,7 +119,8 @@ export default function RoadmapStats() {
     }
   }
 
-  const costBrl = stats?.estimatedCostBrl ?? 0
+  const lifetimeBrl = cost?.lifetimeBrl ?? 0
+  const mtdBrl = cost?.mtdBrl ?? 0
 
   if (error) {
     return (
@@ -127,8 +143,14 @@ export default function RoadmapStats() {
         mono
       />
       <StatRow
+        label={t('costs_live_mtd')}
+        value={formatBrl(mtdBrl)}
+        loading={loading}
+        mono
+      />
+      <StatRow
         label={t('costs_live_cost')}
-        value={formatBrl(costBrl)}
+        value={formatBrl(lifetimeBrl)}
         loading={loading}
         mono
       />

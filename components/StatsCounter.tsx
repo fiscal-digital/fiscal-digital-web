@@ -5,15 +5,16 @@ import { useTranslations } from 'next-intl'
 import { API_URL } from '@/lib/api'
 import { activeCount, totalCount } from '@/lib/cities'
 
-// Backend retorna estimatedCostBrl direto. Site só exibe — moeda única é BRL,
-// não traduz para outros locales. Sem conversão aqui.
-
 interface StatsApiResponse {
   totalFindings: number
   totalGazettesProcessed: number | null
-  estimatedCostBrl: number
   lastFindingAt: string | null
   uptimeDays: number
+}
+
+interface CostMtdResponse {
+  currency: 'BRL'
+  lifetimeBrl: number
 }
 
 function formatNumber(n: number): string {
@@ -87,21 +88,33 @@ function StatCard({
 export default function StatsCounter() {
   const t = useTranslations('home.stats')
   const [stats, setStats] = useState<StatsApiResponse | null>(null)
+  const [cost, setCost] = useState<CostMtdResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
   useEffect(() => {
     let cancelled = false
 
-    fetch(`${API_URL}/stats`, { cache: 'no-store' })
-      .then((res) => {
-        if (res.status === 404) return null
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        return res.json()
-      })
-      .then((data: StatsApiResponse | null) => {
+    Promise.all([
+      fetch(`${API_URL}/stats`, { cache: 'no-store' })
+        .then((res) => {
+          if (res.status === 404) return null
+          if (!res.ok) throw new Error(`HTTP ${res.status}`)
+          return res.json()
+        })
+        .catch(() => null),
+      fetch(`${API_URL}/transparencia/costs/mtd`, { cache: 'no-store' })
+        .then((res) => {
+          if (res.status === 503) return null
+          if (!res.ok) throw new Error(`HTTP ${res.status}`)
+          return res.json()
+        })
+        .catch(() => null),
+    ])
+      .then(([statsData, costData]) => {
         if (cancelled) return
-        setStats(data ?? null)
+        setStats(statsData ?? null)
+        setCost(costData ?? null)
       })
       .catch(() => {
         if (cancelled) return
@@ -122,7 +135,7 @@ export default function StatsCounter() {
 
   const gazettes = stats?.totalGazettesProcessed ?? 0
   const findings = stats?.totalFindings ?? 0
-  const costBrl = stats?.estimatedCostBrl ?? 0
+  const costBrl = cost?.lifetimeBrl ?? 0
 
   if (error && !stats) {
     return (

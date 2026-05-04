@@ -92,3 +92,59 @@ export async function fetchAlertsWithTotal(params: {
     return empty
   }
 }
+
+// ── Custos (UH-OPS-001 — FiscalCustos) ──────────────────────────────────────
+
+export interface CostServiceBreakdown {
+  service: string
+  usd: number
+  brl: number
+}
+
+export interface CostDaily {
+  date: string
+  totalBrl: number
+  totalUsd: number
+  byService: CostServiceBreakdown[]
+  ptaxBrl: number
+}
+
+export interface CostMonthly {
+  month: string
+  mtdUsd: number
+  mtdBrl: number
+  projectedUsd: number
+  projectedBrl: number
+  prevMonthBrl: number | null
+  deltaPct: number | null
+  byService: CostServiceBreakdown[]
+  ptaxBrl: number
+  capturedAt: string
+}
+
+export interface CostsResponse {
+  currency: 'BRL'
+  days: number
+  updatedAt: string | null
+  monthly: CostMonthly | null
+  daily: CostDaily[]
+}
+
+const EMPTY_COSTS: CostsResponse = {
+  currency: 'BRL',
+  days: 30,
+  updatedAt: null,
+  monthly: null,
+  daily: [],
+}
+
+export async function fetchCosts(days = 30): Promise<CostsResponse> {
+  const url = `${API_URL}/transparencia/costs?days=${days}`
+  try {
+    const res = await fetch(url, { next: { revalidate: 3600 } })
+    if (!res.ok) return EMPTY_COSTS
+    return (await res.json()) as CostsResponse
+  } catch {
+    return EMPTY_COSTS
+  }
+}

@@ -37,7 +37,7 @@
     "support_desc": "Fiscal Digital is maintained by community contributions. Every inflow and outflow is publicly reported.",
     "support_cta": "Support us on Catarse",
     "section_problem": "The problem",
-    "problem_desc": "Brazilian municipal gazettes publish, every day, spending decisions that almost no citizen has time to read. Waivers, contract amendments, appointments and procurement slip by unnoticed for lack of time, tools or technical fluency. Fiscal Digital reads these documents for you and surfaces what deserves attention — always with a link back to the original record.",
+    "problem_desc": "Every day, 5,570 Brazilian municipalities publish their acts in official gazettes: billion-dollar contracts, procurement waivers, political appointments. The content is public by law. But illegible in practice: long PDFs, no search, no alerts. Contract fragmentation, phantom suppliers and abusive amendments go unnoticed for years. Fiscal Digital reads these documents for you. Identifies risk patterns with explicit legal criteria. Publishes verifiable alerts with sources always cited.",
     "section_indicators": "By the numbers",
     "indicators_desc": "Updated on every pipeline run.",
     "stats": {

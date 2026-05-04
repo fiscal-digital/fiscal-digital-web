@@ -11,7 +11,7 @@ import type { SortOption, ViewOption } from '@/lib/hooks/useAlertsQueryParams'
 
 interface AlertsToolbarProps {
   search: string
-  filters: { state: string; city: string; type: string; riskMin: number; riskMax: number }
+  filters: { state: string; city: string; type: string; yearMin: number; yearMax: number }
   sort: SortOption
   limit: number
   view: ViewOption
@@ -57,28 +57,11 @@ export function AlertsToolbar({
 
   return (
     <div className="space-y-4">
-      {/* Row 1: Search */}
-      <SearchBar value={search} onChange={onSearchChange} placeholder="Buscar por CNPJ, contrato, fornecedor..." />
-
-      {/* Row 2: Filters + Sort + Limit + View + RSS */}
-      <div className="flex flex-wrap items-end justify-between gap-3 rounded-xl border border-brand-gray/15 bg-white p-4 shadow-sm">
-        <FilterBar
-          state={filters.state}
-          city={filters.city}
-          type={filters.type}
-          riskMin={filters.riskMin}
-          riskMax={filters.riskMax}
-          onFilterChange={onFilterChange}
-          allLabel="Todas"
-        />
-
-        <div className="flex gap-3">
-          <SortDropdown value={sort} onChange={onSortChange} options={SORT_OPTIONS} />
-          <LimitSelector value={limit} onChange={onLimitChange} options={LIMIT_OPTIONS} />
-          <ViewToggle value={view} onChange={onViewChange} />
+      {/* Row 1: Search + RSS */}
+      <div className="flex gap-3 items-end">
+        <div className="flex-1">
+          <SearchBar value={search} onChange={onSearchChange} placeholder="Buscar por CNPJ, contrato, fornecedor..." />
         </div>
-
-        {/* RSS */}
         <a
           href={rssUrl}
           target="_blank"
@@ -88,6 +71,25 @@ export function AlertsToolbar({
           <RssSimple size={14} weight="fill" className="text-brand-amber" />
           Assinar RSS
         </a>
+      </div>
+
+      {/* Row 2: Filters + Sort + Limit + View */}
+      <div className="flex flex-wrap items-end justify-between gap-3 rounded-xl border border-brand-gray/15 bg-white p-4 shadow-sm">
+        <FilterBar
+          state={filters.state}
+          city={filters.city}
+          type={filters.type}
+          yearMin={filters.yearMin}
+          yearMax={filters.yearMax}
+          onFilterChange={onFilterChange}
+          allLabel="Todas"
+        />
+
+        <div className="flex gap-3">
+          <SortDropdown value={sort} onChange={onSortChange} options={SORT_OPTIONS} />
+          <LimitSelector value={limit} onChange={onLimitChange} options={LIMIT_OPTIONS} />
+          <ViewToggle value={view} onChange={onViewChange} />
+        </div>
       </div>
     </div>
   )

@@ -5,7 +5,7 @@ import Link from 'next/link'
  * 404 customizada bilíngue.
  *
  * Server component — renderizada estaticamente por locale.
- * Em static export, Next.js gera /pt/404.html e /en/404.html
+ * Em static export, Next.js gera /pt-br/404.html e /en-us/404.html
  * que CloudFront serve em respostas 404.
  *
  * WCAG: heading h1 único, dois CTAs claros (home + alertas),
@@ -15,7 +15,7 @@ type Params = Promise<{ locale: string }>
 
 export default async function NotFound({ params }: { params?: Params }) {
   // Em not-found, params pode não existir (rota raiz). Default para PT.
-  const locale = (await params)?.locale ?? 'pt'
+  const locale = (await params)?.locale ?? 'pt-br'
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: 'notFound' })
 

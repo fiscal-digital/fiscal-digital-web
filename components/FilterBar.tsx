@@ -131,7 +131,7 @@ export function FilterBar({ state, city, type, yearMin, yearMax, onFilterChange,
           <option value="">{allLabel}</option>
           {ALERT_TYPES.map((t) => (
             <option key={t} value={t}>
-              {findingTypeLabel(t, 'pt')}
+              {findingTypeLabel(t, 'pt-br')}
             </option>
           ))}
         </select>

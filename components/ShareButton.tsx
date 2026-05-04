@@ -29,11 +29,11 @@ interface ShareButtonProps {
   title: string
   text: string
   label: string
-  locale: 'pt' | 'en'
+  locale: 'pt-br' | 'en-us'
 }
 
 const t = {
-  'pt': {
+  'pt-br': {
     copy: 'Copiar link',
     copied: 'Copiado!',
     whatsapp: 'Compartilhar no WhatsApp',
@@ -42,7 +42,7 @@ const t = {
     native: 'Compartilhar',
     nativeAria: 'Abrir menu de compartilhamento do sistema',
   },
-  en: {
+  'en-us': {
     copy: 'Copy link',
     copied: 'Copied!',
     whatsapp: 'Share on WhatsApp',

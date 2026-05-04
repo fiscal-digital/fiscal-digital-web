@@ -20,7 +20,7 @@ export const revalidate = 3600
 const BRAND_PALETTE = ['#0F4C5C', '#E36414', '#9A8C98', '#5F0F40', '#FB8B24', '#1B998B', '#A8DADC', '#457B9D']
 
 function formatBrl(value: number, locale: string): string {
-  return new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'pt-BR', {
+  return new Intl.NumberFormat(locale === 'en-us' ? 'en-US' : 'pt-BR', {
     style: 'currency',
     currency: 'BRL',
     maximumFractionDigits: 2,
@@ -29,7 +29,7 @@ function formatBrl(value: number, locale: string): string {
 
 function formatDate(iso: string, locale: string): string {
   const d = new Date(iso + 'T00:00:00Z')
-  return d.toLocaleDateString(locale === 'en' ? 'en-US' : 'pt-BR', {
+  return d.toLocaleDateString(locale === 'en-us' ? 'en-US' : 'pt-BR', {
     day: '2-digit',
     month: 'short',
     timeZone: 'UTC',
@@ -230,7 +230,7 @@ export default async function CustosPage({ params }: Props) {
                 )}
                 {data.updatedAt && (
                   <span>
-                    {t('updated_at')}: {new Date(data.updatedAt).toLocaleString(locale === 'en' ? 'en-US' : 'pt-BR', { timeZone: 'America/Sao_Paulo' })} (BRT)
+                    {t('updated_at')}: {new Date(data.updatedAt).toLocaleString(locale === 'en-us' ? 'en-US' : 'pt-BR', { timeZone: 'America/Sao_Paulo' })} (BRT)
                   </span>
                 )}
               </div>

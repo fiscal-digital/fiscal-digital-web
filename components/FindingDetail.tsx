@@ -42,78 +42,78 @@ function typeBadgeClass(type: string): string {
 // com referência legal. Usado na seção "Como interpretamos" para responder
 // "por que esse alerta apareceu".
 function triggerCriterion(type: string, isPt: boolean): string {
-  const map: Record<string, { pt: string; en: string }> = {
+  const map: Record<string, { 'pt-br': string; 'en-us': string }> = {
     dispensa_irregular: {
-      pt: 'Dispensa de licitação acima do teto legal sem justificativa adequada (Lei 14.133/2021, Art. 75).',
-      en: 'Bidding waiver above legal cap without adequate justification (Law 14.133/2021, Art. 75).',
+      'pt-br': 'Dispensa de licitação acima do teto legal sem justificativa adequada (Lei 14.133/2021, Art. 75).',
+      'en-us': 'Bidding waiver above legal cap without adequate justification (Law 14.133/2021, Art. 75).',
     },
     fracionamento: {
-      pt: 'Múltiplas dispensas ao mesmo fornecedor em 12 meses cuja soma ultrapassa o limite legal (Lei 14.133/2021, Art. 75, §1º).',
-      en: 'Multiple waivers to the same supplier within 12 months exceeding the legal cap (Law 14.133/2021, Art. 75, §1).',
+      'pt-br': 'Múltiplas dispensas ao mesmo fornecedor em 12 meses cuja soma ultrapassa o limite legal (Lei 14.133/2021, Art. 75, §1º).',
+      'en-us': 'Multiple waivers to the same supplier within 12 months exceeding the legal cap (Law 14.133/2021, Art. 75, §1).',
     },
     aditivo_abusivo: {
-      pt: 'Aditivo de valor acima de 25% do contrato original (50% no caso de reformas) — Lei 14.133/2021, Art. 125, §1º, I.',
-      en: 'Amendment above 25% of original contract value (50% for renovations) — Law 14.133/2021, Art. 125, §1, I.',
+      'pt-br': 'Aditivo de valor acima de 25% do contrato original (50% no caso de reformas) — Lei 14.133/2021, Art. 125, §1º, I.',
+      'en-us': 'Amendment above 25% of original contract value (50% for renovations) — Law 14.133/2021, Art. 125, §1, I.',
     },
     prorrogacao_excessiva: {
-      pt: 'Sucessivas prorrogações de contrato contínuo ultrapassando o teto decenal (Lei 14.133/2021, Art. 107).',
-      en: 'Successive extensions of continuous contract beyond the 10-year cap (Law 14.133/2021, Art. 107).',
+      'pt-br': 'Sucessivas prorrogações de contrato contínuo ultrapassando o teto decenal (Lei 14.133/2021, Art. 107).',
+      'en-us': 'Successive extensions of continuous contract beyond the 10-year cap (Law 14.133/2021, Art. 107).',
     },
     cnpj_jovem: {
-      pt: 'Empresa com menos de 6 meses de abertura na data da contratação — indicativo de empresa sem histórico operacional.',
-      en: 'Company opened less than 6 months before contract date — indicating no operational history.',
+      'pt-br': 'Empresa com menos de 6 meses de abertura na data da contratação — indicativo de empresa sem histórico operacional.',
+      'en-us': 'Company opened less than 6 months before contract date — indicating no operational history.',
     },
     concentracao_fornecedor: {
-      pt: 'Mesmo fornecedor concentra mais de 40% do gasto de uma secretaria em 12 meses.',
-      en: 'Single supplier concentrates more than 40% of a department\'s spending in 12 months.',
+      'pt-br': 'Mesmo fornecedor concentra mais de 40% do gasto de uma secretaria em 12 meses.',
+      'en-us': 'Single supplier concentrates more than 40% of a department\'s spending in 12 months.',
     },
     pico_nomeacoes: {
-      pt: 'Volume anormalmente alto de nomeações em janela eleitoral (≥3 atos por gazette; ≥7 fora) — Lei 9.504/97.',
-      en: 'Abnormally high volume of appointments during electoral window (≥3 acts per gazette; ≥7 outside) — Law 9.504/97.',
+      'pt-br': 'Volume anormalmente alto de nomeações em janela eleitoral (≥3 atos por gazette; ≥7 fora) — Lei 9.504/97.',
+      'en-us': 'Abnormally high volume of appointments during electoral window (≥3 acts per gazette; ≥7 outside) — Law 9.504/97.',
     },
     inexigibilidade_sem_justificativa: {
-      pt: 'Contratação por inexigibilidade sem fundamentação adequada de exclusividade ou notória especialização.',
-      en: 'Contract by non-bidding without adequate justification of exclusivity or notable specialization.',
+      'pt-br': 'Contratação por inexigibilidade sem fundamentação adequada de exclusividade ou notória especialização.',
+      'en-us': 'Contract by non-bidding without adequate justification of exclusivity or notable specialization.',
     },
     convenio_sem_chamamento: {
-      pt: 'Termo de fomento/colaboração com OSC sem registro de chamamento público prévio (Lei 13.019/2014, Art. 24).',
-      en: 'Partnership with NGO without record of prior public call (Law 13.019/2014, Art. 24).',
+      'pt-br': 'Termo de fomento/colaboração com OSC sem registro de chamamento público prévio (Lei 13.019/2014, Art. 24).',
+      'en-us': 'Partnership with NGO without record of prior public call (Law 13.019/2014, Art. 24).',
     },
     repasse_recorrente_osc: {
-      pt: 'Repasses recorrentes à mesma OSC sem renovação formal do termo de parceria.',
-      en: 'Recurring transfers to the same NGO without formal renewal of the partnership.',
+      'pt-br': 'Repasses recorrentes à mesma OSC sem renovação formal do termo de parceria.',
+      'en-us': 'Recurring transfers to the same NGO without formal renewal of the partnership.',
     },
     diaria_irregular: {
-      pt: 'Pagamento de diária acima do limite indiciário OU em fim de semana/feriado sem justificativa (Lei 8.112/90, Art. 58, por analogia).',
-      en: 'Per diem payment above indicative cap OR on weekends/holidays without justification (Law 8.112/90, Art. 58, by analogy).',
+      'pt-br': 'Pagamento de diária acima do limite indiciário OU em fim de semana/feriado sem justificativa (Lei 8.112/90, Art. 58, por analogia).',
+      'en-us': 'Per diem payment above indicative cap OR on weekends/holidays without justification (Law 8.112/90, Art. 58, by analogy).',
     },
     publicidade_eleitoral: {
-      pt: 'Contratação de publicidade institucional na janela vedada (3 meses antes da eleição até 31/12) — Lei 9.504/97, Art. 73, VI, "b".',
-      en: 'Institutional advertising during forbidden window (3 months before election through Dec 31) — Law 9.504/97, Art. 73, VI, "b".',
+      'pt-br': 'Contratação de publicidade institucional na janela vedada (3 meses antes da eleição até 31/12) — Lei 9.504/97, Art. 73, VI, "b".',
+      'en-us': 'Institutional advertising during forbidden window (3 months before election through Dec 31) — Law 9.504/97, Art. 73, VI, "b".',
     },
     locacao_sem_justificativa: {
-      pt: 'Locação por inexigibilidade sem fundamento técnico de necessidade específica (Lei 14.133/2021, Art. 74, III).',
-      en: 'Lease by non-bidding without technical justification of specific need (Law 14.133/2021, Art. 74, III).',
+      'pt-br': 'Locação por inexigibilidade sem fundamento técnico de necessidade específica (Lei 14.133/2021, Art. 74, III).',
+      'en-us': 'Lease by non-bidding without technical justification of specific need (Law 14.133/2021, Art. 74, III).',
     },
     nepotismo_indicio: {
-      pt: 'Coincidência de sobrenome incomum entre cargo comissionado e autoridade nomeante (STF Súmula Vinculante 13).',
-      en: 'Coincidence of uncommon surname between commissioned position and appointing authority (STF Binding Precedent 13).',
+      'pt-br': 'Coincidência de sobrenome incomum entre cargo comissionado e autoridade nomeante (STF Súmula Vinculante 13).',
+      'en-us': 'Coincidence of uncommon surname between commissioned position and appointing authority (STF Binding Precedent 13).',
     },
     cnpj_situacao_irregular: {
-      pt: 'Empresa contratada com situação cadastral irregular na Receita Federal na data do contrato.',
-      en: 'Contracted company with irregular registration status at Federal Revenue on contract date.',
+      'pt-br': 'Empresa contratada com situação cadastral irregular na Receita Federal na data do contrato.',
+      'en-us': 'Contracted company with irregular registration status at Federal Revenue on contract date.',
     },
     fornecedor_sancionado: {
-      pt: 'Empresa contratada consta na lista do CGU (CEIS/CNEP) como sancionada na data do contrato.',
-      en: 'Contracted company listed in CGU sanctions register (CEIS/CNEP) on contract date.',
+      'pt-br': 'Empresa contratada consta na lista do CGU (CEIS/CNEP) como sancionada na data do contrato.',
+      'en-us': 'Contracted company listed in CGU sanctions register (CEIS/CNEP) on contract date.',
     },
     rotatividade_anormal: {
-      pt: 'Padrão de exonerações e nomeações em volume estatisticamente anormal para a secretaria.',
-      en: 'Pattern of dismissals and appointments at statistically abnormal volume for the department.',
+      'pt-br': 'Padrão de exonerações e nomeações em volume estatisticamente anormal para a secretaria.',
+      'en-us': 'Pattern of dismissals and appointments at statistically abnormal volume for the department.',
     },
     padrao_recorrente: {
-      pt: '≥3 achados envolvendo o mesmo CNPJ em janela de 12 meses, identificados pelo Fiscal Geral cross-gazette.',
-      en: '≥3 findings involving the same CNPJ within 12 months, detected by the General Fiscal across gazettes.',
+      'pt-br': '≥3 achados envolvendo o mesmo CNPJ em janela de 12 meses, identificados pelo Fiscal Geral cross-gazette.',
+      'en-us': '≥3 findings involving the same CNPJ within 12 months, detected by the General Fiscal across gazettes.',
     },
   }
   const entry = map[type]
@@ -122,12 +122,12 @@ function triggerCriterion(type: string, isPt: boolean): string {
       ? 'Critério detalhado documentado em /fiscais.'
       : 'Detailed criterion documented at /fiscais.'
   }
-  return isPt ? entry.pt : entry.en
+  return isPt ? entry['pt-br'] : entry['en-us']
 }
 
 interface FindingDetailProps {
   finding: ApiFinding
-  locale: 'pt' | 'en'
+  locale: 'pt-br' | 'en-us'
   showPdf?: boolean
   hideCity?: boolean
 }
@@ -138,7 +138,7 @@ export default function FindingDetail({
   showPdf = true,
   hideCity = false,
 }: FindingDetailProps) {
-  const isPt = locale === 'pt'
+  const isPt = locale === 'pt-br'
   const riskLabel = getRiskLabel(finding.riskScore, locale)
   const evidence = finding.evidence?.[0]
   const cityHref = `/${locale}/cidades/${slugForCityId(finding.cityId)}`

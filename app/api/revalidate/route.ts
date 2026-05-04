@@ -9,7 +9,7 @@
  *   POST /api/revalidate
  *   Authorization: Bearer <WEB_REVALIDATE_SECRET>
  *   Content-Type: application/json
- *   { "tags": ["findings", "city:4305108"], "paths": ["/pt/alertas"] }
+ *   { "tags": ["findings", "city:4305108"], "paths": ["/pt-br/alertas"] }
  *
  *   200 OK    → { "revalidated": [...], "count": N }
  *   400       → { "error": "invalid_body" }

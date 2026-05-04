@@ -11,7 +11,7 @@ interface AlertsListProps {
 
 export function AlertsList({ findings, typeLabel }: AlertsListProps) {
   const pathname = usePathname()
-  const locale = pathname.split('/')[1] || 'pt'
+  const locale = pathname.split('/')[1] || 'pt-br'
 
   return (
     <div className="overflow-x-auto rounded-xl border border-brand-gray/15 bg-white shadow-sm">
@@ -28,7 +28,7 @@ export function AlertsList({ findings, typeLabel }: AlertsListProps) {
         </thead>
         <tbody>
           {findings.map((f) => (
-            <FindingRow key={f.id} finding={f} typeLabel={typeLabel} locale={locale as 'pt' | 'en'} />
+            <FindingRow key={f.id} finding={f} typeLabel={typeLabel} locale={locale as 'pt-br' | 'en-us'} />
           ))}
         </tbody>
       </table>

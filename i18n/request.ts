@@ -3,7 +3,7 @@ import { routing } from './routing'
 
 export default getRequestConfig(async ({ requestLocale }) => {
   const locale = (await requestLocale) ?? routing.defaultLocale
-  if (!routing.locales.includes(locale as 'pt' | 'en')) {
+  if (!routing.locales.includes(locale as 'pt-br' | 'en-us')) {
     // Fallback silencioso para locale padrão
     return {
       locale: routing.defaultLocale,

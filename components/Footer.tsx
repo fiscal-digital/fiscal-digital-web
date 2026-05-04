@@ -49,7 +49,7 @@ export default async function Footer({ locale }: Props) {
           external: true,
         },
         {
-          label: 'lineu [at] fiscaldigital.org',
+          label: t('contact_link'),
           href: `/${locale}/sobre`,
         },
       ],

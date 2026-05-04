@@ -91,8 +91,13 @@ export default async function FeaturedAlert({ locale }: Props) {
             {typeLabel}
           </span>
         )}
-        <span className="rounded-pill bg-brand-teal px-2.5 py-0.5 text-xs font-semibold text-brand-paper">
-          {tCard('riskScore')} {riskScore} — {riskLabel}
+        <span
+          className="rounded-pill bg-brand-teal px-2.5 py-0.5 text-xs font-semibold text-brand-paper"
+          title={locale === 'en'
+            ? `Risk score ${riskScore}/100 — calculated from the legal criteria applied by the Fiscal Agent.`
+            : `Pontuação de risco ${riskScore}/100 — calculada pelos critérios legais do Fiscal.`}
+        >
+          {riskLabel}
         </span>
       </div>
 

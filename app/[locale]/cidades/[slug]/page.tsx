@@ -16,7 +16,7 @@ import { routing } from '@/i18n/routing'
 import { CITIES, getCityBySlug, regionOf, REGION_LABELS } from '@/lib/cities'
 import { fetchAlertsWithTotal, API_URL } from '@/lib/api'
 import { findingTypeLabel, formatCurrency, formatDate } from '@/lib/findings'
-import CityAlertsList from '@/components/CityAlertsList'
+import AlertsFeedClient from '@/components/AlertsFeedClient'
 import { getRiskLevel, getRiskLabel } from '@/lib/brand'
 
 type Props = {
@@ -243,13 +243,10 @@ export default async function CidadePage({ params }: Props) {
         </section>
       )}
 
-      {/* Feed — client-side fetch via API real, sem depender de SSG cache */}
-      <section className="px-6 py-12">
-        <div className="mx-auto max-w-5xl">
-          <h2 className="mb-6 text-xl font-bold tracking-tight text-brand-ink">
-            {t.feedTitle}
-          </h2>
-          <CityAlertsList cityId={city.cityId} cityName={city.name} locale={lang} />
+      {/* Feed — AlertsFeedClient com cityId para filtrar por cidade */}
+      <section className="px-6 py-16">
+        <div className="mx-auto max-w-7xl">
+          <AlertsFeedClient locale={lang} cityId={city.cityId} />
         </div>
       </section>
     </main>

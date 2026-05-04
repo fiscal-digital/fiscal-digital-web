@@ -18,9 +18,10 @@ interface FilterBarProps {
   yearMax: number
   onFilterChange: (filters: { state?: string; city?: string; type?: string; yearMin?: number; yearMax?: number }) => void
   allLabel: string
+  hideLocation?: boolean
 }
 
-export function FilterBar({ state, city, type, yearMin, yearMax, onFilterChange, allLabel }: FilterBarProps) {
+export function FilterBar({ state, city, type, yearMin, yearMax, onFilterChange, allLabel, hideLocation }: FilterBarProps) {
   const currentYear = new Date().getFullYear()
   const availableYears = [2021, 2022, 2023, 2024, 2025, 2026].filter(y => y <= currentYear)
 
@@ -62,44 +63,48 @@ export function FilterBar({ state, city, type, yearMin, yearMax, onFilterChange,
 
   return (
     <div className="flex flex-col gap-4 sm:flex-wrap sm:flex-row sm:items-end sm:gap-3">
-      <div className="flex flex-col gap-1">
-        <label htmlFor="filter-state" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
-          Estado
-        </label>
-        <select
-          id="filter-state"
-          value={state}
-          onChange={(e) => onFilterChange({ state: e.target.value })}
-          className="rounded-md border border-brand-gray/25 bg-white px-3 py-2 text-sm text-brand-ink focus:border-brand-teal focus:outline-none focus:ring-1 focus:ring-brand-teal"
-        >
-          <option value="">{allLabel}</option>
-          {BR_STATES.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
-      </div>
+      {!hideLocation && (
+        <div className="flex flex-col gap-1">
+          <label htmlFor="filter-state" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
+            Estado
+          </label>
+          <select
+            id="filter-state"
+            value={state}
+            onChange={(e) => onFilterChange({ state: e.target.value })}
+            className="rounded-md border border-brand-gray/25 bg-white px-3 py-2 text-sm text-brand-ink focus:border-brand-teal focus:outline-none focus:ring-1 focus:ring-brand-teal"
+          >
+            <option value="">{allLabel}</option>
+            {BR_STATES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="filter-city" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
-          Cidade
-        </label>
-        <select
-          id="filter-city"
-          value={city}
-          onChange={(e) => onFilterChange({ city: e.target.value })}
-          disabled={!state}
-          className="rounded-md border border-brand-gray/25 bg-white px-3 py-2 text-sm text-brand-ink focus:border-brand-teal focus:outline-none focus:ring-1 focus:ring-brand-teal disabled:cursor-not-allowed disabled:bg-brand-gray/10 disabled:text-brand-gray/60"
-        >
-          <option value="">{state ? allLabel : 'Selecione um estado'}</option>
-          {availableCities.map((c) => (
-            <option key={c.cityId} value={c.cityId}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      {!hideLocation && (
+        <div className="flex flex-col gap-1">
+          <label htmlFor="filter-city" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
+            Cidade
+          </label>
+          <select
+            id="filter-city"
+            value={city}
+            onChange={(e) => onFilterChange({ city: e.target.value })}
+            disabled={!state}
+            className="rounded-md border border-brand-gray/25 bg-white px-3 py-2 text-sm text-brand-ink focus:border-brand-teal focus:outline-none focus:ring-1 focus:ring-brand-teal disabled:cursor-not-allowed disabled:bg-brand-gray/10 disabled:text-brand-gray/60"
+          >
+            <option value="">{state ? allLabel : 'Selecione um estado'}</option>
+            {availableCities.map((c) => (
+              <option key={c.cityId} value={c.cityId}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div className="flex flex-col gap-1">
         <label htmlFor="filter-type" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">

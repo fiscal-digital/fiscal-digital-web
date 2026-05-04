@@ -591,6 +591,15 @@
       "threshold_confidence_val": "0.70",
       "threshold_reference": "Reference value / transfers",
       "threshold_reference_val": "R$ 600,000 / 3 or more in 12 months"
+    },
+    "label_operational": "Operational agent",
+    "custos": {
+      "name": "FiscalCustos",
+      "role": "Internal transparency over the project's own costs",
+      "description": "Every day at 03:00 BRT, this agent queries AWS Cost Explorer with daily granularity by service, converts the values to BRL using the Brazilian Central Bank PTAX rate, and publishes the result on /transparencia/custos. Unlike the other Fiscais — which oversee municipal public spending — FiscalCustos oversees our own operational costs. The same verifiability standard we apply to public contracts we apply to ourselves.",
+      "threshold_label": "Flags relevant variation",
+      "threshold_value": "Current month vs. previous month > 20% (amber visual alert).",
+      "cta": "See current costs"
     }
   },
   "roadmap": {

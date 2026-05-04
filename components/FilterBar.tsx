@@ -61,7 +61,7 @@ export function FilterBar({ state, city, type, yearMin, yearMax, onFilterChange,
   ]
 
   return (
-    <div className="flex flex-wrap items-end gap-3">
+    <div className="flex flex-col gap-4 sm:flex-wrap sm:flex-row sm:items-end sm:gap-3">
       <div className="flex flex-col gap-1">
         <label htmlFor="filter-state" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
           Estado
@@ -120,7 +120,7 @@ export function FilterBar({ state, city, type, yearMin, yearMax, onFilterChange,
         </select>
       </div>
 
-      <div className="flex items-end gap-2">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-2">
         <div className="flex flex-col gap-1">
           <label htmlFor="year-min" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
             Ano (De)

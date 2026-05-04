@@ -41,64 +41,6 @@ const TIMELINE_ITEMS: TimelineItem[] = [
   { labelKey: 'sprint6_label', dateKey: 'sprint6_date', descKey: 'sprint6_desc', status: 'planned' },
 ]
 
-const INFRA_TABLE = [
-  {
-    component: 'Análise de gazettes (extração)',
-    service: 'AWS Bedrock',
-    cost: '~R$ 0,27 por 1.000 gazettes',
-  },
-  {
-    component: 'Geração de narrativas',
-    service: 'AWS Bedrock',
-    cost: '~R$ 4,44 por 1.000 alertas',
-  },
-  {
-    component: 'Armazenamento',
-    service: 'AWS DynamoDB + S3',
-    cost: '< R$ 10',
-  },
-  {
-    component: 'Site',
-    service: 'AWS CloudFront',
-    cost: '< R$ 5',
-  },
-  {
-    component: 'Limite configurado',
-    service: 'AWS Budget',
-    cost: 'R$ 115 alerta / R$ 115 bloqueio',
-    highlight: true,
-  },
-]
-
-const INFRA_TABLE_EN = [
-  {
-    component: 'Gazette analysis (extraction)',
-    service: 'AWS Bedrock',
-    cost: '~R$ 0.27 per 1,000 gazettes',
-  },
-  {
-    component: 'Narrative generation',
-    service: 'AWS Bedrock',
-    cost: '~R$ 4.44 per 1,000 alerts',
-  },
-  {
-    component: 'Storage',
-    service: 'AWS DynamoDB + S3',
-    cost: '< R$ 10',
-  },
-  {
-    component: 'Site',
-    service: 'AWS CloudFront',
-    cost: '< R$ 5',
-  },
-  {
-    component: 'Configured limit',
-    service: 'AWS Budget',
-    cost: 'R$ 115 alert / R$ 115 block',
-    highlight: true,
-  },
-]
-
 function StatusBadge({ status, labels }: { status: TimelineStatus; labels: { done: string; active: string; planned: string } }) {
   if (status === 'done') {
     return (
@@ -135,7 +77,6 @@ export default async function RoadmapPage({ params }: Props) {
     planned: t('status_planned'),
   }
 
-  const infraTable = locale === 'pt-br' ? INFRA_TABLE : INFRA_TABLE_EN
 
   return (
     <main className="min-h-dvh bg-brand-paper">
@@ -280,43 +221,20 @@ export default async function RoadmapPage({ params }: Props) {
             <RoadmapStats />
           </div>
 
-          {/* 4B — Modelo de infraestrutura (estático) */}
-          <div>
-            <h3 className="mb-4 text-lg font-semibold text-brand-ink">
+          {/* 4B — Detalhamento (CTA para página canônica do FiscalCustos) */}
+          <div className="rounded-lg border border-brand-gray/20 bg-brand-paper p-6">
+            <h3 className="mb-2 text-lg font-semibold text-brand-ink">
               {t('costs_infra_title')}
             </h3>
-            <div className="overflow-x-auto rounded-lg border border-brand-gray/20">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-brand-teal text-brand-paper">
-                  <tr>
-                    <th className="px-4 py-3 font-semibold">{t('costs_infra_component')}</th>
-                    <th className="px-4 py-3 font-semibold">{t('costs_infra_service')}</th>
-                    <th className="px-4 py-3 font-semibold">{t('costs_infra_cost')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {infraTable.map((row, i) => (
-                    <tr
-                      key={row.component}
-                      className={
-                        row.highlight
-                          ? 'bg-brand-amber/10 font-semibold'
-                          : i % 2 === 0
-                            ? 'bg-brand-paper'
-                            : 'bg-brand-gray/5'
-                      }
-                    >
-                      <td className="px-4 py-3 text-brand-ink">{row.component}</td>
-                      <td className="px-4 py-3 font-mono text-xs text-brand-gray">{row.service}</td>
-                      <td className="px-4 py-3 font-mono text-xs text-brand-ink">{row.cost}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="mt-3 text-xs text-brand-gray">
+            <p className="mb-4 text-sm leading-relaxed text-brand-gray">
               {t('costs_infra_note')}
             </p>
+            <Link
+              href={`/${locale}/transparencia/custos`}
+              className="inline-flex items-center gap-2 rounded-md border border-brand-teal px-4 py-2 text-sm font-semibold text-brand-teal transition-colors hover:bg-brand-teal hover:text-brand-paper"
+            >
+              {t('costs_infra_cta')} →
+            </Link>
           </div>
 
           {/* 4C — Modelo de captação */}

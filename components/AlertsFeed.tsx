@@ -203,6 +203,7 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
     setLoading(true)
     setError(false)
 
+    const controller = new AbortController()
     const qs = new URLSearchParams()
     if (params.state) qs.set('state', params.state)
     if (params.city) qs.set('city', params.city)
@@ -210,7 +211,7 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
 
     const url = `${API_URL}/alerts${qs.size > 0 ? `?${qs.toString()}` : ''}`
 
-    fetch(url)
+    fetch(url, { signal: controller.signal })
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         return res.json()
@@ -220,8 +221,14 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
         setFindings(items)
         setPageInfo(Array.isArray(data) ? null : data.pageInfo ?? null)
       })
-      .catch(() => setError(true))
+      .catch((err) => {
+        if (err.name !== 'AbortError') {
+          setError(true)
+        }
+      })
       .finally(() => setLoading(false))
+
+    return () => controller.abort()
   }, [params.state, params.city, params.type])
 
   // Filter, sort, paginate

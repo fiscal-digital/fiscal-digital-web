@@ -96,11 +96,23 @@ export default function FindingDetail({
         <span className={`rounded-pill px-3 py-1 text-xs font-semibold ${typeBadgeClass(finding.type)}`}>
           {findingTypeLabel(finding.type, locale)}
         </span>
-        <span className={`rounded-pill px-3 py-1 text-xs font-semibold ${riskBadgeClass(finding.riskScore)}`}>
-          {isPt ? 'Risco' : 'Risk'} {finding.riskScore} — {riskLabel}
+        <span
+          className={`rounded-pill px-3 py-1 text-xs font-semibold ${riskBadgeClass(finding.riskScore)}`}
+          title={isPt
+            ? `Pontuação de risco ${finding.riskScore}/100 — calculada pelos critérios legais do Fiscal.`
+            : `Risk score ${finding.riskScore}/100 — calculated from the legal criteria applied by the Fiscal Agent.`}
+        >
+          {riskLabel}
         </span>
-        <span className="rounded-pill bg-brand-gray/10 px-3 py-1 text-xs font-semibold text-brand-gray">
-          {isPt ? 'Confiança' : 'Confidence'} {Math.round(finding.confidence * 100)}%
+        <span
+          className="rounded-pill bg-brand-gray/10 px-3 py-1 text-xs font-semibold text-brand-gray"
+          title={isPt
+            ? `Confiança ${Math.round(finding.confidence * 100)}% — quão certo o algoritmo está dos dados extraídos do diário.`
+            : `Confidence ${Math.round(finding.confidence * 100)}% — how confident the algorithm is in the extracted data.`}
+        >
+          {finding.confidence >= 0.85
+            ? (isPt ? 'Confiança alta' : 'High confidence')
+            : (isPt ? 'Confiança média' : 'Medium confidence')}
         </span>
         {isHistorical && gazetteDateLabel && (
           <span

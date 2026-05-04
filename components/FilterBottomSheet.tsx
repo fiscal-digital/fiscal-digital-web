@@ -5,7 +5,7 @@ import { FilterBar } from './FilterBar'
 
 interface FilterBottomSheetProps {
   isOpen: boolean
-  filters: { state: string; city: string; type: string; riskMin: number; riskMax: number }
+  filters: { state: string; city: string; type: string; yearMin: number; yearMax: number }
   onFilterChange: (filters: any) => void
   onClose: () => void
 }
@@ -42,8 +42,8 @@ export function FilterBottomSheet({ isOpen, filters, onFilterChange, onClose }: 
             state={filters.state}
             city={filters.city}
             type={filters.type}
-            riskMin={filters.riskMin}
-            riskMax={filters.riskMax}
+            yearMin={filters.yearMin}
+            yearMax={filters.yearMax}
             onFilterChange={onFilterChange}
             allLabel="Todas"
           />

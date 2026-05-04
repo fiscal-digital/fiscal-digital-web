@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { ArrowRight } from '@phosphor-icons/react'
-import { getRiskLevel } from '@/lib/brand'
+import { getRiskLevel, getRiskLabel } from '@/lib/brand'
 import { findingIdToSlug } from '@/lib/findings'
 import type { Finding } from './AlertsFeed'
 
@@ -28,8 +28,13 @@ export function FindingRow({ finding, typeLabel, locale }: FindingRowProps) {
       <td className="px-4 py-3 text-sm font-semibold text-brand-ink">{typeLabel(finding.type)}</td>
       <td className="px-4 py-3 text-sm text-brand-gray">{finding.city}</td>
       <td className="px-4 py-3 text-sm">
-        <span className={`rounded-pill px-2.5 py-0.5 text-xs font-semibold ${riskBadgeClass(finding.riskScore)}`}>
-          {finding.riskScore}
+        <span
+          className={`rounded-pill px-2.5 py-0.5 text-xs font-semibold ${riskBadgeClass(finding.riskScore)}`}
+          title={locale === 'en'
+            ? `Risk score ${finding.riskScore}/100`
+            : `Pontuação de risco ${finding.riskScore}/100`}
+        >
+          {getRiskLabel(finding.riskScore, locale)}
         </span>
       </td>
       {finding.value != null && (

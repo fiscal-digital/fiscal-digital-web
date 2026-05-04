@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { API_URL } from '@/lib/api'
 import { findingIdToSlug, findingTypeLabel, formatCurrency, formatDate } from '@/lib/findings'
-import { getRiskLevel } from '@/lib/brand'
+import { getRiskLevel, getRiskLabel } from '@/lib/brand'
 
 /**
  * Feed de alertas de uma cidade — client-side fetch ao API real, sem
@@ -121,8 +121,13 @@ export default function CityAlertsList({ cityId, cityName, locale }: Props) {
             className="block rounded-xl border border-brand-gray/15 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
           >
             <div className="mb-2 flex flex-wrap items-center gap-2">
-              <span className={`rounded-pill px-2.5 py-0.5 text-xs font-semibold ${riskBadgeClass(f.riskScore)}`}>
-                {t.riskLabel} {f.riskScore}
+              <span
+                className={`rounded-pill px-2.5 py-0.5 text-xs font-semibold ${riskBadgeClass(f.riskScore)}`}
+                title={locale === 'en'
+                  ? `Risk score ${f.riskScore}/100`
+                  : `Pontuação de risco ${f.riskScore}/100`}
+              >
+                {getRiskLabel(f.riskScore, locale)}
               </span>
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
                 {findingTypeLabel(f.type, locale)}

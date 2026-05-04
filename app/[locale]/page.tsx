@@ -23,17 +23,17 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'meta' })
-  const isPt = locale === 'pt-br'
-  const path = isPt ? '/pt-br' : '/en'
+  const isPt = locale === 'pt'
+  const path = isPt ? '/pt' : '/en'
   return {
     title: t('home_title'),
     description: t('home_description'),
     alternates: {
       canonical: path,
       languages: {
-        'pt-br': '/pt-br',
+        'pt': '/pt',
         en: '/en',
-        'x-default': '/pt-br',
+        'x-default': '/pt',
       },
     },
     openGraph: {
@@ -130,7 +130,7 @@ export default async function HomePage({ params }: Props) {
         className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
       >
         <div className="mx-auto max-w-6xl">
-          <HighlightsCarousel locale={locale as 'pt-br' | 'en'} />
+          <HighlightsCarousel locale={locale as 'pt' | 'en'} />
         </div>
       </section>
 
@@ -140,7 +140,7 @@ export default async function HomePage({ params }: Props) {
         className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
       >
         <div className="mx-auto max-w-6xl">
-          <HowItWorks locale={locale as 'pt-br' | 'en'} />
+          <HowItWorks locale={locale as 'pt' | 'en'} />
         </div>
       </section>
 

@@ -40,7 +40,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, id } = await params
-  const isPt = locale === 'pt-br'
+  const isPt = locale === 'pt'
   const title = isPt
     ? `Secretaria ${id} — Fiscal Digital`
     : `Department ${id} — Fiscal Digital`
@@ -49,10 +49,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function SecretariaPage({ params }: Props) {
   const { locale, id } = await params
-  if (!routing.locales.includes(locale as 'pt-br' | 'en')) notFound()
+  if (!routing.locales.includes(locale as 'pt' | 'en')) notFound()
   setRequestLocale(locale)
 
-  const isPt = locale === 'pt-br'
+  const isPt = locale === 'pt'
   const findings = await fetchAlerts({ limit: 200 })
   const matched = findings.filter((f) => f.secretaria && secSlug(f.secretaria) === id)
   const displayName = matched[0]?.secretaria ?? id
@@ -118,17 +118,17 @@ export default async function SecretariaPage({ params }: Props) {
                   >
                     <div className="mb-1 flex flex-wrap items-center gap-2 text-xs">
                       <span className="font-semibold text-brand-ink">
-                        {findingTypeLabel(f.type, locale as 'pt-br' | 'en')}
+                        {findingTypeLabel(f.type, locale as 'pt' | 'en')}
                       </span>
                       <span className="text-brand-gray">·</span>
                       <span className="text-brand-gray">{f.city}/{f.state}</span>
                       <span className="ml-auto font-mono text-brand-gray">
-                        {formatDate(f.createdAt, locale as 'pt-br' | 'en')}
+                        {formatDate(f.createdAt, locale as 'pt' | 'en')}
                       </span>
                     </div>
                     {f.value != null && (
                       <p className="font-mono text-sm text-brand-ink">
-                        {formatCurrency(f.value, locale as 'pt-br' | 'en')}
+                        {formatCurrency(f.value, locale as 'pt' | 'en')}
                       </p>
                     )}
                   </Link>

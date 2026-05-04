@@ -14,7 +14,7 @@ export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
 
 const COPY: OgCopy = {
-  'pt-br': {
+  'pt': {
     eyebrow: 'Sobre',
     title: 'Quem está por trás do Fiscal Digital.',
     sub: 'Time, parceiros e ecossistema cívico.',

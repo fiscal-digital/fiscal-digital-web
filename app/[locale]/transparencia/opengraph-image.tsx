@@ -14,7 +14,7 @@ export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
 
 const COPY: OgCopy = {
-  'pt-br': {
+  'pt': {
     eyebrow: 'Transparência',
     title: 'Cada real recebido, cada real gasto — em público.',
     sub: 'Contas, custos de operação e relatórios do projeto.',

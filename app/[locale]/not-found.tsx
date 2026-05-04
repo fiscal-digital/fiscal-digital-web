@@ -15,7 +15,7 @@ type Params = Promise<{ locale: string }>
 
 export default async function NotFound({ params }: { params?: Params }) {
   // Em not-found, params pode não existir (rota raiz). Default para PT.
-  const locale = (await params)?.locale ?? 'pt-br'
+  const locale = (await params)?.locale ?? 'pt'
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: 'notFound' })
 

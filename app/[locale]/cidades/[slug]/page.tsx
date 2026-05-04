@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const city = getCityBySlug(slug)
   if (!city) return { title: 'Cidade — Fiscal Digital' }
 
-  const isPt = locale === 'pt-br'
+  const isPt = locale === 'pt'
   const title = isPt
     ? `${city.name} (${city.uf}) — Alertas de Gastos Públicos · Fiscal Digital`
     : `${city.name} (${city.uf}) — Public Spending Alerts · Fiscal Digital`
@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description,
     alternates: {
       canonical: `/${locale}/cidades/${slug}`,
-      languages: { 'pt-br': `/pt-br/cidades/${slug}`, en: `/en/cidades/${slug}` },
+      languages: { 'pt': `/pt/cidades/${slug}`, en: `/en/cidades/${slug}` },
     },
     openGraph: { title, description, type: 'website' },
   }
@@ -82,7 +82,7 @@ function formatCompactBrl(value: number): string {
 
 export default async function CidadePage({ params }: Props) {
   const { locale, slug } = await params
-  if (!routing.locales.includes(locale as 'pt-br' | 'en')) notFound()
+  if (!routing.locales.includes(locale as 'pt' | 'en')) notFound()
   setRequestLocale(locale)
 
   const city = getCityBySlug(slug)
@@ -93,8 +93,8 @@ export default async function CidadePage({ params }: Props) {
   const result = await fetchAlertsWithTotal({ city: city.cityId, size: 200 })
   const findings = result.items
   const region = regionOf(city.uf)
-  const isPt = locale === 'pt-br'
-  const lang: 'pt-br' | 'en' = isPt ? 'pt-br' : 'en'
+  const isPt = locale === 'pt'
+  const lang: 'pt' | 'en' = isPt ? 'pt' : 'en'
 
   // ── Stats ─────────────────────────────────────────────────────────────────
   const totalCount = result.total                 // total real (pageInfo.total)

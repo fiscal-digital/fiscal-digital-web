@@ -183,7 +183,7 @@ export default async function FiscaisPage({ params }: Props) {
           </article>
 
           <p className="mt-8 text-sm text-brand-gray">
-            {locale === 'pt-br'
+            {locale === 'pt'
               ? 'Critérios completos e histórico de calibração em'
               : 'Full criteria and calibration history at'}{' '}
             <a

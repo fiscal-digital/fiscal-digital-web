@@ -29,11 +29,11 @@ interface ShareButtonProps {
   title: string
   text: string
   label: string
-  locale: 'pt-br' | 'en'
+  locale: 'pt' | 'en'
 }
 
 const t = {
-  'pt-br': {
+  'pt': {
     copy: 'Copiar link',
     copied: 'Copiado!',
     whatsapp: 'Compartilhar no WhatsApp',

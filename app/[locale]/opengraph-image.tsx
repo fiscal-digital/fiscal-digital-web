@@ -14,7 +14,7 @@ export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
 
 const COPY: OgCopy = {
-  'pt-br': {
+  'pt': {
     eyebrow: 'Fiscal Digital',
     title: 'Fiscalização autônoma de gastos públicos',
     sub: 'Cada alerta cita o diário oficial. fiscaldigital.org',

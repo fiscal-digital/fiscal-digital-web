@@ -214,8 +214,10 @@
     "retry": "Try again",
     "filters": {
       "state": "State",
+      "city": "City",
       "type": "Type",
-      "all": "All"
+      "all": "All",
+      "cityDisabled": "Select a state"
     },
     "card": {
       "source": "View source",

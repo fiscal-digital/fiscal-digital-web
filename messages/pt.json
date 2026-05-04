@@ -214,8 +214,10 @@
     "retry": "Tentar novamente",
     "filters": {
       "state": "Estado",
+      "city": "Cidade",
       "type": "Tipo",
-      "all": "Todos"
+      "all": "Todas",
+      "cityDisabled": "Selecione um estado"
     },
     "card": {
       "source": "Ver fonte",

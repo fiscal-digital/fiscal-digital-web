@@ -41,7 +41,7 @@ export default async function AlertasPage({ params }: Props) {
   return (
     <main className="min-h-dvh bg-brand-paper">
       {/* Page header — compacto, full width */}
-      <section className="bg-brand-teal px-6 py-12 text-brand-paper sm:py-16">
+      <section className="bg-brand-teal px-6 py-16 text-brand-paper">
         <div className="mx-auto max-w-7xl">
           <h1 className="mb-3 text-balance text-3xl font-bold tracking-tight sm:text-4xl">
             {t('title')}
@@ -55,7 +55,7 @@ export default async function AlertasPage({ params }: Props) {
       {/* Feed full width — KPIs + toolbar (filtros + RSS) + grid 3-4 colunas
           gerenciados internamente pelo AlertsFeedClient. Removida sidebar lateral
           que desperdiçava espaço — RSS virou item da toolbar. */}
-      <section className="px-6 py-10">
+      <section className="px-6 py-16">
         <div className="mx-auto max-w-7xl">
           <AlertsFeedClient locale={locale} />
         </div>

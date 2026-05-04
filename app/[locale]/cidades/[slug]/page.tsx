@@ -15,7 +15,7 @@ import {
 import { routing } from '@/i18n/routing'
 import { CITIES, getCityBySlug, regionOf, REGION_LABELS } from '@/lib/cities'
 import { fetchAlertsWithTotal, API_URL } from '@/lib/api'
-import { findingTypeLabel, formatCurrency, formatDate } from '@/lib/findings'
+import { formatCurrency, formatDate } from '@/lib/findings'
 import AlertsFeedClient from '@/components/AlertsFeedClient'
 import { getRiskLevel, getRiskLabel } from '@/lib/brand'
 
@@ -127,13 +127,6 @@ export default async function CidadePage({ params }: Props) {
     statTopSec: isPt ? 'Secretaria mais frequente' : 'Top department',
     typesUnit: (n: number) =>
       isPt ? (n === 1 ? 'tipo' : 'tipos') : (n === 1 ? 'type' : 'types'),
-    feedTitle: isPt ? 'Achados em ' + city.name : 'Findings in ' + city.name,
-    empty: isPt
-      ? `Sem alertas detectados em ${city.name} ainda.`
-      : `No alerts detected in ${city.name} yet.`,
-    emptyDesc: isPt
-      ? 'Os Fiscais monitoram diariamente o diário oficial. Volte em breve.'
-      : 'The Fiscals monitor the official gazette daily. Check back soon.',
     inactive: isPt
       ? 'Cidade mapeada, ainda sem cobertura ativa pelo Querido Diário.'
       : 'City mapped, no active coverage from Querido Diário yet.',
@@ -145,8 +138,8 @@ export default async function CidadePage({ params }: Props) {
   return (
     <main className="min-h-dvh bg-brand-paper">
       {/* Header */}
-      <section className="bg-brand-teal px-6 py-12 text-brand-paper">
-        <div className="mx-auto max-w-5xl">
+      <section className="bg-brand-teal px-6 py-16 text-brand-paper">
+        <div className="mx-auto max-w-7xl">
           <Link
             href={`/${locale}`}
             className="inline-flex items-center gap-1 text-sm font-semibold text-brand-amber hover:underline"
@@ -246,7 +239,7 @@ export default async function CidadePage({ params }: Props) {
       {/* Feed — AlertsFeedClient com cityId para filtrar por cidade */}
       <section className="px-6 py-16">
         <div className="mx-auto max-w-7xl">
-          <AlertsFeedClient locale={lang} cityId={city.cityId} />
+          <AlertsFeedClient locale={lang} cityId={city.cityId} hideKpis />
         </div>
       </section>
     </main>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo } from 'react'
 import { CITIES } from '@/lib/cities'
 import { findingTypeLabel } from '@/lib/findings'
 
@@ -40,14 +40,16 @@ export function FilterBar({ state, city, type, yearMin, yearMax, onFilterChange,
       .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
   }, [state])
 
-  // Reset city when state changes — ignora onFilterChange/availableCities nas deps
-  // de propósito: ambos são instáveis (nova ref por render) e causariam loop infinito.
-  useEffect(() => {
-    if (city && !availableCities.find((c) => c.cityId === city)) {
-      onFilterChange({ city: '' })
+  // Reset city quando estado muda — feito inline no onChange do select de Estado
+  // (eliminado useEffect que tinha callback prop nas deps e causava loop infinito
+  // de re-renders → skeleton flickering).
+  const handleStateChange = (newState: string) => {
+    if (newState !== state && city) {
+      onFilterChange({ state: newState, city: '' })
+    } else {
+      onFilterChange({ state: newState })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state, city])
+  }
 
   // All finding types
   const ALERT_TYPES = [
@@ -81,7 +83,7 @@ export function FilterBar({ state, city, type, yearMin, yearMax, onFilterChange,
           <select
             id="filter-state"
             value={state}
-            onChange={(e) => onFilterChange({ state: e.target.value })}
+            onChange={(e) => handleStateChange(e.target.value)}
             className="rounded-md border border-brand-gray/25 bg-white px-3 py-2 text-sm text-brand-ink focus:border-brand-teal focus:outline-none focus:ring-1 focus:ring-brand-teal"
           >
             <option value="">{allLabel}</option>

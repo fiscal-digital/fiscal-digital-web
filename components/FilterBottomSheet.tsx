@@ -23,7 +23,7 @@ export function FilterBottomSheet({ isOpen, filters, onFilterChange, onClose }: 
       />
 
       {/* Bottom Sheet */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 flex flex-col rounded-t-2xl border-t border-brand-gray/15 bg-white p-4 sm:hidden max-h-[80vh] overflow-y-auto">
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex flex-col rounded-t-2xl border-t border-brand-gray/15 bg-white p-4 sm:hidden max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-brand-ink">Filtros</h2>
@@ -37,7 +37,7 @@ export function FilterBottomSheet({ isOpen, filters, onFilterChange, onClose }: 
         </div>
 
         {/* Filters */}
-        <div className="mb-4">
+        <div className="mb-4 overflow-visible">
           <FilterBar
             state={filters.state}
             city={filters.city}
@@ -59,7 +59,8 @@ export function FilterBottomSheet({ isOpen, filters, onFilterChange, onClose }: 
           </button>
           <button
             onClick={() => {
-              onFilterChange({ state: '', city: '', type: '', riskMin: 0, riskMax: 100 })
+              const currentYear = new Date().getFullYear()
+              onFilterChange({ state: '', city: '', type: '', yearMin: 2021, yearMax: currentYear })
               onClose()
             }}
             className="flex-1 rounded-md border border-brand-gray/25 bg-white px-4 py-2 text-sm font-semibold text-brand-ink transition-colors hover:bg-brand-gray/10"

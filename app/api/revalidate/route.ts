@@ -65,9 +65,10 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  // Next 16: revalidateTag(tag, profile) — { expire: 0 } purga imediato.
   const revalidated: string[] = []
   for (const tag of tags) {
-    revalidateTag(tag as string)
+    revalidateTag(tag as string, { expire: 0 })
     revalidated.push(`tag:${tag}`)
   }
   for (const path of paths) {

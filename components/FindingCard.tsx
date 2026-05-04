@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { ArrowRight } from '@phosphor-icons/react'
+import { useTranslations } from 'next-intl'
 import { getRiskLevel, getRiskLabel } from '@/lib/brand'
 import { findingIdToSlug } from '@/lib/findings'
 import type { Finding } from './AlertsFeed'
@@ -9,7 +10,7 @@ import type { Finding } from './AlertsFeed'
 interface FindingCardProps {
   finding: Finding
   typeLabel: (type: string) => string
-  t: any
+  t: ReturnType<typeof useTranslations<'alertas'>>
   locale: 'pt' | 'en'
 }
 

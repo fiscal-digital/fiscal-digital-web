@@ -10,13 +10,21 @@ const BR_STATES = [
   'RJ', 'RN', 'RO', 'RR', 'RS', 'SC', 'SE', 'SP', 'TO',
 ]
 
+export interface FilterUpdate {
+  state?: string
+  city?: string
+  type?: string
+  yearMin?: number
+  yearMax?: number
+}
+
 interface FilterBarProps {
   state: string
   city: string
   type: string
   yearMin: number
   yearMax: number
-  onFilterChange: (filters: { state?: string; city?: string; type?: string; yearMin?: number; yearMax?: number }) => void
+  onFilterChange: (filters: FilterUpdate) => void
   allLabel: string
   hideLocation?: boolean
 }

@@ -8,7 +8,7 @@ import { routing } from '@/i18n/routing'
 import { fetchAlerts, fetchFindingById } from '@/lib/api'
 import { findingIdToSlug, findingTypeLabel } from '@/lib/findings'
 import FindingDetail from '@/components/FindingDetail'
-import ShareButton from './ShareButton'
+import ShareButton from '@/components/ShareButton'
 
 type Props = {
   params: Promise<{ locale: string; id: string }>

@@ -32,12 +32,14 @@ export function FilterBar({ state, city, type, yearMin, yearMax, onFilterChange,
       .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
   }, [state])
 
-  // Reset city when state changes
+  // Reset city when state changes — ignora onFilterChange/availableCities nas deps
+  // de propósito: ambos são instáveis (nova ref por render) e causariam loop infinito.
   useEffect(() => {
     if (city && !availableCities.find((c) => c.cityId === city)) {
       onFilterChange({ city: '' })
     }
-  }, [state, city, availableCities, onFilterChange])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state, city])
 
   // All finding types
   const ALERT_TYPES = [

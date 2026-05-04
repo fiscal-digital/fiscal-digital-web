@@ -20,7 +20,7 @@ export default async function NewsletterSection({ locale }: Props) {
       id="newsletter"
       className="border-t border-brand-gray/10 bg-brand-paper px-6 py-14"
     >
-      <div className="mx-auto max-w-2xl">
+      <div className="mx-auto max-w-3xl">
         <div className="mb-8 text-center">
           <h2 className="mb-3 text-3xl font-bold tracking-tight text-brand-teal">
             {t('section_title')}

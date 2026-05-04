@@ -43,12 +43,12 @@ const TIMELINE_ITEMS: TimelineItem[] = [
 
 const INFRA_TABLE = [
   {
-    component: 'Análise de gazettes (Nova Lite)',
+    component: 'Análise de gazettes (extração)',
     service: 'AWS Bedrock',
     cost: '~R$ 0,27 por 1.000 gazettes',
   },
   {
-    component: 'Geração de narrativas (Haiku 4.5)',
+    component: 'Geração de narrativas',
     service: 'AWS Bedrock',
     cost: '~R$ 4,44 por 1.000 alertas',
   },
@@ -72,12 +72,12 @@ const INFRA_TABLE = [
 
 const INFRA_TABLE_EN = [
   {
-    component: 'Gazette analysis (Nova Lite)',
+    component: 'Gazette analysis (extraction)',
     service: 'AWS Bedrock',
     cost: '~R$ 0.27 per 1,000 gazettes',
   },
   {
-    component: 'Narrative generation (Haiku 4.5)',
+    component: 'Narrative generation',
     service: 'AWS Bedrock',
     cost: '~R$ 4.44 per 1,000 alerts',
   },

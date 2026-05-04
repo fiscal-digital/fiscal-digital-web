@@ -4,13 +4,16 @@ import { useEffect, useState } from 'react'
 import { API_URL } from '@/lib/api'
 import { activeCount, totalCount } from '@/lib/cities'
 
-// Mesma API que StatsCounter — números devem bater entre Hero e seção "Em números".
-// Antes este componente lia estimatedCostUsd (removido do backend ao mover
-// conversão para BRL único). Resultado: mostrava "R$ 0".
 interface StatsApiResponse {
   totalFindings: number
   totalGazettesProcessed: number | null
-  estimatedCostBrl: number
+}
+
+interface CostMtdResponse {
+  currency: 'BRL'
+  lifetimeBrl: number
+  mtdBrl: number
+  updatedAt: string | null
 }
 
 interface Props {
@@ -22,13 +25,13 @@ const labels = {
     findings: 'Achados publicados',
     gazettes: 'Diários analisados',
     cities: 'Cidades monitoradas',
-    cost: 'Custo operacional total',
+    cost: 'Custo real de operação',
   },
   en: {
     findings: 'Published findings',
     gazettes: 'Gazettes analyzed',
     cities: 'Cities monitored',
-    cost: 'Total operational cost',
+    cost: 'Real operating cost',
   },
 }
 
@@ -42,6 +45,8 @@ function formatBrl(n: number): string {
 
 export default function HeroStats({ locale }: Props) {
   const [stats, setStats] = useState<StatsApiResponse | null>(null)
+  const [cost, setCost] = useState<CostMtdResponse | null>(null)
+  const [costFailed, setCostFailed] = useState(false)
   const lang = locale === 'en' ? 'en' : 'pt'
   const l = labels[lang]
 
@@ -50,6 +55,17 @@ export default function HeroStats({ locale }: Props) {
       .then((r) => (r.ok ? r.json() : null))
       .then((d: StatsApiResponse | null) => setStats(d))
       .catch(() => {})
+
+    fetch(`${API_URL}/transparencia/costs/mtd`, { cache: 'no-store' })
+      .then((r) => {
+        if (r.status === 503) {
+          setCostFailed(true)
+          return null
+        }
+        return r.ok ? r.json() : null
+      })
+      .then((d: CostMtdResponse | null) => setCost(d))
+      .catch(() => setCostFailed(true))
   }, [])
 
   const citiesActive = activeCount()
@@ -76,7 +92,11 @@ export default function HeroStats({ locale }: Props) {
     },
     {
       key: 'cost',
-      value: stats ? formatBrl(stats.estimatedCostBrl ?? 0) : null,
+      value: cost
+        ? formatBrl(cost.lifetimeBrl)
+        : costFailed
+          ? '—'
+          : null,
       label: l.cost,
     },
   ]

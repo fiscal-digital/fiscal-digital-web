@@ -23,7 +23,7 @@ type Props = {
   params: Promise<{ locale: string; slug: string }>
 }
 
-export const revalidate = 600
+export const revalidate = 60
 
 // ISR: pré-renderiza todas as cidades active. dynamicParams é true (default) —
 // slugs de cidades ainda não ativas também são aceitos on-demand via ISR.

@@ -2,7 +2,9 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-export const revalidate = 600
+// ISR-WEB-002: 60s lag máx em métricas dinâmicas (Hero, Em números).
+// Publisher dispara /api/revalidate após cada ingestão pra reduzir a ≤5s.
+export const revalidate = 60
 import StatsCounter from '@/components/StatsCounter'
 import HeroStats from '@/components/HeroStats'
 import FourFiscais from '@/components/FourFiscais'

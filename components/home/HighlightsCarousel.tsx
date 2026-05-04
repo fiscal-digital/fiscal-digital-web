@@ -9,7 +9,7 @@ import { API_URL } from '@/lib/api'
 import { type ApiFinding, findingIdToSlug, findingTypeLabel } from '@/lib/findings'
 
 interface Props {
-  locale: 'pt' | 'en'
+  locale: 'pt-br' | 'en-us'
 }
 
 type FetchState =

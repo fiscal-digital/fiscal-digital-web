@@ -14,12 +14,12 @@ export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
 
 const COPY: OgCopy = {
-  'pt': {
+  'pt-br': {
     eyebrow: 'Alertas',
     title: 'Achados em diários oficiais — atualizados todo dia.',
     sub: 'Risco ≥ 60 e confiança ≥ 0.70. Sempre com fonte.',
   },
-  en: {
+  'en-us': {
     eyebrow: 'Alerts',
     title: 'Findings from official gazettes — updated daily.',
     sub: 'Risk ≥ 60 and confidence ≥ 0.70. Always with source.',

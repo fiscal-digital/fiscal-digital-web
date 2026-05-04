@@ -71,7 +71,7 @@ function matchesSearch(finding: Finding, query: string): boolean {
     finding.contractNumber || '',
     finding.narrative || '',
     finding.secretaria || '',
-    findingTypeLabel(finding.type, 'pt'),
+    findingTypeLabel(finding.type, 'pt-br'),
   ]
 
   return fieldsToSearch.some((f) => normalizeText(f).includes(normalized))
@@ -126,7 +126,7 @@ function SkeletonCard() {
 interface KpiBarProps {
   pageInfo: PageInfo | null
   fallback: Finding[]
-  locale: 'pt' | 'en'
+  locale: 'pt-br' | 'en-us'
   t: ReturnType<typeof useTranslations<'alertas'>>
   hideCities?: boolean
 }
@@ -152,7 +152,7 @@ function KpiBar({ pageInfo, fallback, locale, t, hideCities }: KpiBarProps) {
       <KpiCard
         icon={<Bell size={18} weight="bold" className="text-brand-teal" />}
         label={t('kpi.alerts')}
-        value={stats.count.toLocaleString(locale === 'pt' ? 'pt-BR' : 'en-US')}
+        value={stats.count.toLocaleString(locale === 'pt-br' ? 'pt-BR' : 'en-US')}
       />
       <KpiCard
         icon={<CurrencyDollar size={18} weight="bold" className="text-brand-teal" />}
@@ -163,7 +163,7 @@ function KpiBar({ pageInfo, fallback, locale, t, hideCities }: KpiBarProps) {
         <KpiCard
           icon={<MapPin size={18} weight="bold" className="text-brand-teal" />}
           label={t('kpi.cities')}
-          value={stats.cities.toLocaleString(locale === 'pt' ? 'pt-BR' : 'en-US')}
+          value={stats.cities.toLocaleString(locale === 'pt-br' ? 'pt-BR' : 'en-US')}
         />
       )}
     </dl>
@@ -192,7 +192,7 @@ interface AlertsFeedProps {
 
 export default function AlertsFeed({ locale, cityId, hideKpis }: AlertsFeedProps) {
   const t = useTranslations('alertas')
-  const lang: 'pt' | 'en' = locale === 'en' ? 'en' : 'pt'
+  const lang: 'pt-br' | 'en-us' = locale === 'en-us' ? 'en-us' : 'pt-br'
   const pathname = usePathname()
 
   const { params, setParams } = useAlertsQueryParams()

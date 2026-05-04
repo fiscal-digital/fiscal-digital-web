@@ -9,7 +9,7 @@ import type { Finding } from './AlertsFeed'
 interface FindingRowProps {
   finding: Finding
   typeLabel: (type: string) => string
-  locale: 'pt' | 'en'
+  locale: 'pt-br' | 'en-us'
 }
 
 function riskBadgeClass(score: number): string {
@@ -30,7 +30,7 @@ export function FindingRow({ finding, typeLabel, locale }: FindingRowProps) {
       <td className="min-w-[90px] px-4 py-3 text-sm">
         <span
           className={`rounded-pill px-2.5 py-0.5 text-xs font-semibold ${riskBadgeClass(finding.riskScore)}`}
-          title={locale === 'en'
+          title={locale === 'en-us'
             ? `Risk score ${finding.riskScore}/100`
             : `Pontuação de risco ${finding.riskScore}/100`}
         >
@@ -39,7 +39,7 @@ export function FindingRow({ finding, typeLabel, locale }: FindingRowProps) {
       </td>
       <td className="min-w-[120px] px-4 py-3 text-sm font-mono text-brand-ink">
         {finding.value != null
-          ? `R$ ${finding.value.toLocaleString(locale === 'pt' ? 'pt-BR' : 'en-US')}`
+          ? `R$ ${finding.value.toLocaleString(locale === 'pt-br' ? 'pt-BR' : 'en-US')}`
           : '—'}
       </td>
       <td className="min-w-[300px] px-4 py-3 text-sm text-brand-gray">

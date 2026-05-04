@@ -11,10 +11,10 @@
     "success":    { "hex": "#1F7A50", "role": "ok",        "use": "verificação, fonte confirmada" }
   },
   "risk": {
-    "info":     { "range": "0-29",   "token": "midGray",    "hex": "#5C6670", "publishable": false, "label": { "pt": "Informativo",     "en": "Informational" } },
-    "low":      { "range": "30-59",  "token": "success",    "hex": "#1F7A50", "publishable": false, "label": { "pt": "Baixo risco",    "en": "Low risk" } },
-    "alert":    { "range": "60-79",  "token": "civicAmber", "hex": "#F5B700", "publishable": true,  "label": { "pt": "Alerta",         "en": "Alert" } },
-    "critical": { "range": "80-100", "token": "danger",     "hex": "#C8372D", "publishable": true,  "label": { "pt": "Alerta crítico", "en": "Critical alert" } }
+    "info":     { "range": "0-29",   "token": "midGray",    "hex": "#5C6670", "publishable": false, "label": { "pt-br": "Informativo",     "en-us": "Informational" } },
+    "low":      { "range": "30-59",  "token": "success",    "hex": "#1F7A50", "publishable": false, "label": { "pt-br": "Baixo risco",    "en-us": "Low risk" } },
+    "alert":    { "range": "60-79",  "token": "civicAmber", "hex": "#F5B700", "publishable": true,  "label": { "pt-br": "Alerta",         "en-us": "Alert" } },
+    "critical": { "range": "80-100", "token": "danger",     "hex": "#C8372D", "publishable": true,  "label": { "pt-br": "Alerta crítico", "en-us": "Critical alert" } }
   },
   "modes": {
     "light": {

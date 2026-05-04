@@ -11,19 +11,19 @@ interface FindingCardProps {
   finding: Finding
   typeLabel: (type: string) => string
   t: ReturnType<typeof useTranslations<'alertas'>>
-  locale: 'pt' | 'en'
+  locale: 'pt-br' | 'en-us'
 }
 
-function formatCurrency(value: number, locale: 'pt' | 'en'): string {
-  return value.toLocaleString(locale === 'pt' ? 'pt-BR' : 'en-US', {
+function formatCurrency(value: number, locale: 'pt-br' | 'en-us'): string {
+  return value.toLocaleString(locale === 'pt-br' ? 'pt-BR' : 'en-US', {
     style: 'currency',
     currency: 'BRL',
   })
 }
 
-function formatDate(iso: string, locale: 'pt' | 'en'): string {
+function formatDate(iso: string, locale: 'pt-br' | 'en-us'): string {
   const d = new Date(iso)
-  return d.toLocaleDateString(locale === 'pt' ? 'pt-BR' : 'en-US', {
+  return d.toLocaleDateString(locale === 'pt-br' ? 'pt-BR' : 'en-US', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -66,7 +66,7 @@ export function FindingCard({ finding, typeLabel, t, locale }: FindingCardProps)
         </span>
         <span
           className={`rounded-pill px-2.5 py-0.5 text-xs font-semibold ${riskBadgeClass(finding.riskScore)}`}
-          title={locale === 'en'
+          title={locale === 'en-us'
             ? `Risk score ${finding.riskScore}/100`
             : `Pontuação de risco ${finding.riskScore}/100`}
         >
@@ -91,7 +91,7 @@ export function FindingCard({ finding, typeLabel, t, locale }: FindingCardProps)
               ·
             </span>
             <span className="font-mono text-xs text-brand-gray">
-              {locale === 'pt' ? 'Contrato ' : 'Contract '}
+              {locale === 'pt-br' ? 'Contrato ' : 'Contract '}
               {finding.contractNumber}
             </span>
           </>
@@ -112,7 +112,7 @@ export function FindingCard({ finding, typeLabel, t, locale }: FindingCardProps)
         <div className="flex flex-col gap-0.5 text-xs text-brand-gray">
           {gazetteDate && (
             <span>
-              {locale === 'pt' ? 'Diário: ' : 'Gazette: '}
+              {locale === 'pt-br' ? 'Diário: ' : 'Gazette: '}
               <span className="font-mono text-brand-ink">{formatDate(gazetteDate, locale)}</span>
             </span>
           )}

@@ -14,12 +14,12 @@ export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
 
 const COPY: OgCopy = {
-  'pt': {
+  'pt-br': {
     eyebrow: 'Fiscal Digital',
     title: 'Fiscalização autônoma de gastos públicos',
     sub: 'Cada alerta cita o diário oficial. fiscaldigital.org',
   },
-  en: {
+  'en-us': {
     eyebrow: 'Fiscal Digital',
     title: 'Autonomous oversight of Brazilian municipal spending',
     sub: 'Every alert cites its source. fiscaldigital.org',

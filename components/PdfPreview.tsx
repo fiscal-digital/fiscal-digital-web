@@ -38,12 +38,12 @@ interface PdfPreviewProps {
   pdfProxyUrl?: string | null
   excerpt?: string
   date?: string
-  /** Locale para labels — defaults to 'pt'. */
-  locale?: 'pt' | 'en'
+  /** Locale para labels — defaults to 'pt-br'. */
+  locale?: 'pt-br' | 'en-us'
 }
 
 const labels = {
-  'pt': {
+  'pt-br': {
     excerpt: 'Trecho citado',
     sourceLabel: 'Fonte: Querido Diário',
     open: 'Abrir no Querido Diário',
@@ -53,7 +53,7 @@ const labels = {
     fallback: 'Seu navegador não exibe PDFs inline. Use o link acima para abrir.',
     date: 'Data do diário',
   },
-  en: {
+  'en-us': {
     excerpt: 'Cited excerpt',
     sourceLabel: 'Source: Querido Diário',
     open: 'Open in Querido Diário',
@@ -65,10 +65,10 @@ const labels = {
   },
 } as const
 
-function formatDate(iso: string, locale: 'pt' | 'en'): string {
+function formatDate(iso: string, locale: 'pt-br' | 'en-us'): string {
   try {
     const d = new Date(iso)
-    return d.toLocaleDateString(locale === 'pt' ? 'pt-BR' : 'en-US', {
+    return d.toLocaleDateString(locale === 'pt-br' ? 'pt-BR' : 'en-US', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -78,7 +78,7 @@ function formatDate(iso: string, locale: 'pt' | 'en'): string {
   }
 }
 
-export default function PdfPreview({ source, cachedPdfUrl, pdfProxyUrl, excerpt, date, locale = 'pt' }: PdfPreviewProps) {
+export default function PdfPreview({ source, cachedPdfUrl, pdfProxyUrl, excerpt, date, locale = 'pt-br' }: PdfPreviewProps) {
   const [showInline, setShowInline] = useState(false)
   const t = labels[locale]
   // Constrói pdfProxyUrl no client a partir do API_URL real (env de build),

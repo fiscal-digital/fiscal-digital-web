@@ -67,13 +67,13 @@ const websiteJsonLd = {
   name: 'Fiscal Digital',
   description:
     'Fiscalização autônoma de gastos públicos municipais no Brasil — alertas verificáveis com fonte citada.',
-  inLanguage: ['pt-BR', 'en'],
+  inLanguage: ['pt-BR', 'en-us'],
   publisher: { '@id': `${SITE_URL}/#organization` },
   potentialAction: {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: `${SITE_URL}/pt/alertas?q={search_term_string}`,
+      urlTemplate: `${SITE_URL}/pt-br/alertas?q={search_term_string}`,
     },
     'query-input': 'required name=search_term_string',
   },

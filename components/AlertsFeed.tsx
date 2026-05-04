@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl'
 import { ArrowSquareOut, ArrowRight, Warning, WarningCircle, Bell, CurrencyDollar, MapPin, RssSimple } from '@phosphor-icons/react'
 import { getRiskLevel, getRiskLabel } from '@/lib/brand'
 import { API_URL } from '@/lib/api'
+import { CITIES } from '@/lib/cities'
 import { FINDING_TYPE_LABELS, findingIdToSlug } from '@/lib/findings'
 
 // pageInfo global vindo do /alerts — KPIs usam isso (não a lista local de items
@@ -309,14 +310,29 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [stateFilter, setStateFilter] = useState('')
+  const [cityFilter, setCityFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
+
+  // Cidades ativas filtradas pelo estado selecionado, ordenadas por nome.
+  const availableCities = useMemo(() => {
+    if (!stateFilter) return []
+    return Object.values(CITIES)
+      .filter((c) => c.active && c.uf === stateFilter)
+      .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
+  }, [stateFilter])
+
+  // Reset cidade quando estado muda — cidade pode não pertencer ao novo estado.
+  useEffect(() => {
+    setCityFilter('')
+  }, [stateFilter])
 
   const fetchAlerts = () => {
     setLoading(true)
     setError(false)
 
     const params = new URLSearchParams()
-    if (stateFilter) params.set('state', stateFilter)
+    if (cityFilter) params.set('city', cityFilter)
+    else if (stateFilter) params.set('state', stateFilter)
     if (typeFilter) params.set('type', typeFilter)
 
     const url = `${API_URL}/alerts${params.size > 0 ? `?${params.toString()}` : ''}`
@@ -338,7 +354,7 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
   useEffect(() => {
     fetchAlerts()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stateFilter, typeFilter])
+  }, [stateFilter, cityFilter, typeFilter])
 
   const typeLabel = (type: string): string => {
     const key = `types.${type}` as Parameters<typeof t>[0]
@@ -376,6 +392,24 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
           </div>
 
           <div className="flex flex-col gap-1">
+            <label htmlFor="filter-city" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
+              {t('filters.city')}
+            </label>
+            <select
+              id="filter-city"
+              value={cityFilter}
+              onChange={(e) => setCityFilter(e.target.value)}
+              disabled={!stateFilter}
+              className="rounded-md border border-brand-gray/25 bg-white px-3 py-2 text-sm text-brand-ink focus:border-brand-teal focus:outline-none focus:ring-1 focus:ring-brand-teal disabled:cursor-not-allowed disabled:bg-brand-gray/10 disabled:text-brand-gray/60"
+            >
+              <option value="">{stateFilter ? t('filters.all') : t('filters.cityDisabled')}</option>
+              {availableCities.map((c) => (
+                <option key={c.cityId} value={c.cityId}>{c.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1">
             <label htmlFor="filter-type" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
               {t('filters.type')}
             </label>
@@ -395,7 +429,13 @@ export default function AlertsFeed({ locale }: AlertsFeedProps) {
 
         {/* RSS subscribe — vira link compacto na toolbar */}
         <a
-          href={`${API_URL}/rss${stateFilter ? `?state=${stateFilter}` : ''}${typeFilter ? `${stateFilter ? '&' : '?'}type=${typeFilter}` : ''}`}
+          href={(() => {
+            const p = new URLSearchParams()
+            if (cityFilter) p.set('city', cityFilter)
+            else if (stateFilter) p.set('state', stateFilter)
+            if (typeFilter) p.set('type', typeFilter)
+            return `${API_URL}/rss${p.size > 0 ? `?${p.toString()}` : ''}`
+          })()}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 rounded-md border border-brand-amber/40 bg-brand-amber/10 px-3 py-2 text-xs font-semibold text-brand-ink transition-colors hover:bg-brand-amber/20"

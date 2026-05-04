@@ -269,6 +269,18 @@
       "en-us": "inconsistency",
       "category": "tone",
       "note": "Preferido a 'irregularidade'. Mais factual, menos juízo de valor."
+    },
+    {
+      "pt-br": "fiscalização agêntica",
+      "en-us": "agentic oversight",
+      "category": "tech",
+      "note": "Termo técnico que descreve a arquitetura do Fiscal Digital: agentes autônomos com Skills próprias, memória persistente e capacidade de decisão (não só execução). Usar em contexto B2B/tech (LinkedIn, GitHub, blog técnico, talks devs). Para audiência leiga (Catarse, X, imprensa local) preferir 'fiscalização autônoma' ou '10 agentes de IA'. Grafia canônica: 'agêntica' (com acento circunflexo no a)."
+    },
+    {
+      "pt-br": "agente autônomo",
+      "en-us": "autonomous agent",
+      "category": "tech",
+      "note": "Cada um dos 10 Fiscais (Licitações, Contratos, Fornecedores, etc.). Tem Skills próprias, memória no DynamoDB e domínio específico. Plural: agentes autônomos / autonomous agents."
     }
   ],
   "avoid": [

@@ -22,6 +22,10 @@ const EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
  * servidor (mesmo email duas vezes não duplica). Estado de sucesso
  * persiste 8s antes de voltar a aceitar nova inscrição na mesma sessão.
  *
+ * Anti-bot — honeypot: campo `website` invisível para humanos (CSS+aria),
+ * indexado por bots de form-fill. Se preenchido, request é silenciosamente
+ * rejeitada no backend (200 OK falso para não revelar a heurística).
+ *
  * Acessibilidade:
  *  - aria-live="polite" na mensagem de status
  *  - input com label visível e descrição de erro vinculada via aria-describedby
@@ -29,6 +33,7 @@ const EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 export default function NewsletterForm({ source = 'home', locale }: Props) {
   const t = useTranslations('home.newsletter')
   const [email, setEmail] = useState('')
+  const [website, setWebsite] = useState('') // honeypot — humanos não veem
   const [status, setStatus] = useState<Status>('idle')
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -45,7 +50,7 @@ export default function NewsletterForm({ source = 'home', locale }: Props) {
       const res = await fetch(`${API_URL}/newsletter`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, locale, source }),
+        body: JSON.stringify({ email, locale, source, website }),
       })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       setStatus('success')
@@ -111,6 +116,32 @@ export default function NewsletterForm({ source = 'home', locale }: Props) {
           {status === 'submitting' ? t('submitting') : t('cta')}
         </button>
       </div>
+
+      {/* Honeypot — invisível para humanos, atrai bots de form-fill.
+          Combinação de técnicas para ser ignorado por screen readers e tab
+          mas continuar sendo um campo de texto que bots vão tentar preencher. */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          left: '-9999px',
+          width: '1px',
+          height: '1px',
+          overflow: 'hidden',
+        }}
+      >
+        <label htmlFor="newsletter-website">Leave this field empty</label>
+        <input
+          id="newsletter-website"
+          type="text"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+        />
+      </div>
+
       {status === 'error' && (
         <p
           id="newsletter-error"

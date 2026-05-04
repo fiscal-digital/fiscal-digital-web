@@ -63,13 +63,22 @@ export default async function HomePage({ params }: Props) {
               <p className="mb-8 text-base leading-relaxed opacity-75 sm:text-lg">
                 {t('subtitle')}
               </p>
-              <Link
-                href={`/${locale}/alertas`}
-                prefetch
-                className="inline-block rounded-md bg-brand-amber px-6 py-3 font-semibold text-brand-ink transition-opacity hover:opacity-90"
-              >
-                {t('cta_alertas')}
-              </Link>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href={`/${locale}/alertas`}
+                  prefetch
+                  className="inline-block rounded-md bg-brand-amber px-6 py-3 font-semibold text-brand-ink transition-opacity hover:opacity-90"
+                >
+                  {t('cta_alertas')}
+                </Link>
+                <Link
+                  href={`/${locale}/apoie`}
+                  prefetch
+                  className="inline-block rounded-md border border-brand-paper/40 bg-transparent px-6 py-3 font-semibold text-brand-paper transition-colors hover:bg-brand-paper/10"
+                >
+                  {t('cta_apoiar')}
+                </Link>
+              </div>
             </div>
 
             {/* Coluna stats ao vivo — 2/5 */}

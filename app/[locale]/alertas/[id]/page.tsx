@@ -19,7 +19,7 @@ type Props = {
 // revalidate=300 → stale-while-revalidate de 5 min para todos (pré e on-demand).
 const SSG_LIMIT = 50
 
-export const revalidate = 300
+export const revalidate = 60
 
 // cache() de React evita chamar a API 3x por request (generateStaticParams,
 // generateMetadata e o componente principal fazem fetch do mesmo endpoint).

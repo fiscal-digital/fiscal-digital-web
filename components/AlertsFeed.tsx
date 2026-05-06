@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Warning, WarningCircle, Bell, CurrencyDollar, MapPin } from '@phosphor-icons/react'
 import { useAlertsQueryParams, type SortOption, type ViewOption } from '@/lib/hooks/useAlertsQueryParams'
@@ -188,24 +188,76 @@ interface AlertsFeedProps {
   locale: string
   cityId?: string
   hideKpis?: boolean
+  /**
+   * Findings pré-carregados em SSR/SSG para hydration sem flash.
+   * Quando presentes, AlertsFeed inicia com loading=false e findings já
+   * populados — elimina a cascata "skeleton → cards" no primeiro render.
+   * Fetch client-side só dispara quando filtros server-relevant mudam.
+   */
+  initialFindings?: Finding[]
+  initialPageInfo?: PageInfo | null
 }
 
-export default function AlertsFeed({ locale, cityId, hideKpis }: AlertsFeedProps) {
+export default function AlertsFeed({
+  locale,
+  cityId,
+  hideKpis,
+  initialFindings,
+  initialPageInfo,
+}: AlertsFeedProps) {
   const t = useTranslations('alertas')
   const lang: 'pt-br' | 'en-us' = locale === 'en-us' ? 'en-us' : 'pt-br'
 
   const { params, setParams } = useAlertsQueryParams()
 
-  const [findings, setFindings] = useState<Finding[]>([])
-  const [pageInfo, setPageInfo] = useState<PageInfo | null>(null)
-  const [loading, setLoading] = useState(true)
+  // ── Instrumentação temporária — diagnóstico do "piscar" ──────────────────
+  // Remover depois de confirmar que problema sumiu. Conta renders e mostra
+  // qual prop/state mudou. Console em prod = debug acessível ao usuário.
+  const renderCountRef = useRef(0)
+  const prevRef = useRef<{ params: typeof params; cityId?: string; loadingState?: boolean }>({
+    params,
+    cityId,
+  })
+  renderCountRef.current += 1
+  if (typeof window !== 'undefined') {
+    const prev = prevRef.current
+    const changes: string[] = []
+    if (prev.params !== params) {
+      const pPairs: string[] = []
+      ;(Object.keys(params) as (keyof typeof params)[]).forEach((k) => {
+        if (prev.params[k] !== params[k]) pPairs.push(`${k}:${String(prev.params[k])}→${String(params[k])}`)
+      })
+      changes.push(`params(${pPairs.join(',') || 'NEW REF SAME VALUES ⚠️'})`)
+    }
+    if (prev.cityId !== cityId) changes.push(`cityId:${prev.cityId}→${cityId}`)
+    // eslint-disable-next-line no-console
+    console.debug(`[AlertsFeed] render #${renderCountRef.current}`, changes.length ? changes.join(' | ') : '(no input change — internal state)')
+    prevRef.current = { params, cityId }
+  }
+
+  // Estado inicial vem do server quando disponível — elimina flash de skeleton
+  // entre hydration e primeiro fetch client-side.
+  const [findings, setFindings] = useState<Finding[]>(initialFindings ?? [])
+  const [pageInfo, setPageInfo] = useState<PageInfo | null>(initialPageInfo ?? null)
+  const [loading, setLoading] = useState(initialFindings == null)
   const [error, setError] = useState(false)
   const [showMobileFilters, setShowMobileFilters] = useState(false)
+
+  // Skip o fetch inicial se findings já vieram do servidor — evita re-fetch
+  // logo após mount (skeleton desnecessário). Fetches subsequentes (mudança
+  // de filtro) usam o caminho normal.
+  const initialFetchSkippedRef = useRef(initialFindings != null)
 
   // ── Fetch findings ────────────────────────────────────────────────────────
   // Deps são APENAS primitivos (cityId + 3 strings de params). Nada de objects
   // ou callbacks aqui — qualquer ref instável dispararia re-fetch infinito.
   useEffect(() => {
+    // Pula o primeiro fetch quando initialFindings veio do server.
+    if (initialFetchSkippedRef.current) {
+      initialFetchSkippedRef.current = false
+      return
+    }
+
     setLoading(true)
     setError(false)
 

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { API_URL } from '@/lib/api'
 import { activeCount, totalCount } from '@/lib/cities'
+import IngestionStatus from './IngestionStatus'
 
 interface StatsApiResponse {
   totalFindings: number
@@ -117,6 +118,7 @@ export default function HeroStats({ locale }: Props) {
           </div>
         ))}
       </div>
+      <IngestionStatus locale={locale} />
     </div>
   )
 }

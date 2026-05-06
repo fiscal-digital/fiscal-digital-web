@@ -1,6 +1,8 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
 import AlertsFeedClient from '@/components/AlertsFeedClient'
+import { fetchAlerts } from '@/lib/api'
+import type { Finding } from '@/components/AlertsFeed'
 
 export const revalidate = 60
 
@@ -38,11 +40,16 @@ export default async function AlertasPage({ params }: Props) {
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: 'alertas' })
 
+  // SSR/ISR: fetch findings no servidor para hydration sem flash de skeleton.
+  // Sem isso, o cliente monta com loading=true → fetch → setLoading(false)
+  // criando cascata visual ("piscar até estabilizar"). Com isso, HTML estático
+  // já chega com cards renderizados e React hidrata sem trocar UI.
+  // Tolera falha (fetchAlerts retorna [] em erro) — feed vazio melhor que
+  // build quebrado.
+  const initialFindings = (await fetchAlerts({ size: 200 })) as unknown as Finding[]
+
   return (
     <main className="min-h-dvh bg-brand-paper">
-      {/* Header simples — sem ShareButton (decisão UX: o RSS dinâmico do
-          AlertsToolbar já cobre o caso "acompanhar este feed"; ShareButton
-          extra confundia o usuário). RSS varia conforme filtros aplicados. */}
       <section className="bg-brand-teal px-6 py-16 text-brand-paper">
         <div className="mx-auto max-w-7xl">
           <h1 className="mb-3 text-balance text-3xl font-bold tracking-tight sm:text-4xl">
@@ -54,11 +61,9 @@ export default async function AlertasPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Feed full width — KPIs + toolbar (filtros + RSS) + grid 3-4 colunas
-          gerenciados internamente pelo AlertsFeedClient. */}
       <section className="px-6 py-16">
         <div className="mx-auto max-w-7xl">
-          <AlertsFeedClient locale={locale} />
+          <AlertsFeedClient locale={locale} initialFindings={initialFindings} />
         </div>
       </section>
     </main>

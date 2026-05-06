@@ -1,16 +1,16 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { usePathname } from 'next/navigation'
 import { Warning, WarningCircle, Bell, CurrencyDollar, MapPin } from '@phosphor-icons/react'
-import { useAlertsQueryParams } from '@/lib/hooks/useAlertsQueryParams'
+import { useAlertsQueryParams, type SortOption, type ViewOption } from '@/lib/hooks/useAlertsQueryParams'
 import { API_URL } from '@/lib/api'
 import { findingTypeLabel, FINDING_TYPE_LABELS } from '@/lib/findings'
 import { SearchBar } from './SearchBar'
 import { AlertsToolbar } from './AlertsToolbar'
 import { MobileFilterButton } from './MobileFilterButton'
 import { FilterBottomSheet } from './FilterBottomSheet'
+import { type FilterUpdate } from './FilterBar'
 import { AlertsGrid } from './AlertsGrid'
 import { AlertsList } from './AlertsList'
 import { PaginationControls } from './PaginationControls'
@@ -193,7 +193,6 @@ interface AlertsFeedProps {
 export default function AlertsFeed({ locale, cityId, hideKpis }: AlertsFeedProps) {
   const t = useTranslations('alertas')
   const lang: 'pt-br' | 'en-us' = locale === 'en-us' ? 'en-us' : 'pt-br'
-  const pathname = usePathname()
 
   const { params, setParams } = useAlertsQueryParams()
 
@@ -203,7 +202,9 @@ export default function AlertsFeed({ locale, cityId, hideKpis }: AlertsFeedProps
   const [error, setError] = useState(false)
   const [showMobileFilters, setShowMobileFilters] = useState(false)
 
-  // Fetch findings
+  // ── Fetch findings ────────────────────────────────────────────────────────
+  // Deps são APENAS primitivos (cityId + 3 strings de params). Nada de objects
+  // ou callbacks aqui — qualquer ref instável dispararia re-fetch infinito.
   useEffect(() => {
     setLoading(true)
     setError(false)
@@ -240,7 +241,7 @@ export default function AlertsFeed({ locale, cityId, hideKpis }: AlertsFeedProps
     return () => controller.abort()
   }, [cityId, params.state, params.city, params.type])
 
-  // Filter, sort, paginate
+  // ── Filter, sort, paginate ────────────────────────────────────────────────
   const filtered = useMemo(() => {
     let result = findings.filter((f) => {
       if (!matchesSearch(f, params.search)) return false
@@ -260,9 +261,59 @@ export default function AlertsFeed({ locale, cityId, hideKpis }: AlertsFeedProps
   const start = (params.page - 1) * params.limit
   const pageItems = filtered.slice(start, start + params.limit)
 
-  const typeLabel = (type: string): string => {
-    return findingTypeLabel(type, lang)
-  }
+  // ── Memoized children inputs ──────────────────────────────────────────────
+  // Filter object passado para Toolbar/BottomSheet — recriar a cada render
+  // dispararia useMemo/useEffect descendentes que comparam por referência.
+  const toolbarFilters = useMemo(() => ({
+    state: params.state,
+    city: params.city,
+    type: params.type,
+    yearMin: params.yearMin,
+    yearMax: params.yearMax,
+  }), [params.state, params.city, params.type, params.yearMin, params.yearMax])
+
+  // ── Stable callbacks ──────────────────────────────────────────────────────
+  // setParams é estável (useCallback no hook); aqui garantimos que TODOS os
+  // handlers passados como prop também sejam, evitando que filhos com
+  // useEffect([..., onChange]) entrem em loop.
+  const handleSearchChange = useCallback(
+    (s: string) => setParams({ search: s, page: 1 }),
+    [setParams],
+  )
+  const handleFilterChange = useCallback(
+    (f: FilterUpdate) => setParams({ ...f, page: 1 }),
+    [setParams],
+  )
+  const handleSortChange = useCallback(
+    (s: SortOption) => setParams({ sort: s }),
+    [setParams],
+  )
+  const handleLimitChange = useCallback(
+    (l: number) => setParams({ limit: l, page: 1 }),
+    [setParams],
+  )
+  const handleViewChange = useCallback(
+    (v: ViewOption) => setParams({ view: v }),
+    [setParams],
+  )
+  const handlePageChange = useCallback(
+    (p: number) => setParams({ page: p }),
+    [setParams],
+  )
+  const handleMobileFilterChange = useCallback(
+    (f: FilterUpdate) => {
+      setParams({ ...f, page: 1 })
+      setShowMobileFilters(false)
+    },
+    [setParams],
+  )
+  const openMobileFilters = useCallback(() => setShowMobileFilters(true), [])
+  const closeMobileFilters = useCallback(() => setShowMobileFilters(false), [])
+
+  const typeLabel = useCallback(
+    (type: string): string => findingTypeLabel(type, lang),
+    [lang],
+  )
 
   return (
     <div>
@@ -273,21 +324,15 @@ export default function AlertsFeed({ locale, cityId, hideKpis }: AlertsFeedProps
       <div className="mb-6 hidden sm:block">
         <AlertsToolbar
           search={params.search}
-          filters={{
-            state: params.state,
-            city: params.city,
-            type: params.type,
-            yearMin: params.yearMin,
-            yearMax: params.yearMax,
-          }}
+          filters={toolbarFilters}
           sort={params.sort}
           limit={params.limit}
           view={params.view}
-          onSearchChange={(s) => setParams({ search: s, page: 1 })}
-          onFilterChange={(f) => setParams({ ...f, page: 1 })}
-          onSortChange={(s) => setParams({ sort: s })}
-          onLimitChange={(l) => setParams({ limit: l, page: 1 })}
-          onViewChange={(v) => setParams({ view: v })}
+          onSearchChange={handleSearchChange}
+          onFilterChange={handleFilterChange}
+          onSortChange={handleSortChange}
+          onLimitChange={handleLimitChange}
+          onViewChange={handleViewChange}
           stateFilter={params.state}
           hideLocation={!!cityId}
         />
@@ -297,26 +342,17 @@ export default function AlertsFeed({ locale, cityId, hideKpis }: AlertsFeedProps
       <div className="mb-6 flex gap-2 sm:hidden">
         <SearchBar
           value={params.search}
-          onChange={(s) => setParams({ search: s, page: 1 })}
+          onChange={handleSearchChange}
           placeholder="Buscar..."
         />
-        <MobileFilterButton onClick={() => setShowMobileFilters(true)} />
+        <MobileFilterButton onClick={openMobileFilters} />
       </div>
 
       <FilterBottomSheet
         isOpen={showMobileFilters}
-        filters={{
-          state: params.state,
-          city: params.city,
-          type: params.type,
-          yearMin: params.yearMin,
-          yearMax: params.yearMax,
-        }}
-        onFilterChange={(f) => {
-          setParams({ ...f, page: 1 })
-          setShowMobileFilters(false)
-        }}
-        onClose={() => setShowMobileFilters(false)}
+        filters={toolbarFilters}
+        onFilterChange={handleMobileFilterChange}
+        onClose={closeMobileFilters}
       />
 
       {/* Loading */}
@@ -370,7 +406,7 @@ export default function AlertsFeed({ locale, cityId, hideKpis }: AlertsFeedProps
             totalPages={totalPages}
             totalCount={totalCount}
             limit={params.limit}
-            onPageChange={(p) => setParams({ page: p })}
+            onPageChange={handlePageChange}
           />
         </>
       )}

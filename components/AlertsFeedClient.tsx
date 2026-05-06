@@ -1,12 +1,23 @@
 'use client'
 
 import { Suspense } from 'react'
-import AlertsFeed from './AlertsFeed'
+import AlertsFeed, { type Finding } from './AlertsFeed'
+
+interface PageInfo {
+  total: number
+  page: number
+  pageSize: number
+  totalPages: number
+  totalValue: number
+  citiesCount: number
+}
 
 interface AlertsFeedClientProps {
   locale: string
   cityId?: string
   hideKpis?: boolean
+  initialFindings?: Finding[]
+  initialPageInfo?: PageInfo | null
 }
 
 /**
@@ -55,10 +66,22 @@ function FeedSkeleton({ hideKpis }: { hideKpis?: boolean }) {
   )
 }
 
-export default function AlertsFeedClient({ locale, cityId, hideKpis }: AlertsFeedClientProps) {
+export default function AlertsFeedClient({
+  locale,
+  cityId,
+  hideKpis,
+  initialFindings,
+  initialPageInfo,
+}: AlertsFeedClientProps) {
   return (
     <Suspense fallback={<FeedSkeleton hideKpis={hideKpis} />}>
-      <AlertsFeed locale={locale} cityId={cityId} hideKpis={hideKpis} />
+      <AlertsFeed
+        locale={locale}
+        cityId={cityId}
+        hideKpis={hideKpis}
+        initialFindings={initialFindings}
+        initialPageInfo={initialPageInfo}
+      />
     </Suspense>
   )
 }

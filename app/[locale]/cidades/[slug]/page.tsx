@@ -151,7 +151,9 @@ export default async function CidadePage({ params }: Props) {
             <CaretLeft size={14} weight="bold" />
             {t.back}
           </Link>
-          <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
+          {/* Stack vertical no mobile — evita overflow horizontal com ShareButton.
+              Lado-a-lado (h1 + ShareButton) só a partir de sm: 640px. */}
+          <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
             <div>
               <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
                 {city.name}

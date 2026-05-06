@@ -14,9 +14,14 @@ export function SearchBar({ value, onChange, placeholder }: SearchBarProps) {
   const [localValue, setLocalValue] = useState(value)
   const debouncedValue = useDebounce(localValue, 300)
 
+  // Callback prop tipicamente é arrow inline do parent (nova ref por render).
+  // Inclui-la nas deps causa loop infinito de re-renders → "página piscando"
+  // / reload aparente. O efeito precisa rodar apenas quando o valor debounced
+  // muda; chamamos onChange como side-effect.
   useEffect(() => {
     onChange(debouncedValue)
-  }, [debouncedValue, onChange])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedValue])
 
   return (
     <div className="flex-1">

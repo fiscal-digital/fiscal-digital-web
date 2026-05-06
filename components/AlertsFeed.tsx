@@ -210,31 +210,6 @@ export default function AlertsFeed({
 
   const { params, setParams } = useAlertsQueryParams()
 
-  // ── Instrumentação temporária — diagnóstico do "piscar" ──────────────────
-  // Remover depois de confirmar que problema sumiu. Conta renders e mostra
-  // qual prop/state mudou. Console em prod = debug acessível ao usuário.
-  const renderCountRef = useRef(0)
-  const prevRef = useRef<{ params: typeof params; cityId?: string; loadingState?: boolean }>({
-    params,
-    cityId,
-  })
-  renderCountRef.current += 1
-  if (typeof window !== 'undefined') {
-    const prev = prevRef.current
-    const changes: string[] = []
-    if (prev.params !== params) {
-      const pPairs: string[] = []
-      ;(Object.keys(params) as (keyof typeof params)[]).forEach((k) => {
-        if (prev.params[k] !== params[k]) pPairs.push(`${k}:${String(prev.params[k])}→${String(params[k])}`)
-      })
-      changes.push(`params(${pPairs.join(',') || 'NEW REF SAME VALUES ⚠️'})`)
-    }
-    if (prev.cityId !== cityId) changes.push(`cityId:${prev.cityId}→${cityId}`)
-    // eslint-disable-next-line no-console
-    console.debug(`[AlertsFeed] render #${renderCountRef.current}`, changes.length ? changes.join(' | ') : '(no input change — internal state)')
-    prevRef.current = { params, cityId }
-  }
-
   // Estado inicial vem do server quando disponível — elimina flash de skeleton
   // entre hydration e primeiro fetch client-side.
   const [findings, setFindings] = useState<Finding[]>(initialFindings ?? [])

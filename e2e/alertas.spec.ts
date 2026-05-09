@@ -25,24 +25,26 @@ test.describe('Página de alertas — fluxo principal', () => {
   test('2. KPIs do header renderizam com números válidos', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
-    // URL state hook do AlertsFeed faz router.push(?...) na hidratação — se
-    // lermos KpiBar antes disso, allTextContents falha com "Execution context
-    // was destroyed". 2s suficiente em CI (mesmo padrão de alertas-detalhe).
     await page.waitForTimeout(2000)
 
-    const kpiValues = page.locator('dl dd')
-    await expect(kpiValues.first()).toBeVisible({ timeout: 10_000 })
-
-    const allTexts = await kpiValues.allTextContents()
-    const numbers = allTexts.map((t) => parseInt(t.replace(/\D/g, ''), 10)).filter(Number.isFinite)
-    expect(numbers.length).toBeGreaterThanOrEqual(2)
-
-    // KPI 1 = total de alertas. Pré-fix da `alertas/page.tsx` mostrava 200
-    // (items.length truncado). Pós-fix mostrará pageInfo.total (~617). Threshold
-    // permissivo (>= 100) tolera ambos enquanto deploy não rola — segundo PR
-    // depois do deploy aperta para >= 600.
-    const alertsNum = numbers[0]
-    expect(alertsNum).toBeGreaterThanOrEqual(100)
+    // expect.poll() re-executa a função até passar, lidando com "Execution
+    // context destroyed" durante navegação concorrente do URL state hook.
+    // Mais resiliente que allTextContents (que falha numa única race).
+    await expect.poll(
+      async () => {
+        try {
+          const text = await page.locator('dl dd').first().textContent({ timeout: 1000 })
+          return parseInt(text?.replace(/\D/g, '') ?? '0', 10)
+        } catch {
+          return 0
+        }
+      },
+      {
+        message: 'KPI 1 deve mostrar >= 100 alertas (pré-fix mostra 200, pós-fix ~617)',
+        timeout: 15_000,
+        intervals: [500, 1000, 2000],
+      },
+    ).toBeGreaterThanOrEqual(100)
   })
 
   test.fixme('2.b BUG conhecido: KPI mostra 200 em vez de 617 (pageInfo não é passado)', async ({ page }) => {

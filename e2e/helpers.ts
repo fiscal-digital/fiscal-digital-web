@@ -11,10 +11,18 @@ import { type Page, expect } from '@playwright/test'
 
 export const ROUTES = {
   home: '/pt-br/',
+  homeEn: '/en-us/',
   alertas: '/pt-br/alertas/',
   alertasEn: '/en-us/alertas/',
   cidade: (slug: string) => `/pt-br/cidades/${slug}/`,
   alertaDetalhe: (slug: string) => `/pt-br/alertas/${slug}/`,
+  transparencia: '/pt-br/transparencia/',
+  custos: '/pt-br/transparencia/custos/',
+  apoie: '/pt-br/apoie/',
+  fiscais: '/pt-br/fiscais/',
+  manifesto: '/pt-br/manifesto/',
+  sobre: '/pt-br/sobre/',
+  roadmap: '/pt-br/roadmap/',
 } as const
 
 /** Filtros aplicáveis na URL de /alertas. */
@@ -43,15 +51,21 @@ export function alertasUrlWithFilters(filters: AlertasFilters): string {
 }
 
 /**
+ * Aguarda qualquer página estar pronta (h1 visível). Usar em todas as
+ * páginas exceto onde precisa de assertions específicas.
+ */
+export async function waitForPageReady(page: Page) {
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible({ timeout: 10_000 })
+}
+
+/**
  * Aguarda a página de alertas estar pronta (cards renderizados, sem skeleton).
  * Como agora usamos SSR initial findings (LRN-20260506-001), os cards já estão
  * no HTML estático — esta função apenas valida que o conteúdo está visível.
  */
 export async function waitForAlertasReady(page: Page) {
-  // Header da página deve estar visível
-  await expect(page.getByRole('heading', { level: 1 })).toBeVisible({ timeout: 10_000 })
+  await waitForPageReady(page)
   // Pelo menos 1 card de finding ou estado de erro/empty
-  // (qualquer um dos 3 indica que a página resolveu)
   await page.waitForSelector('article, [role="alert"], .empty-state', {
     state: 'visible',
     timeout: 10_000,

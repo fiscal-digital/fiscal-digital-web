@@ -24,8 +24,8 @@ test.describe('Navegação alertas → detalhe', () => {
     const href = await firstLink.getAttribute('href')
     expect(href).toMatch(/^\/pt-br\/alertas\//)
 
-    // Aguarda URL state hook do AlertsFeed estabilizar antes de navegar — evita
-    // ERR_ABORTED por router.push concorrente. waitForTimeout é OK aqui (não é polling).
+    // Aguarda URL state hook do AlertsFeed terminar router.push(?page=1)
+    // antes de navegar — evita ERR_ABORTED por nav. concorrente.
     await page.waitForTimeout(2000)
 
     // Navega direto para o detalhe

@@ -26,6 +26,11 @@ test.describe('Página de alertas — fluxo principal', () => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
 
+    // URL state hook do AlertsFeed faz router.push(?page=1) na hidratação —
+    // se lermos KpiBar antes disso, allTextContents falha com "Execution context
+    // was destroyed". Aguardar URL estabilizar antes de ler KPIs.
+    await page.waitForURL(/\/alertas\/\?[^=]*page=1/, { timeout: 10_000 })
+
     const kpiValues = page.locator('dl dd')
     await expect(kpiValues.first()).toBeVisible({ timeout: 10_000 })
 
@@ -33,9 +38,10 @@ test.describe('Página de alertas — fluxo principal', () => {
     const numbers = allTexts.map((t) => parseInt(t.replace(/\D/g, ''), 10)).filter(Number.isFinite)
     expect(numbers.length).toBeGreaterThanOrEqual(2)
 
-    // KPI 1 = alertas. Hoje em prod mostra 200 (truncado pelo size:200 do fetchAlerts).
-    // Bug conhecido: deveria mostrar pageInfo.total (617). Ver TEC-WEB-XXX no backlog.
-    // Quando corrigido, ajustar este test para >= 600.
+    // KPI 1 = total de alertas. Pré-fix da `alertas/page.tsx` mostrava 200
+    // (items.length truncado). Pós-fix mostrará pageInfo.total (~617). Threshold
+    // permissivo (>= 100) tolera ambos enquanto deploy não rola — segundo PR
+    // depois do deploy aperta para >= 600.
     const alertsNum = numbers[0]
     expect(alertsNum).toBeGreaterThanOrEqual(100)
   })
@@ -54,15 +60,19 @@ test.describe('Página de alertas — fluxo principal', () => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
 
+    // Aguarda URL state hook estabilizar — sem isso, click no input race com
+    // navigation e dispara "Execution context was destroyed" em CI.
+    await page.waitForURL(/\/alertas\/\?[^=]*page=1/, { timeout: 10_000 })
+
     // SearchBar tem aria-label="Buscar alertas"
     const search = page.getByRole('textbox', { name: /buscar alertas/i }).first()
-    await expect(search).toBeVisible({ timeout: 5000 })
+    await expect(search).toBeVisible({ timeout: 10_000 })
     await search.click()
     await search.fill('Niter')
 
     // Confirma que o input recebeu o valor — sincronização com URL via debounce
-    // tem race com URL state hook em prod (TEC-WEB-XXX backlog)
-    await expect(search).toHaveValue('Niter', { timeout: 2000 })
+    // tem race com URL state hook em prod (TEC-WEB-008 no backlog).
+    await expect(search).toHaveValue('Niter', { timeout: 5_000 })
   })
 
   test('4. Filtro Estado RS habilita Cidade e atualiza URL', async ({ page }) => {

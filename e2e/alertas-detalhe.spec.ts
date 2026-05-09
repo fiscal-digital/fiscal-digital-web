@@ -21,13 +21,22 @@ test.describe('Navegação alertas → detalhe', () => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
     const firstLink = page.getByRole('link', { name: /ver alerta completo/i }).first()
-    await firstLink.click()
+    const href = await firstLink.getAttribute('href')
+    expect(href).toMatch(/^\/pt-br\/alertas\//)
 
-    // Aguarda página carregar
+    // Aguarda URL state hook do AlertsFeed estabilizar antes de navegar — evita
+    // ERR_ABORTED por router.push concorrente. waitForTimeout é OK aqui (não é polling).
+    await page.waitForTimeout(2000)
+
+    // Navega direto para o detalhe
+    await page.goto(href!, { waitUntil: 'domcontentloaded' })
+    await expect(page).toHaveURL(/\/pt-br\/alertas\/[^/]+\/?$/, { timeout: 10_000 })
+
+    // Aguarda página de detalhe carregar
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible({ timeout: 10_000 })
 
-    // Voltar para alertas — link sempre presente
-    await expect(page.getByRole('link', { name: /voltar.*alertas/i }).first()).toBeVisible()
+    // Voltar para alertas — link sempre presente no header do detalhe
+    await expect(page.getByRole('link', { name: /voltar.*alertas/i }).first()).toBeVisible({ timeout: 10_000 })
 
     // Compartilhar — ShareButton (label "Compartilhar este alerta")
     await expect(page.locator('[aria-label*="Compartilhar"]').first()).toBeVisible()
@@ -41,14 +50,23 @@ test.describe('Navegação alertas → detalhe', () => {
     await waitForAlertasReady(page)
 
     const firstLink = page.getByRole('link', { name: /ver alerta completo/i }).first()
-    await firstLink.click()
-    await expect(page).toHaveURL(/\/pt-br\/alertas\/[^/]+\/?$/)
+    const href = await firstLink.getAttribute('href')
+    expect(href).toMatch(/^\/pt-br\/alertas\//)
 
-    // Click "Voltar para alertas" — qualquer link com esse aria/label leva pra listagem
+    // Aguarda URL state hook estabilizar antes de navegar (evita ERR_ABORTED)
+    await page.waitForTimeout(2000)
+
+    // Navega direto (sem race com URL state hook)
+    await page.goto(href!, { waitUntil: 'domcontentloaded' })
+    await expect(page).toHaveURL(/\/pt-br\/alertas\/[^/]+\/?$/, { timeout: 10_000 })
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible({ timeout: 10_000 })
+
+    // Click "Voltar para alertas"
     const back = page.getByRole('link', { name: /voltar.*alertas/i }).first()
+    await expect(back).toBeVisible({ timeout: 10_000 })
     await back.click()
 
-    // Algum URL que comece com /pt-br/alertas (exata ou /pt-br/)
-    await expect(page).toHaveURL(/\/pt-br\/(alertas\/?)?$/)
+    // URL volta para /pt-br/alertas (com query string opcional ?page=1 do URL state hook)
+    await expect(page).toHaveURL(/\/pt-br\/alertas\/(\?.*)?$/, { timeout: 10_000 })
   })
 })

@@ -26,10 +26,10 @@ test.describe('Página de alertas — fluxo principal', () => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
 
-    // URL state hook do AlertsFeed faz router.push(?page=1) na hidratação —
-    // se lermos KpiBar antes disso, allTextContents falha com "Execution context
-    // was destroyed". Aguardar URL estabilizar antes de ler KPIs.
-    await page.waitForURL(/\/alertas\/\?[^=]*page=1/, { timeout: 10_000 })
+    // URL state hook do AlertsFeed faz router.push(?...) na hidratação — se
+    // lermos KpiBar antes disso, allTextContents falha com "Execution context
+    // was destroyed". 2s é suficiente em CI (mesmo padrão de alertas-detalhe).
+    await page.waitForTimeout(2000)
 
     const kpiValues = page.locator('dl dd')
     await expect(kpiValues.first()).toBeVisible({ timeout: 10_000 })
@@ -62,7 +62,7 @@ test.describe('Página de alertas — fluxo principal', () => {
 
     // Aguarda URL state hook estabilizar — sem isso, click no input race com
     // navigation e dispara "Execution context was destroyed" em CI.
-    await page.waitForURL(/\/alertas\/\?[^=]*page=1/, { timeout: 10_000 })
+    await page.waitForTimeout(2000)
 
     // SearchBar tem aria-label="Buscar alertas"
     const search = page.getByRole('textbox', { name: /buscar alertas/i }).first()

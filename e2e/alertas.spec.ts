@@ -22,14 +22,16 @@ test.describe('Página de alertas — fluxo principal', () => {
     ).toBeVisible()
   })
 
-  test('2. KPIs do header renderizam com números válidos', async ({ page }) => {
+  test('2. KPIs do header renderizam pageInfo.total real (>= 600)', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
     await page.waitForTimeout(2000)
 
     // expect.poll() re-executa a função até passar, lidando com "Execution
     // context destroyed" durante navegação concorrente do URL state hook.
-    // Mais resiliente que allTextContents (que falha numa única race).
+    // Pós-fix #3 (deploy 2026-05-09): KPI mostra pageInfo.total (~617), não
+    // mais items.length (200). Threshold apertado de 100 → 600 pra detectar
+    // regressão se KPI voltar a usar items.length.
     await expect.poll(
       async () => {
         try {
@@ -40,21 +42,11 @@ test.describe('Página de alertas — fluxo principal', () => {
         }
       },
       {
-        message: 'KPI 1 deve mostrar >= 100 alertas (pré-fix mostra 200, pós-fix ~617)',
+        message: 'KPI 1 deve mostrar pageInfo.total real (>= 600 hoje)',
         timeout: 15_000,
         intervals: [500, 1000, 2000],
       },
-    ).toBeGreaterThanOrEqual(100)
-  })
-
-  test.fixme('2.b BUG conhecido: KPI mostra 200 em vez de 617 (pageInfo não é passado)', async ({ page }) => {
-    await page.goto(ROUTES.alertas)
-    await waitForAlertasReady(page)
-    const kpiValues = page.locator('dl dd')
-    const allTexts = await kpiValues.allTextContents()
-    const alertsNum = parseInt(allTexts[0]?.replace(/\D/g, '') ?? '0', 10)
-    // Quando bug for corrigido + deploy, este teste deve passar e podemos remover .fixme()
-    expect(alertsNum).toBeGreaterThanOrEqual(600)
+    ).toBeGreaterThanOrEqual(600)
   })
 
   test('3. SearchBar aceita texto e mantém valor', async ({ page }) => {

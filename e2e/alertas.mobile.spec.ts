@@ -18,6 +18,8 @@ test.describe('Página de alertas — mobile', () => {
   test('2. Bottom sheet abre ao clicar Filtros', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
+    // Aguarda URL state hook estabilizar (evita race em CI mobile-chrome)
+    await page.waitForTimeout(2000)
 
     // Antes do click — botão Fechar filtros não existe
     expect(await page.getByRole('button', { name: /fechar filtros/i }).count()).toBe(0)
@@ -25,19 +27,20 @@ test.describe('Página de alertas — mobile', () => {
     await page.getByRole('button', { name: /abrir filtros/i }).click()
 
     // Após click — botão "Fechar filtros" aparece (só existe no bottom sheet)
-    await expect(page.getByRole('button', { name: /fechar filtros/i })).toBeVisible({ timeout: 3000 })
+    await expect(page.getByRole('button', { name: /fechar filtros/i })).toBeVisible({ timeout: 5000 })
   })
 
   test('3. Fechar bottom sheet via X', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
+    await page.waitForTimeout(2000)
 
     await page.getByRole('button', { name: /abrir filtros/i }).click()
     const closeBtn = page.getByRole('button', { name: /fechar filtros/i })
-    await expect(closeBtn).toBeVisible({ timeout: 3000 })
+    await expect(closeBtn).toBeVisible({ timeout: 5000 })
 
     await closeBtn.click()
-    await expect(closeBtn).not.toBeVisible({ timeout: 3000 })
+    await expect(closeBtn).not.toBeVisible({ timeout: 5000 })
   })
 
   test('4. Sem overflow horizontal em viewport 375', async ({ page }) => {

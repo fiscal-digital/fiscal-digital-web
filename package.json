@@ -13,7 +13,11 @@
     "type-check": "tsc --noEmit",
     "brand:theme": "node scripts/generate-brand-theme.mjs",
     "lint:copy": "node scripts/lint-copy.mjs",
-    "pretest": "npm run lint:copy"
+    "pretest": "npm run lint:copy",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:codegen": "playwright codegen https://fiscaldigital.org/pt-br/alertas/",
+    "test:e2e:full": "PLAYWRIGHT_FULL_MATRIX=1 playwright test"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.0",
@@ -24,6 +28,7 @@
   },
   "devDependencies": {
     "@opennextjs/aws": "^3.10.4",
+    "@playwright/test": "^1.59.1",
     "@tailwindcss/postcss": "^4.2.0",
     "@types/node": "^25.0.0",
     "@types/react": "^19.2.0",

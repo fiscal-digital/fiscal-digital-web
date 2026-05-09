@@ -1,7 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
 import AlertsFeedClient from '@/components/AlertsFeedClient'
-import { fetchAlerts } from '@/lib/api'
+import { fetchAlertsWithTotal } from '@/lib/api'
 import type { Finding } from '@/components/AlertsFeed'
 
 export const revalidate = 60
@@ -40,13 +40,22 @@ export default async function AlertasPage({ params }: Props) {
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: 'alertas' })
 
-  // SSR/ISR: fetch findings no servidor para hydration sem flash de skeleton.
-  // Sem isso, o cliente monta com loading=true → fetch → setLoading(false)
-  // criando cascata visual ("piscar até estabilizar"). Com isso, HTML estático
-  // já chega com cards renderizados e React hidrata sem trocar UI.
-  // Tolera falha (fetchAlerts retorna [] em erro) — feed vazio melhor que
-  // build quebrado.
-  const initialFindings = (await fetchAlerts({ size: 200 })) as unknown as Finding[]
+  // SSR/ISR: fetch findings + pageInfo no servidor para hydration sem flash.
+  // Antes (LRN-20260506-001) usava fetchAlerts → só items, sem total. KPI
+  // mostrava items.length=200 em vez do total real (~617). fetchAlertsWithTotal
+  // expõe pageInfo.total, totalValue e citiesCount — KPI agora reflete o
+  // universo todo, não só a primeira página.
+  const result = await fetchAlertsWithTotal({ size: 200 })
+  const initialFindings = result.items as unknown as Finding[]
+  const initialPageInfo = {
+    total: result.total,
+    totalValue: result.totalValue,
+    citiesCount: result.citiesCount,
+    // Campos de paginação não usados no KpiBar mas exigidos pela interface
+    page: 1,
+    pageSize: result.items.length,
+    totalPages: Math.max(1, Math.ceil(result.total / Math.max(1, result.items.length))),
+  }
 
   return (
     <main className="min-h-dvh bg-brand-paper">
@@ -63,7 +72,11 @@ export default async function AlertasPage({ params }: Props) {
 
       <section className="px-6 py-16">
         <div className="mx-auto max-w-7xl">
-          <AlertsFeedClient locale={locale} initialFindings={initialFindings} />
+          <AlertsFeedClient
+            locale={locale}
+            initialFindings={initialFindings}
+            initialPageInfo={initialPageInfo}
+          />
         </div>
       </section>
     </main>

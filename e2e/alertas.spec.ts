@@ -33,9 +33,10 @@ test.describe('Página de alertas — fluxo principal', () => {
     const numbers = allTexts.map((t) => parseInt(t.replace(/\D/g, ''), 10)).filter(Number.isFinite)
     expect(numbers.length).toBeGreaterThanOrEqual(2)
 
-    // KPI 1 = alertas. Hoje em prod mostra 200 (truncado pelo size:200 do fetchAlerts).
-    // Bug conhecido: deveria mostrar pageInfo.total (617). Ver TEC-WEB-XXX no backlog.
-    // Quando corrigido, ajustar este test para >= 600.
+    // KPI 1 = total de alertas. Pré-fix da `alertas/page.tsx` mostrava 200
+    // (items.length truncado). Pós-fix mostrará pageInfo.total (~617). Threshold
+    // permissivo (>= 100) tolera ambos enquanto deploy não rola — segundo PR
+    // depois do deploy aperta para >= 600.
     const alertsNum = numbers[0]
     expect(alertsNum).toBeGreaterThanOrEqual(100)
   })
@@ -46,7 +47,7 @@ test.describe('Página de alertas — fluxo principal', () => {
     const kpiValues = page.locator('dl dd')
     const allTexts = await kpiValues.allTextContents()
     const alertsNum = parseInt(allTexts[0]?.replace(/\D/g, '') ?? '0', 10)
-    // Quando bug for corrigido, este teste deve passar e podemos remover .fixme()
+    // Quando bug for corrigido + deploy, este teste deve passar e podemos remover .fixme()
     expect(alertsNum).toBeGreaterThanOrEqual(600)
   })
 

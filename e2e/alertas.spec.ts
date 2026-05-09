@@ -53,7 +53,7 @@ test.describe('Página de alertas — fluxo principal', () => {
     const kpiValues = page.locator('dl dd')
     const allTexts = await kpiValues.allTextContents()
     const alertsNum = parseInt(allTexts[0]?.replace(/\D/g, '') ?? '0', 10)
-    // Quando bug for corrigido, este teste deve passar e podemos remover .fixme()
+    // Quando bug for corrigido + deploy, este teste deve passar e podemos remover .fixme()
     expect(alertsNum).toBeGreaterThanOrEqual(600)
   })
 

@@ -88,3 +88,4 @@ export async function readKpis(page: Page): Promise<{ alerts: string; value: str
 export function findingIdToSlug(id: string): string {
   return Buffer.from(id, 'utf-8').toString('base64url')
 }
+// test

@@ -93,7 +93,9 @@ export function AlertsAppliedFilters({
             className="rounded p-0.5 hover:bg-brand-teal/20 focus:outline-none focus:ring-1 focus:ring-brand-teal"
             aria-label={`Remover filtro ${chip.label}`}
           >
-            <X size={11} weight="bold" />
+            {/* pointer-events-none no ícone para que clicks centro-alinhados
+                do Playwright caiam no <button> e não no SVG path. */}
+            <X size={11} weight="bold" className="pointer-events-none" />
           </button>
         </span>
       ))}

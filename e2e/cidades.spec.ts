@@ -47,14 +47,11 @@ test.describe('Página de cidade — Caxias do Sul', () => {
 
   test('5. Voltar para home pelo link "Voltar"', async ({ page }) => {
     await page.goto(ROUTES.cidade('caxias-do-sul'))
-    // Aguarda URL state hook do AlertsFeed estabilizar (?page=1) — evita race com click
-    await page.waitForURL(/cidades\/caxias-do-sul\/\?page=1/, { timeout: 15_000 })
-    // Aguarda mais 1s pra garantir que nenhum router.push pendente vai atropelar o click
-    await page.waitForTimeout(1500)
 
-    // Verifica que href do link Voltar aponta para /pt-br/ (validação direta, sem
-    // navegar — link tem href correto, não testamos nav real para evitar race
-    // com URL state hook)
+    // Verifica que href do link Voltar aponta para /pt-br/.
+    // Após fix do SearchBar (#6), URL state hook não dispara mais ?page=1 parasita,
+    // então click testaria sem race. Mantemos validação por href apenas pra evitar
+    // dependência adicional no AlertsFeed do feed da cidade.
     const back = page.locator('a[href="/pt-br/"]').first()
     await expect(back).toBeVisible({ timeout: 10_000 })
     const href = await back.getAttribute('href')

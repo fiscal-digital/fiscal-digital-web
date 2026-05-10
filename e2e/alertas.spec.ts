@@ -108,8 +108,16 @@ test.describe('Página de alertas — fluxo principal', () => {
     await page.goto(alertasUrlWithFilters({ type: 'aditivo_abusivo', sort: 'riskDesc' }))
     await waitForAlertasReady(page)
 
-    const cards = await countAlertCards(page)
-    expect(cards).toBeGreaterThan(0)
+    // Race: HTML estático tem <article> de initialFindings (sem filtro). Quando
+    // hasFiltersOnMountRef detecta filtros na URL, descarta initialFindings e
+    // dispara fetch — articles somem, skeletons aparecem, depois articles novos
+    // (filtrados) chegam. waitForAlertasReady passa rápido vendo articles SSR
+    // que somem em seguida, gerando count=0 transitório. expect.poll aguarda
+    // o ciclo completar.
+    await expect.poll(
+      async () => page.locator('article').count(),
+      { timeout: 10_000, intervals: [500, 1000, 2000] },
+    ).toBeGreaterThan(0)
 
     expect(page.url()).toContain('type=aditivo_abusivo')
     expect(page.url()).toContain('sort=riskDesc')

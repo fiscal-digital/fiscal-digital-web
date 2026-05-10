@@ -91,6 +91,60 @@ export const FINDING_TYPE_LABELS: Record<string, { 'pt-br': string; 'en-us': str
   fornecedor_sancionado:            { 'pt-br': 'Fornecedor sancionado (CGU)',  'en-us': 'Sanctioned supplier (CGU)' },
 }
 
+/**
+ * Famílias de FindingType — usadas para agrupar tipos no select da toolbar
+ * (`<optgroup>`). Ordem aqui define a ordem visual.
+ */
+export const FINDING_TYPE_FAMILIES: Array<{
+  key: string
+  labels: { 'pt-br': string; 'en-us': string }
+  types: string[]
+}> = [
+  {
+    key: 'licitacoes_contratos',
+    labels: { 'pt-br': 'Licitações & Contratos', 'en-us': 'Procurement & Contracts' },
+    types: [
+      'dispensa_irregular',
+      'fracionamento',
+      'aditivo_abusivo',
+      'prorrogacao_excessiva',
+      'inexigibilidade_sem_justificativa',
+      'locacao_sem_justificativa',
+    ],
+  },
+  {
+    key: 'fornecedores',
+    labels: { 'pt-br': 'Fornecedores', 'en-us': 'Suppliers' },
+    types: [
+      'cnpj_jovem',
+      'concentracao_fornecedor',
+      'padrao_recorrente',
+      'cnpj_situacao_irregular',
+      'fornecedor_sancionado',
+    ],
+  },
+  {
+    key: 'pessoal',
+    labels: { 'pt-br': 'Pessoal', 'en-us': 'Personnel' },
+    types: ['pico_nomeacoes', 'rotatividade_anormal', 'nepotismo_indicio'],
+  },
+  {
+    key: 'convenios',
+    labels: { 'pt-br': 'Convênios', 'en-us': 'Agreements' },
+    types: ['convenio_sem_chamamento', 'repasse_recorrente_osc'],
+  },
+  {
+    key: 'eleitoral',
+    labels: { 'pt-br': 'Eleitoral', 'en-us': 'Electoral' },
+    types: ['publicidade_eleitoral'],
+  },
+  {
+    key: 'diarias',
+    labels: { 'pt-br': 'Diárias', 'en-us': 'Per diem' },
+    types: ['diaria_irregular'],
+  },
+]
+
 function humanizeSnake(s: string): string {
   return s
     .split('_')

@@ -18,17 +18,11 @@ import { ROUTES, alertasUrlWithFilters, countAlertCards, waitForAlertasReady } f
  * antes de qualquer click/navegação. AlertsFeed dispara router.push na hidratação
  * via useAlertsQueryParams + SearchBar.useEffect — sem o waitForTimeout, clicks
  * dão "Execution context was destroyed" / ERR_ABORTED. Ver feedback_e2e_url_state_race.md.
- *
- * STATUS: marcado como `test.describe.fixme()` enquanto a nova toolbar não está
- * em prod. PR-gate roda E2E contra https://fiscaldigital.org, e os componentes
- * (LocationCombobox, YearRangeSlider, AlertsPrefsButton, AlertsAppliedFilters)
- * só existem nesta branch. Após merge + deploy, abrir follow-up PR removendo
- * `.fixme()` pra ativar a cobertura.
  */
 
 const URL_RACE_WAIT = 2000
 
-test.describe.fixme('Alertas toolbar — Refinamento incremental (aguarda deploy)', () => {
+test.describe('Alertas toolbar — Refinamento incremental', () => {
   test('1. Location combobox abre com busca e popula UFs + cidades', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)

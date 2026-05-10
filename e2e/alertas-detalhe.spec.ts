@@ -24,10 +24,6 @@ test.describe('Navegação alertas → detalhe', () => {
     const href = await firstLink.getAttribute('href')
     expect(href).toMatch(/^\/pt-br\/alertas\//)
 
-    // Aguarda URL state hook do AlertsFeed terminar router.push(?page=1)
-    // antes de navegar — evita ERR_ABORTED por nav. concorrente.
-    await page.waitForTimeout(2000)
-
     // Navega direto para o detalhe
     await page.goto(href!, { waitUntil: 'domcontentloaded' })
     await expect(page).toHaveURL(/\/pt-br\/alertas\/[^/]+\/?$/, { timeout: 10_000 })
@@ -52,9 +48,6 @@ test.describe('Navegação alertas → detalhe', () => {
     const firstLink = page.getByRole('link', { name: /ver alerta completo/i }).first()
     const href = await firstLink.getAttribute('href')
     expect(href).toMatch(/^\/pt-br\/alertas\//)
-
-    // Aguarda URL state hook estabilizar antes de navegar (evita ERR_ABORTED)
-    await page.waitForTimeout(2000)
 
     // Navega direto (sem race com URL state hook)
     await page.goto(href!, { waitUntil: 'domcontentloaded' })

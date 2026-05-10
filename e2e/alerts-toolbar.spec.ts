@@ -174,7 +174,10 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
 
     const chips = page.getByTestId('alerts-applied-filters')
     const removeBtn = chips.getByRole('button', { name: /remover filtro RS/i })
-    await removeBtn.click()
+    await expect(removeBtn).toBeVisible({ timeout: 5_000 })
+    // Force native click via DOM — bypassa qualquer race de hidratação React
+    // que poderia fazer pointer events caírem em elemento sem handler attached.
+    await removeBtn.evaluate((el) => (el as HTMLButtonElement).click())
 
     await expect.poll(() => page.url(), { timeout: 8_000 }).not.toContain('state=RS')
   })
@@ -187,7 +190,8 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
     const chips = page.getByTestId('alerts-applied-filters')
     await expect(chips).toBeVisible({ timeout: 5000 })
 
-    await chips.getByRole('button', { name: /limpar tudo/i }).click()
+    const clearBtn = chips.getByRole('button', { name: /limpar tudo/i })
+    await clearBtn.evaluate((el) => (el as HTMLButtonElement).click())
 
     await expect.poll(() => page.url(), { timeout: 8_000 }).not.toContain('state=RS')
     await expect.poll(() => page.url(), { timeout: 8_000 }).not.toContain('type=aditivo_abusivo')

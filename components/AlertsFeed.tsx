@@ -11,6 +11,7 @@ import { AlertsToolbar } from './AlertsToolbar'
 import { MobileFilterButton } from './MobileFilterButton'
 import { FilterBottomSheet } from './FilterBottomSheet'
 import { type FilterUpdate } from './FilterBar'
+import { AlertsAppliedFilters } from './AlertsAppliedFilters'
 import { AlertsGrid } from './AlertsGrid'
 import { AlertsList } from './AlertsList'
 import { PaginationControls } from './PaginationControls'
@@ -337,6 +338,26 @@ export default function AlertsFeed({
   const openMobileFilters = useCallback(() => setShowMobileFilters(true), [])
   const closeMobileFilters = useCallback(() => setShowMobileFilters(false), [])
 
+  const currentYear = new Date().getFullYear()
+  const mobileActiveFilterCount = useMemo(() => {
+    let n = 0
+    if (params.state || params.city) n++
+    if (params.type) n++
+    if (params.yearMin !== 2021 || params.yearMax !== currentYear) n++
+    return n
+  }, [params.state, params.city, params.type, params.yearMin, params.yearMax, currentYear])
+
+  const handleClearAll = useCallback(() => {
+    setParams({
+      state: '',
+      city: '',
+      type: '',
+      yearMin: 2021,
+      yearMax: currentYear,
+      page: 1,
+    })
+  }, [setParams, currentYear])
+
   const typeLabel = useCallback(
     (type: string): string => findingTypeLabel(type, lang),
     [lang],
@@ -362,7 +383,26 @@ export default function AlertsFeed({
           onViewChange={handleViewChange}
           stateFilter={params.state}
           hideLocation={!!cityId}
+          locale={lang}
         />
+        {!cityId && (
+          <AlertsAppliedFilters
+            state={params.state}
+            city={params.city}
+            type={params.type}
+            yearMin={params.yearMin}
+            yearMax={params.yearMax}
+            defaultYearMin={2021}
+            defaultYearMax={currentYear}
+            onChange={handleFilterChange}
+            onClearAll={handleClearAll}
+            locale={lang}
+            labels={{
+              title: t('toolbar.applied.title'),
+              clearAll: t('toolbar.applied.clearAll'),
+            }}
+          />
+        )}
       </div>
 
       {/* Mobile Toolbar */}
@@ -370,9 +410,14 @@ export default function AlertsFeed({
         <SearchBar
           value={params.search}
           onChange={handleSearchChange}
-          placeholder="Buscar..."
+          placeholder={t('toolbar.search.placeholderShort')}
         />
-        <MobileFilterButton onClick={openMobileFilters} />
+        <MobileFilterButton
+          onClick={openMobileFilters}
+          activeCount={mobileActiveFilterCount}
+          label={t('toolbar.mobile.filtersLabel')}
+          ariaLabel={t('toolbar.mobile.openFilters')}
+        />
       </div>
 
       <FilterBottomSheet
@@ -380,6 +425,7 @@ export default function AlertsFeed({
         filters={toolbarFilters}
         onFilterChange={handleMobileFilterChange}
         onClose={closeMobileFilters}
+        locale={lang}
       />
 
       {/* Loading */}

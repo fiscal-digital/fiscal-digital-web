@@ -211,18 +211,30 @@ export default function AlertsFeed({
 
   const { params, setParams } = useAlertsQueryParams()
 
-  // Estado inicial vem do server quando disponível — elimina flash de skeleton
-  // entre hydration e primeiro fetch client-side.
-  const [findings, setFindings] = useState<Finding[]>(initialFindings ?? [])
-  const [pageInfo, setPageInfo] = useState<PageInfo | null>(initialPageInfo ?? null)
-  const [loading, setLoading] = useState(initialFindings == null)
+  // Se URL tem filtros server/city/type no mount (deep-link com query string),
+  // o SSR `initialFindings`/`initialPageInfo` está SEM esses filtros aplicados
+  // (Static Export gera HTML único pra `/pt-br/alertas/`, ignora query string).
+  // Nesse caso, ignoramos o estado inicial do SSR e forçamos fetch com filtros
+  // corretos da API. Sem esse guard, KPIs mostravam totais globais e cards
+  // mostravam cidades fora do filtro (bug visível em deep-links compartilhados).
+  // `cityId` prop (página de cidade) é caso à parte: filtro vem do prop,
+  // não da URL; comportamento default funciona.
+  const hasFiltersOnMountRef = useRef(
+    !cityId && (params.state !== '' || params.city !== '' || params.type !== ''),
+  )
+  const useSsrInitial = !hasFiltersOnMountRef.current && initialFindings != null
+
+  // Estado inicial vem do server quando disponível e sem filtros na URL —
+  // elimina flash de skeleton entre hydration e primeiro fetch client-side.
+  const [findings, setFindings] = useState<Finding[]>(useSsrInitial ? initialFindings! : [])
+  const [pageInfo, setPageInfo] = useState<PageInfo | null>(useSsrInitial ? (initialPageInfo ?? null) : null)
+  const [loading, setLoading] = useState(!useSsrInitial)
   const [error, setError] = useState(false)
   const [showMobileFilters, setShowMobileFilters] = useState(false)
 
-  // Skip o fetch inicial se findings já vieram do servidor — evita re-fetch
-  // logo após mount (skeleton desnecessário). Fetches subsequentes (mudança
-  // de filtro) usam o caminho normal.
-  const initialFetchSkippedRef = useRef(initialFindings != null)
+  // Skip o fetch inicial só quando o SSR initial é confiável (sem filtros
+  // na URL). Fetches subsequentes (mudança de filtro) usam o caminho normal.
+  const initialFetchSkippedRef = useRef(useSsrInitial)
 
   // ── Fetch findings ────────────────────────────────────────────────────────
   // Deps são APENAS primitivos (cityId + 3 strings de params). Nada de objects

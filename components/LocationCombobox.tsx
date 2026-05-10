@@ -171,7 +171,7 @@ export function LocationCombobox({
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full z-20 mt-1 w-full min-w-[240px] rounded-md border border-brand-gray/15 bg-white shadow-lg">
+        <div className="absolute left-0 top-full z-30 mt-1 w-full min-w-[240px] rounded-md border border-brand-gray/15 bg-white shadow-lg">
           <div className="border-b border-brand-gray/10 p-2">
             <input
               ref={inputRef}

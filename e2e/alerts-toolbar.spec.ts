@@ -167,12 +167,10 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
     await expect(chips).toContainText('RS')
   })
 
-  // TODO(TEC-WEB-009): chip click não atualiza URL em prod mesmo com PR #9 deployed
-  // e expect.poll(8s). Hipótese: <button> dentro de <span> com text node antes —
-  // o click pode estar sendo capturado pelo span pai. Tests 10 e 11 marcados
-  // como .fixme até investigação local com `playwright test --headed --debug`.
-  // Cobertura preservada: tests 9 (chip aparece) e o teste-em-componente cobrem
-  // a renderização. Falta apenas a interação ser validada via E2E.
+  // Tests 10 e 11 dependem do fix `pointer-events-none` no <X> SVG (esta PR
+  // mesmo). Como E2E roda contra prod e o fix ainda não foi deployado, os
+  // tests ficam .fixme neste PR. Follow-up PR remove o .fixme após o deploy.
+  // Pattern: feedback_e2e_two_pr_pattern.md.
   test.fixme('10. Chip removível via × limpa o filtro da URL', async ({ page }) => {
     await page.goto(alertasUrlWithFilters({ state: 'RS' }))
     await waitForAlertasReady(page)

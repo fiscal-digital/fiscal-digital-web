@@ -224,6 +224,52 @@
       "all": "All",
       "cityDisabled": "Select a state"
     },
+    "toolbar": {
+      "common": {
+        "all": "All"
+      },
+      "search": {
+        "placeholder": "Search by CNPJ, contract, supplier...",
+        "placeholderShort": "Search..."
+      },
+      "rss": {
+        "label": "Subscribe RSS",
+        "aria": "Subscribe to alerts RSS feed"
+      },
+      "location": {
+        "label": "Location",
+        "searchPlaceholder": "Search state or city...",
+        "stateBadge": "ST"
+      },
+      "type": {
+        "label": "Type"
+      },
+      "period": {
+        "label": "Period"
+      },
+      "sort": {
+        "label": "Sort"
+      },
+      "prefs": {
+        "button": "Preferences",
+        "perPage": "Per page",
+        "view": "View",
+        "grid": "Cards",
+        "list": "List"
+      },
+      "applied": {
+        "title": "Filters:",
+        "clearAll": "Clear all"
+      },
+      "mobile": {
+        "title": "Filters",
+        "close": "Close filters",
+        "apply": "Apply",
+        "clear": "Clear",
+        "filtersLabel": "Filters",
+        "openFilters": "Open filters"
+      }
+    },
     "card": {
       "source": "View source",
       "viewFull": "View full alert",

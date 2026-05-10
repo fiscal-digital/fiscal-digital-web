@@ -224,6 +224,52 @@
       "all": "Todas",
       "cityDisabled": "Selecione um estado"
     },
+    "toolbar": {
+      "common": {
+        "all": "Todas"
+      },
+      "search": {
+        "placeholder": "Buscar por CNPJ, contrato, fornecedor...",
+        "placeholderShort": "Buscar..."
+      },
+      "rss": {
+        "label": "Assinar RSS",
+        "aria": "Assinar feed RSS dos alertas"
+      },
+      "location": {
+        "label": "Local",
+        "searchPlaceholder": "Buscar estado ou cidade...",
+        "stateBadge": "UF"
+      },
+      "type": {
+        "label": "Tipo"
+      },
+      "period": {
+        "label": "Período"
+      },
+      "sort": {
+        "label": "Ordenar"
+      },
+      "prefs": {
+        "button": "Preferências",
+        "perPage": "Por página",
+        "view": "Visualizar",
+        "grid": "Cartões",
+        "list": "Lista"
+      },
+      "applied": {
+        "title": "Filtros:",
+        "clearAll": "Limpar tudo"
+      },
+      "mobile": {
+        "title": "Filtros",
+        "close": "Fechar filtros",
+        "apply": "Aplicar",
+        "clear": "Limpar",
+        "filtersLabel": "Filtros",
+        "openFilters": "Abrir filtros"
+      }
+    },
     "card": {
       "source": "Ver fonte",
       "viewFull": "Ver alerta completo",

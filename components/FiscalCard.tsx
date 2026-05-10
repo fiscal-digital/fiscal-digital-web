@@ -43,6 +43,8 @@ export interface FiscalCardProps {
   legal: string
   thresholds: Threshold[]
   elevatedConfidenceLabel?: string
+  findingsCount?: number
+  findingsLabel?: string
   expanded?: boolean
 }
 
@@ -74,6 +76,8 @@ export default function FiscalCard({
   legal,
   thresholds,
   elevatedConfidenceLabel,
+  findingsCount,
+  findingsLabel,
   expanded = false,
 }: FiscalCardProps) {
   const Icon = ICONS[id]
@@ -97,6 +101,11 @@ export default function FiscalCard({
               {isElevated && elevatedConfidenceLabel && (
                 <span className="inline-flex items-center rounded-full border border-brand-amber/40 bg-brand-amber/10 px-2 py-0.5 font-mono text-xs font-semibold text-brand-ink">
                   confidence 0,95
+                </span>
+              )}
+              {findingsCount != null && findingsCount > 0 && findingsLabel && (
+                <span className="inline-flex items-center rounded-full bg-brand-teal/10 px-2 py-0.5 font-mono text-xs font-semibold text-brand-teal">
+                  {findingsCount.toLocaleString('pt-BR')} {findingsLabel}
                 </span>
               )}
             </div>

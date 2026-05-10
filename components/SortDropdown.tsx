@@ -7,15 +7,14 @@ interface SortDropdownProps {
   value: SortOption
   onChange: (sort: SortOption) => void
   options: Array<{ label: string; value: SortOption }>
+  label?: string
 }
 
-export function SortDropdown({ value, onChange, options }: SortDropdownProps) {
-  const currentLabel = options.find((o) => o.value === value)?.label || 'Ordenar'
-
+export function SortDropdown({ value, onChange, options, label = 'Ordenar' }: SortDropdownProps) {
   return (
     <div className="flex flex-col gap-1">
       <label htmlFor="sort-dropdown" className="text-xs font-semibold uppercase tracking-wider text-brand-gray">
-        Ordenar
+        {label}
       </label>
       <div className="relative">
         <select

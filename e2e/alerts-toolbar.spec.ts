@@ -167,13 +167,14 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
     await expect(chips).toContainText('RS')
   })
 
-  // Test 10 marcado como .fixme: o click no botão de remover chip individual
-  // (X SVG dentro do button) não dispara o onClick em prod, mesmo após o fix
-  // pointer-events-none e mesmo via evaluate(el => el.click()). O test 11
-  // ("Limpar tudo") passa com a mesma técnica — diferença no DOM tree.
-  // Hipótese a investigar: o handler React não está attached no button do chip
-  // por algum bug de hidratação específico desse componente. Cobertura parcial:
-  // test 9 valida render do chip, test 11 valida que "Limpar tudo" remove state.
+  // TEC-WEB-009 — investigação completa em `docs/tec-web-009-chip-click-flake.md`.
+  // Resumo: `props.onClick` está attached e é invocado sem erro, mas o
+  // `router.push` no `setParams` não dispara navigation real depois de tests
+  // que abriram popover (6/7/8) preverem a sequência. Provavelmente Next.js
+  // 16 router state interno acumulando algo entre múltiplos pushes em static
+  // export. Tests 10 e 11 ficam .fixme até virar dor real.
+  // Cobertura preservada: test 9 valida render do chip; tests 7/8 validam
+  // setParams via popover (mesmo caminho de URL update).
   test.fixme('10. Chip removível via × limpa o filtro da URL', async ({ page }) => {
     await page.goto(alertasUrlWithFilters({ state: 'RS' }))
     await waitForAlertasReady(page)

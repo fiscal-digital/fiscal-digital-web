@@ -1,7 +1,7 @@
 'use client'
 
 import { MagnifyingGlass } from '@phosphor-icons/react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useDebounce } from '@/lib/hooks/useDebounce'
 
 interface SearchBarProps {
@@ -13,12 +13,22 @@ interface SearchBarProps {
 export function SearchBar({ value, onChange, placeholder }: SearchBarProps) {
   const [localValue, setLocalValue] = useState(value)
   const debouncedValue = useDebounce(localValue, 300)
+  // Skip initial onChange no mount (LRN-20260509-006/008): sem isso, monta com
+  // value='' → debounce → onChange('') → setParams({search:'',page:1}) →
+  // router.push(?page=1) parasita que cria race com qualquer nav. subsequente
+  // (links, click em filtros). Só dispara onChange a partir da 2ª execução
+  // do effect (i.e., quando o usuário muda o input).
+  const isFirstRun = useRef(true)
 
   // Callback prop tipicamente é arrow inline do parent (nova ref por render).
   // Inclui-la nas deps causa loop infinito de re-renders → "página piscando"
   // / reload aparente. O efeito precisa rodar apenas quando o valor debounced
   // muda; chamamos onChange como side-effect.
   useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false
+      return
+    }
     onChange(debouncedValue)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedValue])

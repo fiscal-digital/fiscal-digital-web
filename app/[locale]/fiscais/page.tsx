@@ -2,6 +2,9 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import FiscalCard, { type FiscalCardProps, type FiscalId } from '@/components/FiscalCard'
+import { fetchStats } from '@/lib/api'
+
+export const revalidate = 60
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -47,6 +50,21 @@ export default async function FiscaisPage({ params }: Props) {
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: 'fiscais' })
 
+  const stats = await fetchStats()
+  const findingsByFiscalId: Record<FiscalId, number> = {
+    geral:        stats.findingsByFiscal['fiscal-geral']        ?? 0,
+    licitacoes:   stats.findingsByFiscal['fiscal-licitacoes']   ?? 0,
+    contratos:    stats.findingsByFiscal['fiscal-contratos']    ?? 0,
+    fornecedores: stats.findingsByFiscal['fiscal-fornecedores'] ?? 0,
+    pessoal:      stats.findingsByFiscal['fiscal-pessoal']      ?? 0,
+    nepotismo:    stats.findingsByFiscal['fiscal-nepotismo']    ?? 0,
+    publicidade:  stats.findingsByFiscal['fiscal-publicidade']  ?? 0,
+    locacao:      stats.findingsByFiscal['fiscal-locacao']      ?? 0,
+    diarias:      stats.findingsByFiscal['fiscal-diarias']      ?? 0,
+    convenios:    stats.findingsByFiscal['fiscal-convenios']    ?? 0,
+  }
+  const findingsLabel = locale === 'en-us' ? 'findings published' : 'achados publicados'
+
   const sharedLabels = {
     criteriaLabel:         t('label_criteria'),
     exclusionsLabel:       t('label_exclusions'),
@@ -71,6 +89,8 @@ export default async function FiscaisPage({ params }: Props) {
       id,
       name:      t(`${id}.name`      as Parameters<typeof t>[0]),
       role:      t(`${id}.role`      as Parameters<typeof t>[0]),
+      findingsCount: findingsByFiscalId[id],
+      findingsLabel,
       criteria,
       exclusions,
       legal:     t(`${id}.legal`     as Parameters<typeof t>[0]),
@@ -124,7 +144,14 @@ export default async function FiscaisPage({ params }: Props) {
                 </svg>
               </span>
               <div className="min-w-0 flex-1">
-                <h2 className="text-xl font-bold text-brand-ink">{t('geral.name')}</h2>
+                <div className="flex flex-wrap items-baseline gap-2">
+                  <h2 className="text-xl font-bold text-brand-ink">{t('geral.name')}</h2>
+                  {findingsByFiscalId.geral > 0 && (
+                    <span className="inline-flex items-center rounded-full bg-brand-teal/10 px-2 py-0.5 font-mono text-xs font-semibold text-brand-teal">
+                      {findingsByFiscalId.geral.toLocaleString(locale === 'pt-br' ? 'pt-BR' : 'en-US')} {findingsLabel}
+                    </span>
+                  )}
+                </div>
                 <p className="mt-1 text-sm text-brand-gray">{t('geral.role')}</p>
                 <p className="mt-4 text-sm leading-relaxed text-brand-ink">{t('geral.description')}</p>
                 <p className="mt-4 border-t border-brand-gray/10 pt-3 text-xs leading-relaxed text-brand-gray">

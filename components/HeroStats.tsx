@@ -10,6 +10,12 @@ interface StatsApiResponse {
   totalGazettesProcessed: number | null
 }
 
+interface AlertsApiResponse {
+  pageInfo?: {
+    totalValue?: number
+  }
+}
+
 interface CostMtdResponse {
   currency: 'BRL'
   lifetimeBrl: number
@@ -26,12 +32,14 @@ const labels = {
     findings: 'Achados publicados',
     gazettes: 'Diários analisados',
     cities: 'Cidades monitoradas',
+    value: 'Em contratos analisados',
     cost: 'Custo real de operação',
   },
   'en-us': {
     findings: 'Published findings',
     gazettes: 'Gazettes analyzed',
     cities: 'Cities monitored',
+    value: 'In contracts reviewed',
     cost: 'Real operating cost',
   },
 }
@@ -44,8 +52,16 @@ function formatBrl(n: number): string {
   return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 }
 
+function formatCompactBrl(n: number): string {
+  if (n >= 1_000_000_000) return `R$ ${(n / 1_000_000_000).toFixed(1).replace('.', ',')} bi`
+  if (n >= 1_000_000) return `R$ ${(n / 1_000_000).toFixed(0)} mi`
+  if (n >= 1_000) return `R$ ${(n / 1_000).toFixed(0)} mil`
+  return `R$ ${n.toFixed(0)}`
+}
+
 export default function HeroStats({ locale }: Props) {
   const [stats, setStats] = useState<StatsApiResponse | null>(null)
+  const [totalValue, setTotalValue] = useState<number | null>(null)
   const [cost, setCost] = useState<CostMtdResponse | null>(null)
   const [costFailed, setCostFailed] = useState(false)
   const lang = locale === 'en-us' ? 'en-us' : 'pt-br'
@@ -55,6 +71,16 @@ export default function HeroStats({ locale }: Props) {
     fetch(`${API_URL}/stats`, { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : null))
       .then((d: StatsApiResponse | null) => setStats(d))
+      .catch(() => {})
+
+    // Valor agregado em contratos analisados — soma pageInfo.totalValue de
+    // todos os findings publicados. size=1 reduz payload; o totalValue
+    // reflete o agregado global, não a página retornada.
+    fetch(`${API_URL}/alerts?size=1`, { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: AlertsApiResponse | null) => {
+        if (d?.pageInfo?.totalValue != null) setTotalValue(d.pageInfo.totalValue)
+      })
       .catch(() => {})
 
     fetch(`${API_URL}/transparencia/costs/mtd`, { cache: 'no-store' })
@@ -80,6 +106,11 @@ export default function HeroStats({ locale }: Props) {
       key: 'findings',
       value: stats ? formatNumber(stats.totalFindings ?? 0) : null,
       label: l.findings,
+    },
+    {
+      key: 'value',
+      value: totalValue != null ? formatCompactBrl(totalValue) : null,
+      label: l.value,
     },
     {
       key: 'gazettes',

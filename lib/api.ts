@@ -166,6 +166,33 @@ const EMPTY_COSTS: CostsResponse = {
   daily: [],
 }
 
+export interface StatsResponse {
+  totalFindings: number
+  totalGazettesProcessed: number | null
+  findingsByFiscal: Record<string, number>
+  findingsByCity?: Array<{ cityId: string; name: string; count: number }>
+}
+
+const EMPTY_STATS: StatsResponse = {
+  totalFindings: 0,
+  totalGazettesProcessed: 0,
+  findingsByFiscal: {},
+}
+
+/**
+ * Stats agregados — usado em SSG das páginas /fiscais e Home. Tolera falha
+ * (retorna estrutura vazia para evitar quebra de build).
+ */
+export async function fetchStats(): Promise<StatsResponse> {
+  try {
+    const res = await fetch(`${API_URL}/stats`, { next: { revalidate: 60 } })
+    if (!res.ok) return EMPTY_STATS
+    return (await res.json()) as StatsResponse
+  } catch {
+    return EMPTY_STATS
+  }
+}
+
 export async function fetchCosts(days = 30): Promise<CostsResponse> {
   const url = `${API_URL}/transparencia/costs?days=${days}`
   try {

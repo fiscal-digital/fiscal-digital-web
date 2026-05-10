@@ -167,11 +167,7 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
     await expect(chips).toContainText('RS')
   })
 
-  // Tests 10 e 11 dependem do fix `pointer-events-none` no <X> SVG (esta PR
-  // mesmo). Como E2E roda contra prod e o fix ainda não foi deployado, os
-  // tests ficam .fixme neste PR. Follow-up PR remove o .fixme após o deploy.
-  // Pattern: feedback_e2e_two_pr_pattern.md.
-  test.fixme('10. Chip removível via × limpa o filtro da URL', async ({ page }) => {
+  test('10. Chip removível via × limpa o filtro da URL', async ({ page }) => {
     await page.goto(alertasUrlWithFilters({ state: 'RS' }))
     await waitForAlertasReady(page)
     await page.waitForTimeout(URL_RACE_WAIT)
@@ -183,7 +179,7 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
     await expect.poll(() => page.url(), { timeout: 8_000 }).not.toContain('state=RS')
   })
 
-  test.fixme('11. "Limpar tudo" reseta múltiplos filtros', async ({ page }) => {
+  test('11. "Limpar tudo" reseta múltiplos filtros', async ({ page }) => {
     await page.goto(alertasUrlWithFilters({ state: 'RS', type: 'aditivo_abusivo' }))
     await waitForAlertasReady(page)
     await page.waitForTimeout(URL_RACE_WAIT)

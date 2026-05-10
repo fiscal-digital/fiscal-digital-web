@@ -21,7 +21,8 @@ test.describe('Home — fluxo principal', () => {
     const cta = page.locator('a[href*="/pt-br/alertas"]').first()
     await expect(cta).toBeVisible()
     await cta.click()
-    await expect(page).toHaveURL(/\/pt-br\/alertas\/?$/, { timeout: 10_000 })
+    // URL pode ter ?page=1 do URL state hook (LRN-20260509-006) — tolerar.
+    await expect(page).toHaveURL(/\/pt-br\/alertas\/(\?.*)?$/, { timeout: 10_000 })
   })
 
   test('3. CTA "Apoiar projeto" navega para /apoie', async ({ page }) => {

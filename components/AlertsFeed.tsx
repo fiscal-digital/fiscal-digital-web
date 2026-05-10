@@ -127,14 +127,20 @@ function SkeletonCard() {
 interface KpiBarProps {
   pageInfo: PageInfo | null
   fallback: Finding[]
+  /**
+   * Quando true, ignora pageInfo (totais server-side) e calcula stats sobre
+   * `fallback` — usado quando há filtros client-side ativos (search livre,
+   * range de ano fora do default) que pageInfo não conhece.
+   */
+  useFallbackStats?: boolean
   locale: 'pt-br' | 'en-us'
   t: ReturnType<typeof useTranslations<'alertas'>>
   hideCities?: boolean
 }
 
-function KpiBar({ pageInfo, fallback, locale, t, hideCities }: KpiBarProps) {
+function KpiBar({ pageInfo, fallback, useFallbackStats, locale, t, hideCities }: KpiBarProps) {
   const stats = useMemo(() => {
-    if (pageInfo) {
+    if (pageInfo && !useFallbackStats) {
       return {
         count: pageInfo.total,
         totalValue: pageInfo.totalValue,
@@ -144,7 +150,7 @@ function KpiBar({ pageInfo, fallback, locale, t, hideCities }: KpiBarProps) {
     const totalValue = fallback.reduce((sum, f) => sum + (f.value ?? 0), 0)
     const cities = new Set(fallback.map((f) => f.cityId)).size
     return { count: fallback.length, totalValue, cities }
-  }, [pageInfo, fallback])
+  }, [pageInfo, fallback, useFallbackStats])
 
   if (stats.count === 0) return null
 
@@ -224,6 +230,10 @@ export default function AlertsFeed({
   )
   const useSsrInitial = !hasFiltersOnMountRef.current && initialFindings != null
 
+  // Year corrente fixo para vida do componente — usado em vários lugares
+  // (default do range slider, hasLocalFilter, mobileActiveFilterCount, clearAll).
+  const currentYear = new Date().getFullYear()
+
   // Estado inicial vem do server quando disponível e sem filtros na URL —
   // elimina flash de skeleton entre hydration e primeiro fetch client-side.
   const [findings, setFindings] = useState<Finding[]>(useSsrInitial ? initialFindings! : [])
@@ -301,6 +311,14 @@ export default function AlertsFeed({
   const start = (params.page - 1) * params.limit
   const pageItems = filtered.slice(start, start + params.limit)
 
+  // pageInfo (server-side) reflete state/city/type. Filtros client-side
+  // (search livre, range de ano custom) não estão lá — quando ativos, KPIs
+  // devem refletir o conjunto filtrado localmente.
+  const hasLocalFilter =
+    params.search.trim() !== '' ||
+    params.yearMin !== 2021 ||
+    params.yearMax !== currentYear
+
   // ── Memoized children inputs ──────────────────────────────────────────────
   // Filter object passado para Toolbar/BottomSheet — recriar a cada render
   // dispararia useMemo/useEffect descendentes que comparam por referência.
@@ -350,7 +368,6 @@ export default function AlertsFeed({
   const openMobileFilters = useCallback(() => setShowMobileFilters(true), [])
   const closeMobileFilters = useCallback(() => setShowMobileFilters(false), [])
 
-  const currentYear = new Date().getFullYear()
   const mobileActiveFilterCount = useMemo(() => {
     let n = 0
     if (params.state || params.city) n++
@@ -378,7 +395,16 @@ export default function AlertsFeed({
   return (
     <div>
       {/* KPIs */}
-      {!hideKpis && !loading && !error && <KpiBar pageInfo={pageInfo} fallback={findings} locale={lang} t={t} hideCities={!!cityId} />}
+      {!hideKpis && !loading && !error && (
+        <KpiBar
+          pageInfo={pageInfo}
+          fallback={hasLocalFilter ? filtered : findings}
+          useFallbackStats={hasLocalFilter}
+          locale={lang}
+          t={t}
+          hideCities={!!cityId}
+        />
+      )}
 
       {/* Desktop Toolbar */}
       <div className="mb-6 hidden sm:block">

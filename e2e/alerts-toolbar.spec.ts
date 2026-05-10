@@ -12,13 +12,21 @@ import { ROUTES, alertasUrlWithFilters, countAlertCards, waitForAlertasReady } f
  *  - AlertsAppliedFilters: chips aparecem, removem, "Limpar tudo" reseta
  *  - Compat URL: deep-links existentes continuam funcionando
  *
- * Roda contra prod read-only. Workers=1 (LRN-20260509-003). Auto-wait padrão.
+ * Roda contra prod read-only. Workers=1 (LRN-20260509-003).
+ *
+ * IMPORTANTE: `waitForTimeout(2000)` após `waitForAlertasReady` é obrigatório
+ * antes de qualquer click/navegação. AlertsFeed dispara router.push na hidratação
+ * via useAlertsQueryParams + SearchBar.useEffect — sem o waitForTimeout, clicks
+ * dão "Execution context was destroyed" / ERR_ABORTED. Ver feedback_e2e_url_state_race.md.
  */
+
+const URL_RACE_WAIT = 2000
 
 test.describe('Alertas toolbar — Refinamento incremental', () => {
   test('1. Location combobox abre com busca e popula UFs + cidades', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
+    await page.waitForTimeout(URL_RACE_WAIT)
 
     const locationButton = page.getByRole('button', { name: /todas/i }).first()
     await expect(locationButton).toBeVisible({ timeout: 5000 })
@@ -38,6 +46,7 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
   test('2. Selecionar estado RS via combobox atualiza URL', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
+    await page.waitForTimeout(URL_RACE_WAIT)
 
     const locationButton = page.getByRole('button', { name: /todas/i }).first()
     await locationButton.click()
@@ -57,6 +66,7 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
   test('3. Tipo agrupado tem optgroups visíveis', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
+    await page.waitForTimeout(URL_RACE_WAIT)
 
     const typeSelect = page.locator('select#filter-type')
     await expect(typeSelect).toBeVisible({ timeout: 5000 })
@@ -77,6 +87,7 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
   test('4. YearRangeSlider tem dois thumbs com aria-valuenow', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
+    await page.waitForTimeout(URL_RACE_WAIT)
 
     const sliders = page.getByRole('slider')
     expect(await sliders.count()).toBe(2)
@@ -93,6 +104,7 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
   test('5. YearRangeSlider responde a teclado (ArrowRight no thumb min)', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
+    await page.waitForTimeout(URL_RACE_WAIT)
 
     const minThumb = page.getByRole('slider', { name: /ano de in[ií]cio/i })
     await minThumb.focus()
@@ -104,6 +116,7 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
   test('6. Popover de preferências abre e mostra Por Página + Visualizar', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
+    await page.waitForTimeout(URL_RACE_WAIT)
 
     const prefsBtn = page.getByRole('button', { name: /prefer[eê]ncias/i })
     await expect(prefsBtn).toBeVisible({ timeout: 5000 })
@@ -120,6 +133,7 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
   test('7. Mudar limite via popover reflete na URL', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
+    await page.waitForTimeout(URL_RACE_WAIT)
 
     await page.getByRole('button', { name: /prefer[eê]ncias/i }).click()
 
@@ -132,6 +146,7 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
   test('8. Mudar visualização para Lista via popover reflete na URL', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
+    await page.waitForTimeout(URL_RACE_WAIT)
 
     await page.getByRole('button', { name: /prefer[eê]ncias/i }).click()
 
@@ -144,6 +159,7 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
   test('9. Chip de filtro aplicado aparece quando state está na URL', async ({ page }) => {
     await page.goto(alertasUrlWithFilters({ state: 'RS' }))
     await waitForAlertasReady(page)
+    await page.waitForTimeout(URL_RACE_WAIT)
 
     const chips = page.getByTestId('alerts-applied-filters')
     await expect(chips).toBeVisible({ timeout: 5000 })
@@ -153,6 +169,7 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
   test('10. Chip removível via × limpa o filtro da URL', async ({ page }) => {
     await page.goto(alertasUrlWithFilters({ state: 'RS' }))
     await waitForAlertasReady(page)
+    await page.waitForTimeout(URL_RACE_WAIT)
 
     const chips = page.getByTestId('alerts-applied-filters')
     const removeBtn = chips.getByRole('button', { name: /remover filtro RS/i })
@@ -164,6 +181,7 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
   test('11. "Limpar tudo" reseta múltiplos filtros', async ({ page }) => {
     await page.goto(alertasUrlWithFilters({ state: 'RS', type: 'aditivo_abusivo' }))
     await waitForAlertasReady(page)
+    await page.waitForTimeout(URL_RACE_WAIT)
 
     const chips = page.getByTestId('alerts-applied-filters')
     await expect(chips).toBeVisible({ timeout: 5000 })
@@ -178,6 +196,7 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
     // Compatibilidade: link compartilhado antes da mudança ainda renderiza
     await page.goto(alertasUrlWithFilters({ state: 'RS', limit: 50, view: 'list' }))
     await waitForAlertasReady(page)
+    await page.waitForTimeout(URL_RACE_WAIT)
 
     expect(page.url()).toContain('state=RS')
     expect(page.url()).toContain('limit=50')

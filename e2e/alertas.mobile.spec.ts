@@ -18,8 +18,6 @@ test.describe('Página de alertas — mobile', () => {
   test('2. Bottom sheet abre ao clicar Filtros', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
-    // Aguarda URL state hook estabilizar (evita race em CI mobile-chrome)
-    await page.waitForTimeout(2000)
 
     // Antes do click — botão Fechar filtros não existe
     expect(await page.getByRole('button', { name: /fechar filtros/i }).count()).toBe(0)
@@ -33,7 +31,6 @@ test.describe('Página de alertas — mobile', () => {
   test('3. Fechar bottom sheet via X', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
-    await page.waitForTimeout(2000)
 
     await page.getByRole('button', { name: /abrir filtros/i }).click()
     const closeBtn = page.getByRole('button', { name: /fechar filtros/i })

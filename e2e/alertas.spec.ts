@@ -25,13 +25,10 @@ test.describe('Página de alertas — fluxo principal', () => {
   test('2. KPIs do header renderizam pageInfo.total real (>= 600)', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
-    await page.waitForTimeout(2000)
 
-    // expect.poll() re-executa a função até passar, lidando com "Execution
-    // context destroyed" durante navegação concorrente do URL state hook.
-    // Pós-fix #3 (deploy 2026-05-09): KPI mostra pageInfo.total (~617), não
-    // mais items.length (200). Threshold apertado de 100 → 600 pra detectar
-    // regressão se KPI voltar a usar items.length.
+    // expect.poll() mantida como defesa em profundidade (LRN-20260509-006). O fix
+    // do SearchBar.useRef em #6 (TEC-WEB-008) elimina o `?page=1` parasita, mas
+    // poll é cinto + suspensório contra qualquer race futura no AlertsFeed.
     await expect.poll(
       async () => {
         try {
@@ -52,8 +49,6 @@ test.describe('Página de alertas — fluxo principal', () => {
   test('3. SearchBar aceita texto e mantém valor', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
-    // Aguarda URL state hook estabilizar antes de interagir com input.
-    await page.waitForTimeout(2000)
 
     // SearchBar tem aria-label="Buscar alertas"
     const search = page.getByRole('textbox', { name: /buscar alertas/i }).first()

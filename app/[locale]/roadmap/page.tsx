@@ -37,8 +37,9 @@ const TIMELINE_ITEMS: TimelineItem[] = [
   { labelKey: 'sprint2_label', dateKey: 'sprint2_date', descKey: 'sprint2_desc', status: 'done' },
   { labelKey: 'sprint3_label', dateKey: 'sprint3_date', descKey: 'sprint3_desc', status: 'done' },
   { labelKey: 'sprint4_label', dateKey: 'sprint4_date', descKey: 'sprint4_desc', status: 'done' },
-  { labelKey: 'sprint5_label', dateKey: 'sprint5_date', descKey: 'sprint5_desc', status: 'active' },
-  { labelKey: 'sprint6_label', dateKey: 'sprint6_date', descKey: 'sprint6_desc', status: 'planned' },
+  { labelKey: 'sprint5_label', dateKey: 'sprint5_date', descKey: 'sprint5_desc', status: 'done' },
+  { labelKey: 'sprint6_label', dateKey: 'sprint6_date', descKey: 'sprint6_desc', status: 'done' },
+  { labelKey: 'sprint7_label', dateKey: 'sprint7_date', descKey: 'sprint7_desc', status: 'active' },
 ]
 
 function StatusBadge({ status, labels }: { status: TimelineStatus; labels: { done: string; active: string; planned: string } }) {

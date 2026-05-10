@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import { Warning, WarningCircle, Bell, CurrencyDollar, MapPin } from '@phosphor-icons/react'
 import { useAlertsQueryParams, type SortOption, type ViewOption } from '@/lib/hooks/useAlertsQueryParams'
 import { API_URL } from '@/lib/api'
-import { findingTypeLabel, FINDING_TYPE_LABELS } from '@/lib/findings'
+import { findingTypeLabel } from '@/lib/findings'
 import { SearchBar } from './SearchBar'
 import { AlertsToolbar } from './AlertsToolbar'
 import { MobileFilterButton } from './MobileFilterButton'
@@ -52,30 +52,6 @@ function formatCompactBrl(value: number): string {
   if (value >= 1_000_000) return `R$ ${(value / 1_000_000).toFixed(1).replace('.', ',')}M`
   if (value >= 1_000) return `R$ ${(value / 1_000).toFixed(0)}k`
   return `R$ ${value.toFixed(0)}`
-}
-
-function normalizeText(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .trim()
-}
-
-function matchesSearch(finding: Finding, query: string): boolean {
-  if (!query) return true
-  const normalized = normalizeText(query)
-
-  const fieldsToSearch = [
-    finding.city,
-    finding.cnpj || '',
-    finding.contractNumber || '',
-    finding.narrative || '',
-    finding.secretaria || '',
-    findingTypeLabel(finding.type, 'pt-br'),
-  ]
-
-  return fieldsToSearch.some((f) => normalizeText(f).includes(normalized))
 }
 
 function applySorting(findings: Finding[], sortBy: string): Finding[] {
@@ -247,8 +223,11 @@ export default function AlertsFeed({
   const initialFetchSkippedRef = useRef(useSsrInitial)
 
   // ── Fetch findings ────────────────────────────────────────────────────────
-  // Deps são APENAS primitivos (cityId + 3 strings de params). Nada de objects
+  // Deps são APENAS primitivos (cityId + 4 strings de params). Nada de objects
   // ou callbacks aqui — qualquer ref instável dispararia re-fetch infinito.
+  // Inclui `params.search` desde 2026-05-10: API agora filtra por search livre,
+  // então re-fetch a cada mudança garante que cards/KPIs cubram a base inteira
+  // (não só os 200 carregados em SSR — antes, "caxias do sul" só achava 1 card).
   useEffect(() => {
     // Pula o primeiro fetch quando initialFindings veio do server.
     if (initialFetchSkippedRef.current) {
@@ -268,6 +247,7 @@ export default function AlertsFeed({
       if (params.city) qs.set('city', params.city)
     }
     if (params.type) qs.set('type', params.type)
+    if (params.search.trim()) qs.set('search', params.search.trim())
 
     const url = `${API_URL}/alerts${qs.size > 0 ? `?${qs.toString()}` : ''}`
 
@@ -289,13 +269,13 @@ export default function AlertsFeed({
       .finally(() => setLoading(false))
 
     return () => controller.abort()
-  }, [cityId, params.state, params.city, params.type])
+  }, [cityId, params.state, params.city, params.type, params.search])
 
   // ── Filter, sort, paginate ────────────────────────────────────────────────
+  // search agora é server-side (FEAT-WEB-XXX). Só year ainda filtra localmente
+  // (API não aceita yearMin/yearMax — heurística baseada em evidence[0].date).
   const filtered = useMemo(() => {
     let result = findings.filter((f) => {
-      if (!matchesSearch(f, params.search)) return false
-      // Filter by gazette year (evidence[0] is the primary source)
       if (f.evidence?.[0]?.date) {
         const gazetteYear = parseInt(f.evidence[0].date.split('-')[0], 10)
         if (gazetteYear < params.yearMin || gazetteYear > params.yearMax) return false
@@ -304,20 +284,18 @@ export default function AlertsFeed({
     })
     result = applySorting(result, params.sort)
     return result
-  }, [findings, params.search, params.yearMin, params.yearMax, params.sort])
+  }, [findings, params.yearMin, params.yearMax, params.sort])
 
   const totalCount = filtered.length
   const totalPages = Math.ceil(totalCount / params.limit)
   const start = (params.page - 1) * params.limit
   const pageItems = filtered.slice(start, start + params.limit)
 
-  // pageInfo (server-side) reflete state/city/type. Filtros client-side
-  // (search livre, range de ano custom) não estão lá — quando ativos, KPIs
-  // devem refletir o conjunto filtrado localmente.
+  // pageInfo (server-side) reflete state/city/type/search. Apenas range de
+  // ano é client-side (API não aceita yearMin/yearMax) — quando customizado,
+  // KPIs precisam refletir o filtered local em vez do pageInfo.
   const hasLocalFilter =
-    params.search.trim() !== '' ||
-    params.yearMin !== 2021 ||
-    params.yearMax !== currentYear
+    params.yearMin !== 2021 || params.yearMax !== currentYear
 
   // ── Memoized children inputs ──────────────────────────────────────────────
   // Filter object passado para Toolbar/BottomSheet — recriar a cada render

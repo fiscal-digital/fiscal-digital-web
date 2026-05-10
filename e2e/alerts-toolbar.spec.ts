@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { ROUTES, alertasUrlWithFilters, countAlertCards, waitForAlertasReady } from './helpers'
+import { ROUTES, alertasUrlWithFilters, waitForAlertasReady } from './helpers'
 
 /**
  * E2E da nova toolbar de Alertas (Direção A — Refinamento incremental).
@@ -54,13 +54,14 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
     const searchInput = page.getByPlaceholder(/buscar estado ou cidade/i)
     await searchInput.fill('RS')
 
-    // Opção do estado RS — primeira da lista após filtro
-    const rsOption = page.getByRole('option', { name: /^RS$/i }).first()
+    // Opção do estado RS — accessible name inclui badge "UF" + valor "RS"
+    // (comportamento de role=option quando conteúdo tem múltiplos spans).
+    const rsOption = page.getByRole('option', { name: /UF\s+RS/i }).first()
     await expect(rsOption).toBeVisible({ timeout: 5000 })
     await rsOption.click()
 
-    // URL ganha state=RS
-    await expect(page).toHaveURL(/state=RS/)
+    // URL ganha state=RS — pode haver race com URL state hook
+    await expect.poll(() => page.url(), { timeout: 5_000 }).toContain('state=RS')
   })
 
   test('3. Tipo agrupado tem optgroups visíveis', async ({ page }) => {
@@ -175,7 +176,8 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
     const removeBtn = chips.getByRole('button', { name: /remover filtro RS/i })
     await removeBtn.click()
 
-    await expect(page).not.toHaveURL(/state=RS/, { timeout: 3000 })
+    // expect.poll tolera race com URL state hook (ver feedback_e2e_url_state_race.md)
+    await expect.poll(() => page.url(), { timeout: 8_000 }).not.toContain('state=RS')
   })
 
   test('11. "Limpar tudo" reseta múltiplos filtros', async ({ page }) => {
@@ -188,8 +190,8 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
 
     await chips.getByRole('button', { name: /limpar tudo/i }).click()
 
-    await expect(page).not.toHaveURL(/state=RS/, { timeout: 3000 })
-    await expect(page).not.toHaveURL(/type=aditivo_abusivo/)
+    await expect.poll(() => page.url(), { timeout: 8_000 }).not.toContain('state=RS')
+    await expect.poll(() => page.url(), { timeout: 8_000 }).not.toContain('type=aditivo_abusivo')
   })
 
   test('12. Deep link com filtros antigos continua funcionando', async ({ page }) => {
@@ -202,10 +204,9 @@ test.describe('Alertas toolbar — Refinamento incremental', () => {
     expect(page.url()).toContain('limit=50')
     expect(page.url()).toContain('view=list')
 
-    // Lista renderiza tabela (não grid)
+    // Lista renderiza tabela (view=list usa <table> com <tr>, não <article>)
     await expect(page.locator('table').first()).toBeVisible({ timeout: 5000 })
-
-    const cards = await countAlertCards(page)
-    expect(cards).toBeGreaterThan(0)
+    const rows = await page.locator('table tbody tr').count()
+    expect(rows).toBeGreaterThan(0)
   })
 })

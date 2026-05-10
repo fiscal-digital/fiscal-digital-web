@@ -27,9 +27,9 @@ export function FindingRow({ finding, typeLabel, locale }: FindingRowProps) {
     <tr className="border-b border-brand-gray/15 hover:bg-brand-gray/5 transition-colors">
       <td className="min-w-[140px] px-4 py-3 text-sm font-semibold text-brand-ink">{typeLabel(finding.type)}</td>
       <td className="min-w-[100px] px-4 py-3 text-sm text-brand-gray">{finding.city}</td>
-      <td className="min-w-[90px] px-4 py-3 text-sm">
+      <td className="min-w-[120px] px-4 py-3 text-sm">
         <span
-          className={`rounded-pill px-2.5 py-0.5 text-xs font-semibold ${riskBadgeClass(finding.riskScore)}`}
+          className={`inline-block whitespace-nowrap rounded-pill px-2.5 py-0.5 text-xs font-semibold ${riskBadgeClass(finding.riskScore)}`}
           title={locale === 'en-us'
             ? `Risk score ${finding.riskScore}/100`
             : `Pontuação de risco ${finding.riskScore}/100`}

@@ -7,6 +7,10 @@
   *Autonomous oversight of Brazilian municipal spending.*
 
   [fiscaldigital.org](https://fiscaldigital.org) · [@FiscalDigitalBR](https://x.com/FiscalDigitalBR)
+
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+  [![Brand: CC BY 4.0](https://img.shields.io/badge/Brand-CC%20BY%204.0-blue.svg)](https://creativecommons.org/licenses/by/4.0/)
+  [![Status: Produção](https://img.shields.io/badge/Status-Produção-success.svg)]()
 </div>
 
 ---
@@ -22,9 +26,9 @@ Cada alerta cita a fonte. Cada fonte é o diário oficial publicado no
 
 ### Status
 
-🚧 **Em desenvolvimento.** Lançamento público condicional ao pipeline de
-fiscalização da engine estar gerando alertas reais para a primeira cidade
-coberta (Caxias do Sul, RS).
+✅ **Em produção** desde 02 de maio de 2026. Serve atualmente 179 alertas publicáveis em 26 cidades brasileiras, com mais de R$ 499 milhões em contratos analisados desde 2021. Pipeline diário ativo: collector às 04:00 BRT, analyzer contínuo via SQS, publisher gera narrativas para findings com `riskScore ≥ 60`.
+
+Engine v1.7.0 em produção (Ciclo 4.1 concluído em 13 de maio de 2026). Janela de observação 30 dias até 10 de junho de 2026, validando ≥ 5 verdadeiros positivos e ≤ 1 falso positivo por Fiscal. Veja [TRAINING_CYCLES.md](https://github.com/fiscal-digital/fiscal-digital-evaluations/blob/main/TRAINING_CYCLES.md) no repo de evaluations.
 
 ### Stack
 
@@ -90,8 +94,9 @@ Foundation Brazil).
 
 ### Status
 
-🚧 **Under development.** Public launch conditional on the fiscal pipeline
-generating real alerts for the first covered city (Caxias do Sul, RS, Brazil).
+✅ **In production** since May 2, 2026. Currently serves 179 publishable alerts across 26 Brazilian cities, with over R$ 499 million in analyzed contracts since 2021. Daily pipeline active: collector at 04:00 BRT, continuous analyzer via SQS, publisher generates narratives for findings with `riskScore ≥ 60`.
+
+Engine v1.7.0 in production (Cycle 4.1 completed May 13, 2026). Thirty-day observation window through June 10, 2026, validating ≥ 5 true positives and ≤ 1 false positive per Fiscal. See [TRAINING_CYCLES.md](https://github.com/fiscal-digital/fiscal-digital-evaluations/blob/main/TRAINING_CYCLES.md) in the evaluations repo.
 
 ### Stack
 

@@ -22,13 +22,15 @@ test.describe('Página de alertas — fluxo principal', () => {
     ).toBeVisible()
   })
 
-  test('2. KPIs do header renderizam pageInfo.total real (>= 600)', async ({ page }) => {
+  test('2. KPIs do header renderizam pageInfo.total real (>= 100)', async ({ page }) => {
     await page.goto(ROUTES.alertas)
     await waitForAlertasReady(page)
 
     // expect.poll() mantida como defesa em profundidade (LRN-20260509-006). O fix
     // do SearchBar.useRef em #6 (TEC-WEB-008) elimina o `?page=1` parasita, mas
     // poll é cinto + suspensório contra qualquer race futura no AlertsFeed.
+    // Threshold ajustado de 600 → 100 pós Ciclo 4.1 (reanalyze v1.7.0 reduziu
+    // publicáveis de 617 para 180 ao eliminar FPs documentados nos Ciclos 1-3).
     await expect.poll(
       async () => {
         try {
@@ -39,11 +41,11 @@ test.describe('Página de alertas — fluxo principal', () => {
         }
       },
       {
-        message: 'KPI 1 deve mostrar pageInfo.total real (>= 600 hoje)',
+        message: 'KPI 1 deve mostrar pageInfo.total real (>= 100 — baseline pós Ciclo 4.1)',
         timeout: 15_000,
         intervals: [500, 1000, 2000],
       },
-    ).toBeGreaterThanOrEqual(600)
+    ).toBeGreaterThanOrEqual(100)
   })
 
   test('3. SearchBar aceita texto e mantém valor', async ({ page }) => {

@@ -42,9 +42,9 @@ export default async function AlertasPage({ params }: Props) {
 
   // SSR/ISR: fetch findings + pageInfo no servidor para hydration sem flash.
   // Antes (LRN-20260506-001) usava fetchAlerts → só items, sem total. KPI
-  // mostrava items.length=200 em vez do total real (~617). fetchAlertsWithTotal
-  // expõe pageInfo.total, totalValue e citiesCount — KPI agora reflete o
-  // universo todo, não só a primeira página.
+  // mostrava items.length=200 em vez do total real (~180 pós Ciclo 4.1).
+  // fetchAlertsWithTotal expõe pageInfo.total, totalValue e citiesCount —
+  // KPI agora reflete o universo todo, não só a primeira página.
   const result = await fetchAlertsWithTotal({ size: 200 })
   const initialFindings = result.items as unknown as Finding[]
   const initialPageInfo = {

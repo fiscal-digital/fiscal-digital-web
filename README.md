@@ -7,6 +7,9 @@
   *Autonomous oversight of Brazilian municipal spending.*
 
   [fiscaldigital.org](https://fiscaldigital.org) · [@FiscalDigitalBR](https://x.com/FiscalDigitalBR)
+
+  [![License: MIT](https://img.shields.io/badge/code-MIT-blue.svg)](LICENSE)
+  [![Brand: CC-BY 4.0](https://img.shields.io/badge/brand-CC--BY%204.0-orange.svg)](https://creativecommons.org/licenses/by/4.0/)
 </div>
 
 ---
@@ -22,9 +25,9 @@ Cada alerta cita a fonte. Cada fonte é o diário oficial publicado no
 
 ### Status
 
-🚧 **Em desenvolvimento.** Lançamento público condicional ao pipeline de
-fiscalização da engine estar gerando alertas reais para a primeira cidade
-coberta (Caxias do Sul, RS).
+✅ **Em produção.** Pipeline da engine ativo desde 2026-05-02, servindo
+alertas verificáveis em [fiscaldigital.org](https://fiscaldigital.org).
+50 cidades cobertas, primeira: Caxias do Sul (RS).
 
 ### Stack
 
@@ -90,8 +93,9 @@ Foundation Brazil).
 
 ### Status
 
-🚧 **Under development.** Public launch conditional on the fiscal pipeline
-generating real alerts for the first covered city (Caxias do Sul, RS, Brazil).
+✅ **In production.** Fiscal pipeline live since 2026-05-02, serving
+verifiable alerts at [fiscaldigital.org](https://fiscaldigital.org).
+50 cities covered, first: Caxias do Sul (RS, Brazil).
 
 ### Stack
 

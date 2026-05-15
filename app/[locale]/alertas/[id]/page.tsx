@@ -3,10 +3,12 @@ import type { Metadata } from 'next'
 import { setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Script from 'next/script'
 import { CaretLeft } from '@phosphor-icons/react/dist/ssr'
 import { routing } from '@/i18n/routing'
 import { fetchAlerts, fetchFindingById } from '@/lib/api'
 import { findingIdToSlug, findingTypeLabel } from '@/lib/findings'
+import { buildReportJsonLd } from '@/lib/llms-txt'
 import FindingDetail from '@/components/FindingDetail'
 import ShareButton from '@/components/ShareButton'
 
@@ -83,8 +85,16 @@ export default async function AlertaPage({ params }: Props) {
     },
   }[locale as 'pt-br' | 'en-us']
 
+  const reportJsonLd = buildReportJsonLd(finding, locale as 'pt-br' | 'en-us')
+
   return (
     <main className="min-h-dvh bg-brand-paper">
+      <Script
+        id={`ld-report-${id}`}
+        type="application/ld+json"
+        strategy="beforeInteractive"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(reportJsonLd) }}
+      />
       {/* Header strip */}
       <section className="bg-brand-teal px-6 py-12 text-brand-paper">
         <div className="mx-auto max-w-3xl">

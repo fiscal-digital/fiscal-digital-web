@@ -68,6 +68,7 @@ const ACTIVE_CITY_SLUGS: readonly string[] = [
 const STATIC_PAGES = [
   { path: '', priority: 1.0, changeFrequency: 'daily' as const },
   { path: 'alertas', priority: 0.9, changeFrequency: 'daily' as const },
+  { path: 'dados', priority: 0.85, changeFrequency: 'weekly' as const },
   { path: 'manifesto', priority: 0.8, changeFrequency: 'monthly' as const },
   { path: 'sobre', priority: 0.7, changeFrequency: 'monthly' as const },
   { path: 'transparencia', priority: 0.7, changeFrequency: 'weekly' as const },

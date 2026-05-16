@@ -43,7 +43,9 @@ export default function robots(): MetadataRoute.Robots {
         ...(crawlDelay !== undefined && { crawlDelay }),
       })),
     ],
-    sitemap: `${SITE}/sitemap.xml`,
+    // Dois sitemaps: principal (páginas estáticas + cidades) + especializado
+    // de alertas (Onda 2 — cada finding individual com lastmod).
+    sitemap: [`${SITE}/sitemap.xml`, `${SITE}/sitemap-alertas.xml`],
     host: SITE,
   }
 }

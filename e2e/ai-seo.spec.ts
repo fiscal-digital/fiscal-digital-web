@@ -4,11 +4,10 @@ import { ROUTES } from './helpers'
 /**
  * AI SEO Onda 1 — cobertura E2E.
  *
- * NOTA: marcado como `test.describe.fixme` enquanto o PR não foi mergeado.
- * Os arquivos /llms.txt, /ai.txt, /.well-known/content-license.json e o
- * robots.txt expandido só existem em prod após o deploy. Remover o fixme
- * via PR follow-up assim que `https://fiscaldigital.org/llms.txt` responder
- * 200. Padrão estabelecido no projeto (memória feedback_e2e_new_feature_fixme).
+ * Mantido em `test.describe.fixme` até PR #19 deployar (fix dos Route Handlers
+ * para /ai.txt e /.well-known/content-license.json). Padrão 2-PR
+ * (LRN-feedback_e2e_two_pr_pattern): remover fixme em PR follow-up dedicado
+ * após confirmar deploy.
  */
 
 test.describe.fixme('AI SEO — discovery files', () => {

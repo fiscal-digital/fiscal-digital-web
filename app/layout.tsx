@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Script from 'next/script'
 import './globals.css'
 
 const SITE_URL = 'https://fiscaldigital.org'
@@ -84,16 +83,16 @@ const websiteJsonLd = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Script
-        id="ld-org"
+      {/* JSON-LD inline (script HTML5 — não next/script). next/script com
+          strategy=beforeInteractive injeta lazy via streaming RSC; crawlers
+          sem JS (curl, Common Crawl legacy) não veem no SSR puro. Inline
+          garante presença literal no HTML. */}
+      <script
         type="application/ld+json"
-        strategy="beforeInteractive"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
       />
-      <Script
-        id="ld-website"
+      <script
         type="application/ld+json"
-        strategy="beforeInteractive"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
       />
       {children}

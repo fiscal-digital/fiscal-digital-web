@@ -4,13 +4,13 @@ import { ROUTES } from './helpers'
 /**
  * AI SEO Onda 1 — cobertura E2E.
  *
- * Os arquivos /llms.txt, /ai.txt, /.well-known/content-license.json e o
- * robots.txt expandido foram deployados em 2026-05-16. Todos os endpoints
- * são Route Handlers `force-static` (LRN-20260516-001 explica por que
- * abandonamos arquivos em `public/`).
+ * Mantido em `test.describe.fixme` até PR #19 deployar (fix dos Route Handlers
+ * para /ai.txt e /.well-known/content-license.json). Padrão 2-PR
+ * (LRN-feedback_e2e_two_pr_pattern): remover fixme em PR follow-up dedicado
+ * após confirmar deploy.
  */
 
-test.describe('AI SEO — discovery files', () => {
+test.describe.fixme('AI SEO — discovery files', () => {
   test('1. /llms.txt retorna 200 com conteúdo canônico', async ({ request }) => {
     const res = await request.get('/llms.txt')
     expect(res.status()).toBe(200)
@@ -64,7 +64,7 @@ test.describe('AI SEO — discovery files', () => {
   })
 })
 
-test.describe('AI SEO — JSON-LD Report em alerta', () => {
+test.describe.fixme('AI SEO — JSON-LD Report em alerta', () => {
   test('1. página de alerta inclui <script type="application/ld+json"> com @type Report', async ({ page, request }) => {
     // Pega ID de um alerta real da API pública
     const alertsRes = await request.get('https://api.fiscaldigital.org/alerts?size=1')

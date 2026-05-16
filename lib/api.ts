@@ -1,8 +1,10 @@
 import type { ApiAlertsResponse, ApiFinding } from './findings'
 
+// Domínio canônico (Onda 2 §5.1 — CloudFront na frente da Lambda Function URL).
+// Lambda Function URL crua continua funcionando paralelo, mas referenciar o
+// subdomain estável beneficia LLMs/agentes (consistência com OpenAPI servers).
 export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ??
-  'https://7vvbdbxwfz4h57j7dfk65wpux40gqayb.lambda-url.us-east-1.on.aws'
+  process.env.NEXT_PUBLIC_API_URL ?? 'https://api.fiscaldigital.org'
 
 // Conversão USD→BRL agora é responsabilidade do backend (único lugar).
 // Site recebe estimatedCostBrl direto — moeda única, não traduzida.

@@ -91,7 +91,7 @@ export async function GET(
           secretaria: f.secretaria,
           legal_basis: f.legalBasis,
           querido_diario_url: f.source,
-          markdown_url: `${SITE}/${locale}/alertas/${slug}.md`,
+          markdown_url: `${SITE}/${locale}/alertas/${slug}/m`,
         },
       }
     }),

@@ -1,16 +1,15 @@
 import { test, expect } from '@playwright/test'
 import { ROUTES } from './helpers'
+import { findingIdToSlug } from '../lib/findings'
 
 /**
  * AI SEO Onda 1 — cobertura E2E.
  *
- * Mantido em `test.describe.fixme` até PR #19 deployar (fix dos Route Handlers
- * para /ai.txt e /.well-known/content-license.json). Padrão 2-PR
- * (LRN-feedback_e2e_two_pr_pattern): remover fixme em PR follow-up dedicado
- * após confirmar deploy.
+ * Onda 1 deployada em prod em 2026-05-16. PR #19 corrigiu /ai.txt e
+ * /.well-known/content-license.json (Route Handlers em vez de public/).
  */
 
-test.describe.fixme('AI SEO — discovery files', () => {
+test.describe('AI SEO — discovery files', () => {
   test('1. /llms.txt retorna 200 com conteúdo canônico', async ({ request }) => {
     const res = await request.get('/llms.txt')
     expect(res.status()).toBe(200)
@@ -64,25 +63,27 @@ test.describe.fixme('AI SEO — discovery files', () => {
   })
 })
 
-test.describe.fixme('AI SEO — JSON-LD Report em alerta', () => {
+test.describe('AI SEO — JSON-LD Report em alerta', () => {
   test('1. página de alerta inclui <script type="application/ld+json"> com @type Report', async ({ page, request }) => {
-    // Pega ID de um alerta real da API pública
+    // Pega ID de um alerta real da API pública e converte para slug base64url
+    // (URL da página é /alertas/<slug>, não /alertas/<id-raw>).
     const alertsRes = await request.get('https://api.fiscaldigital.org/alerts?size=1')
     expect(alertsRes.ok()).toBeTruthy()
     const alertsJson = await alertsRes.json()
     const firstId = alertsJson.items?.[0]?.id
     expect(firstId, 'API deve retornar pelo menos um alerta').toBeTruthy()
+    const slug = findingIdToSlug(firstId)
 
-    await page.goto(ROUTES.alertaDetalhe(firstId))
+    await page.goto(ROUTES.alertaDetalhe(slug))
 
-    // Localiza o JSON-LD do Report (id começa com `ld-report-`)
-    const ldScript = await page.locator('script[type="application/ld+json"]').filter({ hasText: '"@type":"Report"' }).first()
-    await expect(ldScript).toHaveCount(1)
-
-    const ldContent = await ldScript.textContent()
-    expect(ldContent).toBeTruthy()
-    const parsed = JSON.parse(ldContent!)
-    expect(parsed['@type']).toBe('Report')
+    // Múltiplos JSON-LD no head (Organization, WebSite, Report). Coleta todos
+    // e procura o Report via JSON.parse (filter hasText busca string literal —
+    // falha por espaçamento do JSON.stringify).
+    const ldTexts = await page.locator('script[type="application/ld+json"]').allTextContents()
+    const parsed = ldTexts.map((t) => {
+      try { return JSON.parse(t) } catch { return null }
+    }).find((ld) => ld?.['@type'] === 'Report')
+    expect(parsed, 'JSON-LD Report deve existir na página').toBeTruthy()
     expect(parsed['@context']).toBe('https://schema.org')
     expect(parsed.license).toContain('creativecommons.org')
     expect(parsed.author?.['@id']).toContain('fiscaldigital.org')

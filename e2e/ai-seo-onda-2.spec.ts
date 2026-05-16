@@ -1,11 +1,10 @@
 import { test, expect } from '@playwright/test'
+import { findingIdToSlug } from '../lib/findings'
 
 /**
  * AI SEO Onda 2 — cobertura E2E.
  *
- * NOTA: marcado como `test.describe.fixme` enquanto o PR não foi deployado.
- * Remover via PR follow-up (2-PR pattern, LRN feedback_e2e_two_pr_pattern)
- * após confirmar deploy:
+ * Onda 2 deployada em prod em 2026-05-16. Valida:
  *   - /dados retornando 200 com JSON-LD Dataset
  *   - /alertas/[id].md retornando 200 com text/markdown
  *   - /pt-br/alertas/feed.json retornando 200 com JSON Feed válido
@@ -14,28 +13,35 @@ import { test, expect } from '@playwright/test'
  *   - /.well-known/openapi.json retornando 302 para api.fiscaldigital.org
  */
 
-test.describe.fixme('AI SEO Onda 2 — discovery files', () => {
+test.describe('AI SEO Onda 2 — discovery files', () => {
   test('1. /pt-br/dados retorna 200 com JSON-LD Dataset', async ({ page }) => {
     await page.goto('/pt-br/dados')
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
-    const ldScript = page.locator('script[type="application/ld+json"]').filter({ hasText: '"@type":"Dataset"' })
-    await expect(ldScript).toHaveCount(1)
-    const ldText = await ldScript.textContent()
-    const ld = JSON.parse(ldText!)
-    expect(ld['@type']).toBe('Dataset')
-    expect(ld.license).toContain('creativecommons.org')
-    expect(Array.isArray(ld.distribution)).toBe(true)
-    expect(ld.distribution.length).toBeGreaterThanOrEqual(3)
+    // Múltiplos JSON-LD scripts no head (Organization, WebSite, Dataset).
+    // Coleta todos e procura o Dataset via JSON.parse em vez de filter
+    // (hasText busca string literal — falha por espaçamento do JSON.stringify).
+    const ldTexts = await page.locator('script[type="application/ld+json"]').allTextContents()
+    const dataset = ldTexts.map((t) => {
+      try { return JSON.parse(t) } catch { return null }
+    }).find((ld) => ld?.['@type'] === 'Dataset')
+    expect(dataset, 'JSON-LD Dataset deve existir').toBeTruthy()
+    expect(dataset.license).toContain('creativecommons.org')
+    expect(Array.isArray(dataset.distribution)).toBe(true)
+    expect(dataset.distribution.length).toBeGreaterThanOrEqual(3)
   })
 
-  test('2. /pt-br/alertas/<id>.md retorna 200 com text/markdown', async ({ request }) => {
-    // Pega ID real de um alerta atual via API pública
+  // fixme temporário: rota /m foi renomeada de [id].md neste mesmo PR.
+  // Remover após deploy mergear (2-PR pattern, LRN feedback_e2e_two_pr_pattern).
+  test.fixme('2. /pt-br/alertas/<slug>/m retorna 200 com text/markdown', async ({ request }) => {
+    // Pega ID real de um alerta via API pública e converte para slug base64url.
+    // Path /m em vez de sufixo .md (Next.js 16 não resolve [id].md/route.ts).
     const apiRes = await request.get('https://api.fiscaldigital.org/alerts?size=1')
     const apiJson = await apiRes.json()
     const firstId = apiJson.items?.[0]?.id
     expect(firstId).toBeTruthy()
+    const slug = findingIdToSlug(firstId)
 
-    const res = await request.get(`/pt-br/alertas/${firstId}.md`)
+    const res = await request.get(`/pt-br/alertas/${slug}/m`)
     expect(res.status()).toBe(200)
     expect(res.headers()['content-type']).toContain('text/markdown')
     const md = await res.text()
@@ -85,11 +91,12 @@ test.describe.fixme('AI SEO Onda 2 — discovery files', () => {
 
   test('7. /pt-br/cidades/<slug> contém JSON-LD Place', async ({ page }) => {
     await page.goto('/pt-br/cidades/caxias-do-sul')
-    const ldScript = page.locator('script[type="application/ld+json"]').filter({ hasText: '"@type":"City"' })
-    await expect(ldScript).toHaveCount(1)
-    const ld = JSON.parse((await ldScript.textContent())!)
-    expect(ld['@type']).toBe('City')
-    expect(ld.name).toBe('Caxias do Sul')
-    expect(ld.addressCountry).toBe('BR')
+    const ldTexts = await page.locator('script[type="application/ld+json"]').allTextContents()
+    const place = ldTexts.map((t) => {
+      try { return JSON.parse(t) } catch { return null }
+    }).find((ld) => ld?.['@type'] === 'City')
+    expect(place, 'JSON-LD City deve existir').toBeTruthy()
+    expect(place.name).toBe('Caxias do Sul')
+    expect(place.addressCountry).toBe('BR')
   })
 })

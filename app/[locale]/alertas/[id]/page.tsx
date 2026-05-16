@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import { setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import Script from 'next/script'
 import { CaretLeft } from '@phosphor-icons/react/dist/ssr'
 import { routing } from '@/i18n/routing'
 import { fetchAlerts, fetchFindingById } from '@/lib/api'
@@ -89,10 +88,9 @@ export default async function AlertaPage({ params }: Props) {
 
   return (
     <main className="min-h-dvh bg-brand-paper">
-      <Script
-        id={`ld-report-${id}`}
+      {/* JSON-LD inline (script HTML5) — SSR estático para crawlers que não rodam JS. */}
+      <script
         type="application/ld+json"
-        strategy="beforeInteractive"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(reportJsonLd) }}
       />
       {/* Header strip */}

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import Script from 'next/script'
 import { setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import {
@@ -82,10 +81,11 @@ export default async function DadosPage({ params }: Props) {
 
   return (
     <main className="min-h-dvh bg-brand-paper">
-      <Script
-        id="ld-dataset"
+      {/* JSON-LD inline (script HTML5 — não next/script). next/script com
+          strategy=beforeInteractive injeta lazy via streaming RSC, então crawlers
+          que não rodam JS (curl, Common Crawl bot legacy) não veem no SSR puro. */}
+      <script
         type="application/ld+json"
-        strategy="beforeInteractive"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetJsonLd) }}
       />
 

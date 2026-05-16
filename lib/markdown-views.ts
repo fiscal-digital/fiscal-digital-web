@@ -5,7 +5,8 @@
  * (menos tokens, sem ruído de CSS/Tailwind). Mesmo conteúdo do
  * `/alertas/[id]` em formato consumível por agente.
  *
- * Padrão URL: `/alertas/[id].md` (Blueprint AI SEO Onda 2 §5.2).
+ * Padrão URL: `/alertas/[id]/m` (subfolder dedicado — Next.js 16 não resolve
+ * sufixo literal `.md` em dynamic segment).
  *
  * Convenção: header com título, tabela de metadata, narrativa, evidências
  * com excerpt + link Querido Diário, base legal, atribuição CC-BY-4.0.
@@ -19,7 +20,7 @@ const QD = 'https://queridodiario.ok.org.br'
 
 /**
  * Converte um finding para markdown canônico, auto-contido e citável.
- * Usado por `/alertas/[id].md` e (no futuro) bulk dumps.
+ * Usado por `/alertas/[id]/m` e (no futuro) bulk dumps.
  */
 export function findingToMarkdown(
   finding: ApiFinding,

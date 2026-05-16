@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import Script from 'next/script'
 import { setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { CaretLeft, Buildings, Hash, WarningCircle } from '@phosphor-icons/react/dist/ssr'
@@ -93,10 +92,9 @@ export default async function FornecedorPage({ params }: Props) {
 
   return (
     <main className="min-h-dvh bg-brand-paper">
-      <Script
-        id={`ld-supplier-${cleanCnpj}`}
+      {/* JSON-LD inline (script HTML5) — SSR estático para crawlers. */}
+      <script
         type="application/ld+json"
-        strategy="beforeInteractive"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
       />
       {/* Header */}

@@ -15,6 +15,7 @@ import { routing } from '@/i18n/routing'
 import { CITIES, getCityBySlug, regionOf, REGION_LABELS } from '@/lib/cities'
 import { fetchAlertsWithTotal } from '@/lib/api'
 import { formatCurrency, formatDate } from '@/lib/findings'
+import { buildCityPlaceJsonLd } from '@/lib/llms-txt'
 import AlertsFeedClient from '@/components/AlertsFeedClient'
 import ShareButton from '@/components/ShareButton'
 import { getRiskLevel, getRiskLabel } from '@/lib/brand'
@@ -139,8 +140,22 @@ export default async function CidadePage({ params }: Props) {
     valueEmpty: isPt ? 'sem valor monetário' : 'no monetary value',
   }
 
+  const placeJsonLd = buildCityPlaceJsonLd({
+    locale: lang,
+    slug,
+    name: city.name,
+    uf: city.uf,
+    findingsCount: totalCount,
+  })
+
   return (
     <main className="min-h-dvh bg-brand-paper">
+      {/* JSON-LD inline — script HTML5 (não next/script). Garante SSR estático
+          para crawlers que não rodam JS. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(placeJsonLd) }}
+      />
       {/* Header */}
       <section className="bg-brand-teal px-6 py-16 text-brand-paper">
         <div className="mx-auto max-w-7xl">

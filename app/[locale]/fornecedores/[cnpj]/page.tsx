@@ -6,6 +6,7 @@ import { CaretLeft, Buildings, Hash, WarningCircle } from '@phosphor-icons/react
 import { routing } from '@/i18n/routing'
 import { fetchAlerts } from '@/lib/api'
 import { findingIdToSlug, findingTypeLabel, formatCurrency, formatDate } from '@/lib/findings'
+import { buildSupplierOrganizationJsonLd } from '@/lib/llms-txt'
 
 type Props = {
   params: Promise<{ locale: string; cnpj: string }>
@@ -78,8 +79,24 @@ export default async function FornecedorPage({ params }: Props) {
     pendingField: isPt ? 'Pendente — aguardando integração' : 'Pending — awaiting integration',
   }
 
+  const orgJsonLd = buildSupplierOrganizationJsonLd({
+    locale: locale as 'pt-br' | 'en-us',
+    cnpj: cleanCnpj,
+    findingsCount: supplierFindings.length,
+    findings: supplierFindings.map(f => ({
+      id: f.id,
+      type: f.type,
+      city: f.city,
+    })),
+  })
+
   return (
     <main className="min-h-dvh bg-brand-paper">
+      {/* JSON-LD inline (script HTML5) — SSR estático para crawlers. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+      />
       {/* Header */}
       <section className="bg-brand-teal px-6 py-12 text-brand-paper">
         <div className="mx-auto max-w-3xl">

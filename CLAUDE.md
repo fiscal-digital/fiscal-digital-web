@@ -128,3 +128,24 @@ herda padrão do repo `fiscal-digital`.
 "Sequenciamento — site só publicado após engine rodar". Dev e preview
 estão liberados; produção (`fiscaldigital.org`) está bloqueada até o
 pipeline da engine estar gerando alertas reais para Caxias.
+
+## Citação jurídica em copy do site (enforcement via hook)
+
+Copy bilíngue do site, mesmo curta, é artefato público. Vale a mesma
+regra do repo mestre: **nunca citar lei, decreto, súmula, artigo ou
+jurisprudência** em `messages/*.json`, `docs/**/*.md`, `README.md`, ou
+em corpo de Issue/PR `gh` sem ter LIDO a fonte na sessão atual.
+
+**Enforcement local:** [`.claude/hooks/check-legal-citation.js`](.claude/hooks/check-legal-citation.js) +
+[`.claude/settings.json`](.claude/settings.json). Hook bloqueia `gh issue|pr create|edit|comment` e
+`Edit|Write` em paths sensíveis quando detecta padrão regulatório sem bypass.
+
+**Fonte canônica:** o hook localiza automaticamente o `legal-corpus`
+do repo irmão `../fiscal-digital/packages/engine/src/legal-corpus/` e
+libera citações que mapeiam para textos sincronizados de fontes oficiais.
+
+**Bypass quando já validou:** `[legal-verified: <fonte>]` em body de
+`gh` ou `<!-- legal-verified -->` em markdown.
+
+Para detalhes da arquitetura, ver [CLAUDE.md do repo mestre](../fiscal-digital/CLAUDE.md)
+> seção "Citação jurídica em artefatos públicos".

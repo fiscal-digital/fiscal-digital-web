@@ -28,6 +28,11 @@ export default async function Footer({ locale }: Props) {
         { label: tNav('manifesto'), href: `/${locale}/manifesto` },
         { label: tNav('sobre'), href: `/${locale}/sobre` },
         { label: tNav('transparencia'), href: `/${locale}/transparencia` },
+        {
+          label: t('evaluations_link'),
+          href: 'https://github.com/fiscal-digital/fiscal-digital-evaluations',
+          external: true,
+        },
       ],
     },
     {

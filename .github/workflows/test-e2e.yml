@@ -19,7 +19,10 @@ jobs:
   e2e:
     name: Playwright (Chromium + Mobile Chrome)
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # 25min: suite real leva ~17min; cache de browser destrava o restante.
+    # Sem cache, npx playwright install + chrome download chegou a >30min (CDN
+    # da Playwright lento). LRN documenta o sintoma.
+    timeout-minutes: 25
 
     steps:
       - uses: actions/checkout@v5
@@ -32,8 +35,28 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
+      # Cache do binário do Chromium do Playwright (resolve cold-download
+      # de ~10-30min do CDN da Playwright observado em 2026-06-06).
+      - name: Get Playwright version
+        id: playwright-version
+        run: |
+          VERSION=$(node -p "require('./node_modules/@playwright/test/package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+
+      - name: Install Playwright browsers (cold)
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright system deps (warm cache)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
 
       - name: Run E2E tests against prod
         env:

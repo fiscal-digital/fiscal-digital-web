@@ -19,13 +19,13 @@ jobs:
   e2e:
     name: Playwright (Chromium + Mobile Chrome)
     runs-on: ubuntu-latest
-    # 60min temporariamente: cold cache run NUNCA terminou em 25min porque
-    # CDN da Playwright (https://cdn.playwright.dev) está extremamente lento
-    # baixando Chrome for Testing (~150MB → 24min+ observado). 60min dá
-    # buffer para download lento + suite real (~17min). Depois do PRIMEIRO
-    # run completar com sucesso, cache fica populado em ~/.cache/ms-playwright
-    # e runs subsequentes ficam ~20min. Em PR follow-up reduzir para 30min.
-    timeout-minutes: 60
+    # 120min ate primeiro cache populado: CDN da Playwright (cdn.playwright.dev)
+    # esta consistentemente >60min para baixar Chrome for Testing (~150MB) em
+    # ubuntu-latest. 5 runs CANCELLED em sequencia em 2026-06-06. Buffer alto
+    # garante que ALGUMA run consiga completar e popular ~/.cache/ms-playwright;
+    # runs subsequentes ficam ~20min com cache hit. Reduzir para 30min em PR
+    # follow-up apos primeira run verde confirmar cache populado. LRN-20260606-003.
+    timeout-minutes: 120
 
     steps:
       - uses: actions/checkout@v5

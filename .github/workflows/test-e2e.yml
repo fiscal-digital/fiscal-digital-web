@@ -19,10 +19,13 @@ jobs:
   e2e:
     name: Playwright (Chromium + Mobile Chrome)
     runs-on: ubuntu-latest
-    # 25min: suite real leva ~17min; cache de browser destrava o restante.
-    # Sem cache, npx playwright install + chrome download chegou a >30min (CDN
-    # da Playwright lento). LRN documenta o sintoma.
-    timeout-minutes: 25
+    # 60min temporariamente: cold cache run NUNCA terminou em 25min porque
+    # CDN da Playwright (https://cdn.playwright.dev) está extremamente lento
+    # baixando Chrome for Testing (~150MB → 24min+ observado). 60min dá
+    # buffer para download lento + suite real (~17min). Depois do PRIMEIRO
+    # run completar com sucesso, cache fica populado em ~/.cache/ms-playwright
+    # e runs subsequentes ficam ~20min. Em PR follow-up reduzir para 30min.
+    timeout-minutes: 60
 
     steps:
       - uses: actions/checkout@v5

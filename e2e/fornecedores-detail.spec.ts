@@ -6,11 +6,15 @@
  *
  * Workers=1 obrigatorio (LRN-20260509-003) — evita throttle CloudFront.
  * Todos os testes sao READ-ONLY — nao criam findings nem modificam DDB.
+ *
+ * FIXME: usar test.describe.fixme() enquanto PR nao for deployado em prod.
+ * Remover via follow-up PR apos deploy bem-sucedido da pagina completa.
+ * (memory: feedback_e2e_new_feature_fixme.md)
  */
 import { test, expect } from '@playwright/test'
 import { ROUTES, KNOWN_CNPJ, waitForPageReady } from './helpers'
 
-test.describe('Pagina de detalhe de fornecedor (/fornecedores/[cnpj])', () => {
+test.describe.fixme('Pagina de detalhe de fornecedor (/fornecedores/[cnpj])', () => {
   const URL = ROUTES.fornecedor(KNOWN_CNPJ)
 
   test('1. Pagina carrega para CNPJ conhecido', async ({ page }) => {

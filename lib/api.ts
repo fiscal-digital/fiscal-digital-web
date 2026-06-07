@@ -205,3 +205,36 @@ export async function fetchCosts(days = 30): Promise<CostsResponse> {
     return EMPTY_COSTS
   }
 }
+
+// ── Supplier profile ──────────────────────────────────────────────────────────
+
+import type { SupplierProfile } from '@/app/api/suppliers/[cnpj]/route'
+export type { SupplierProfile }
+
+/**
+ * Fetch perfil de fornecedor via rota interna /api/suppliers/[cnpj].
+ * Usado em SSG do [cnpj]/page.tsx.
+ * Tolerante a falha — retorna null em 404 ou erro de rede.
+ */
+export async function fetchSupplierProfile(cnpj: string): Promise<SupplierProfile | null> {
+  const clean = cnpj.replace(/\D/g, '')
+  if (clean.length !== 14) return null
+
+  // Em build-time (SSG) precisamos da URL absoluta para chamar a rota interna.
+  // NEXT_PUBLIC_SITE_URL ou localhost:3000 como fallback de dev.
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+  const url = `${siteUrl}/api/suppliers/${clean}`
+
+  try {
+    const res = await fetch(url, { next: { revalidate: 3600 } })
+    if (res.status === 404) return null
+    if (!res.ok) {
+      console.warn(`[fetchSupplierProfile] HTTP ${res.status} for ${url}`)
+      return null
+    }
+    return (await res.json()) as SupplierProfile
+  } catch (err) {
+    console.warn(`[fetchSupplierProfile] failed: ${(err as Error).message}`)
+    return null
+  }
+}

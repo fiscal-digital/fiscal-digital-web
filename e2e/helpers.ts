@@ -16,6 +16,7 @@ export const ROUTES = {
   alertasEn: '/en-us/alertas/',
   cidade: (slug: string) => `/pt-br/cidades/${slug}/`,
   alertaDetalhe: (slug: string) => `/pt-br/alertas/${slug}/`,
+  fornecedor: (cnpj: string) => `/pt-br/fornecedores/${cnpj}/`,
   transparencia: '/pt-br/transparencia/',
   custos: '/pt-br/transparencia/custos/',
   apoie: '/pt-br/apoie/',
@@ -24,6 +25,13 @@ export const ROUTES = {
   sobre: '/pt-br/sobre/',
   roadmap: '/pt-br/roadmap/',
 } as const
+
+/**
+ * CNPJ conhecido em producao (aparece em alertas publicados).
+ * Usado nos testes de /fornecedores/[cnpj].
+ * Atualizar se o fornecedor sair dos alertas atuais.
+ */
+export const KNOWN_CNPJ = '40329940000143' // Caxias do Sul — dispensa_irregular
 
 /** Filtros aplicáveis na URL de /alertas. */
 export interface AlertasFilters {

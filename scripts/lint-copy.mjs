@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * Copy linter: verifica se messages/pt.json e messages/en.json contêm
+ * Copy linter: verifica se messages/*.json contêm
  * palavras da lista `avoid` do brand/glossary.json.
  *
  * Uso: npm run lint:copy
  * Sai com exit code 1 se encontrar palavras proibidas.
  */
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 
@@ -16,17 +16,19 @@ const root = join(__dirname, '..')
 // Carrega glossary e extrai lista avoid
 const glossary = JSON.parse(readFileSync(join(root, 'brand', 'glossary.json'), 'utf8'))
 
-/** @type {Array<{pt: string, en: string, reason: string, use_instead: string[]}>} */
+/** @type {Array<{pt?: string, en?: string, "pt-br"?: string, "en-us"?: string, reason: string, use_instead: string[]}>} */
 const avoidList = glossary.avoid
+
+function avoidTerms(entry) {
+  return [entry.pt, entry.en, entry['pt-br'], entry['en-us']]
+    .filter((term) => typeof term === 'string' && term.trim().length > 0)
+}
 
 // Extrai todas as palavras/frases proibidas (pt + en) em lowercase
 const forbiddenTerms = avoidList.flatMap((entry) => {
-  const terms = [entry.pt]
-  // en pode ter variantes separadas por " / " (ex: "fraud" ou "embezzlement / misappropriation")
-  if (entry.en) {
-    terms.push(...entry.en.split('/').map((t) => t.trim()))
-  }
-  return terms.map((t) => t.toLowerCase())
+  return avoidTerms(entry)
+    .flatMap((term) => term.split('/').map((t) => t.trim()))
+    .map((t) => t.toLowerCase())
 })
 
 /**
@@ -53,9 +55,11 @@ function extractStrings(obj, prefix = '') {
 }
 
 const messagePaths = [
+  join(root, 'messages', 'pt-br.json'),
+  join(root, 'messages', 'en-us.json'),
   join(root, 'messages', 'pt.json'),
   join(root, 'messages', 'en.json'),
-]
+].filter((path) => existsSync(path))
 
 let violations = 0
 
@@ -78,9 +82,9 @@ for (const msgPath of messagePaths) {
         console.error(`  Valor:   ${value.slice(0, 120)}`)
         // Encontra a entrada avoid original para mostrar alternativa
         const entry = avoidList.find(
-          (a) =>
-            a.pt.toLowerCase() === term ||
-            (a.en && a.en.toLowerCase().split('/').map((t) => t.trim()).includes(term)),
+          (a) => avoidTerms(a)
+            .flatMap((t) => t.toLowerCase().split('/').map((part) => part.trim()))
+            .includes(term),
         )
         if (entry) {
           console.error(`  Motivo: ${entry.reason}`)

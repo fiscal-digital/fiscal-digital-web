@@ -19,16 +19,18 @@ jobs:
   e2e:
     name: Playwright (Chromium + Mobile Chrome)
     runs-on: ubuntu-latest
-    # 120min ate primeiro cache populado: CDN da Playwright (cdn.playwright.dev)
-    # esta consistentemente >60min para baixar Chrome for Testing (~150MB) em
-    # ubuntu-latest. 5 runs CANCELLED em sequencia em 2026-06-06. Buffer alto
-    # garante que ALGUMA run consiga completar e popular ~/.cache/ms-playwright;
-    # runs subsequentes ficam ~20min com cache hit. Reduzir para 30min em PR
-    # follow-up apos primeira run verde confirmar cache populado. LRN-20260606-003.
-    timeout-minutes: 120
+    # Container oficial Playwright Microsoft com Chromium + apt deps pre-instalados.
+    # Elimina ~120min de `apt-get install` que ubuntu-latest sofria em cold path.
+    # LRN-20260606-003 (revisado): causa real do CANCEL era apt-get install do
+    # `--with-deps`, nao CDN. Container resolve definitivamente.
+    # Tag DEVE bater com versao do @playwright/test em package.json.
+    container:
+      image: mcr.microsoft.com/playwright:v1.60.0-jammy
+      options: --user 1001
+    timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-node@v6
         with:
@@ -37,29 +39,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      # Cache do binário do Chromium do Playwright (resolve cold-download
-      # de ~10-30min do CDN da Playwright observado em 2026-06-06).
-      - name: Get Playwright version
-        id: playwright-version
-        run: |
-          VERSION=$(node -p "require('./node_modules/@playwright/test/package.json').version")
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
-
-      - name: Install Playwright browsers (cold)
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
-
-      - name: Install Playwright system deps (warm cache)
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
 
       - name: Run E2E tests against prod
         env:
@@ -70,7 +49,7 @@ jobs:
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: playwright-report/
@@ -78,7 +57,7 @@ jobs:
 
       - name: Upload trace artifacts (on failure)
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-traces
           path: test-results/

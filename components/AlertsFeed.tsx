@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import { Warning, WarningCircle, Bell, CurrencyDollar, MapPin } from '@phosphor-icons/react'
 import { useAlertsQueryParams, type SortOption, type ViewOption } from '@/lib/hooks/useAlertsQueryParams'
 import { API_URL } from '@/lib/api'
-import { findingTypeLabel } from '@/lib/findings'
+import { applySorting, findingTypeLabel } from '@/lib/findings'
 import { SearchBar } from './SearchBar'
 import { AlertsToolbar } from './AlertsToolbar'
 import { MobileFilterButton } from './MobileFilterButton'
@@ -52,30 +52,6 @@ function formatCompactBrl(value: number): string {
   if (value >= 1_000_000) return `R$ ${(value / 1_000_000).toFixed(1).replace('.', ',')}M`
   if (value >= 1_000) return `R$ ${(value / 1_000).toFixed(0)}k`
   return `R$ ${value.toFixed(0)}`
-}
-
-function applySorting(findings: Finding[], sortBy: string): Finding[] {
-  const sorted = [...findings]
-  const getGazetteDate = (f: Finding): number => {
-    const gazetteDate = f.evidence?.[0]?.date
-    return gazetteDate ? new Date(gazetteDate).getTime() : 0
-  }
-  switch (sortBy) {
-    case 'riskDesc':
-      return sorted.sort((a, b) => b.riskScore - a.riskScore)
-    case 'riskAsc':
-      return sorted.sort((a, b) => a.riskScore - b.riskScore)
-    case 'dateDesc':
-      return sorted.sort((a, b) => getGazetteDate(b) - getGazetteDate(a))
-    case 'dateAsc':
-      return sorted.sort((a, b) => getGazetteDate(a) - getGazetteDate(b))
-    case 'valueDesc':
-      return sorted.sort((a, b) => (b.value ?? 0) - (a.value ?? 0))
-    case 'valueAsc':
-      return sorted.sort((a, b) => (a.value ?? 0) - (b.value ?? 0))
-    default:
-      return sorted
-  }
 }
 
 // ── Skeleton ──────────────────────────────────────────────────────────────────

@@ -14,6 +14,9 @@
     "brand:theme": "node scripts/generate-brand-theme.mjs",
     "lint:copy": "node scripts/lint-copy.mjs",
     "pretest": "npm run lint:copy",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:codegen": "playwright codegen https://fiscaldigital.org/pt-br/alertas/",
@@ -30,10 +33,14 @@
     "@opennextjs/aws": "^3.10.4",
     "@playwright/test": "^1.59.1",
     "@tailwindcss/postcss": "^4.2.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^25.0.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "jsdom": "^29.1.1",
     "tailwindcss": "^4.2.0",
-    "typescript": "^6.0.0"
+    "typescript": "^6.0.0",
+    "vitest": "^4.1.7"
   }
 }

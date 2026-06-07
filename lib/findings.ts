@@ -66,6 +66,37 @@ export interface ApiAlertsResponse {
   items: ApiFinding[]
 }
 
+export interface SortableFinding {
+  riskScore: number
+  value?: number
+  evidence?: Array<{ date: string }>
+}
+
+export function applySorting<T extends SortableFinding>(findings: T[], sortBy: string): T[] {
+  const sorted = [...findings]
+  const getGazetteDate = (f: T): number => {
+    const gazetteDate = f.evidence?.[0]?.date
+    return gazetteDate ? new Date(gazetteDate).getTime() : 0
+  }
+
+  switch (sortBy) {
+    case 'riskDesc':
+      return sorted.sort((a, b) => b.riskScore - a.riskScore)
+    case 'riskAsc':
+      return sorted.sort((a, b) => a.riskScore - b.riskScore)
+    case 'dateDesc':
+      return sorted.sort((a, b) => getGazetteDate(b) - getGazetteDate(a))
+    case 'dateAsc':
+      return sorted.sort((a, b) => getGazetteDate(a) - getGazetteDate(b))
+    case 'valueDesc':
+      return sorted.sort((a, b) => (b.value ?? 0) - (a.value ?? 0))
+    case 'valueAsc':
+      return sorted.sort((a, b) => (a.value ?? 0) - (b.value ?? 0))
+    default:
+      return sorted
+  }
+}
+
 /**
  * Labels canônicos PT-BR de cada FindingType.
  * Espelha `engine/types/FindingType` + fallback EN curto.

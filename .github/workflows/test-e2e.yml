@@ -25,7 +25,7 @@ jobs:
     # `--with-deps`, nao CDN. Container resolve definitivamente.
     # Tag DEVE bater com versao do @playwright/test em package.json.
     container:
-      image: mcr.microsoft.com/playwright:v1.60.0-jammy
+      image: mcr.microsoft.com/playwright:v1.61.0-jammy
       options: --user 1001
     timeout-minutes: 10
 

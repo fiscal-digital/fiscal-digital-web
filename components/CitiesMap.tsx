@@ -9,7 +9,8 @@ import {
   totalCount,
   type City,
 } from '@/lib/cities'
-import { API_URL } from '@/lib/api'
+import { fetchCitiesFreshness, freshnessTone } from '@/lib/freshness'
+import { formatDate } from '@/lib/findings'
 
 const REGION_ORDER: Region[] = ['SE', 'S', 'NE', 'CO', 'N']
 
@@ -17,25 +18,8 @@ interface Props {
   locale: string
 }
 
-interface CityStat {
-  cityId: string
-  findingsCount: number
-}
-
-/**
- * Busca contagem de findings por cidade. Tolerante a falha — se API estiver
- * fora durante build, retorna mapa vazio (UI degrada para "sem destaque").
- */
-async function fetchCityStats(): Promise<Map<string, number>> {
-  try {
-    const res = await fetch(`${API_URL}/cities`, { next: { revalidate: 300 } })
-    if (!res.ok) return new Map()
-    const data = (await res.json()) as CityStat[]
-    return new Map(data.map((c) => [c.cityId, c.findingsCount ?? 0]))
-  } catch {
-    return new Map()
-  }
-}
+// UH-WEB-020: fetch consolidado em lib/freshness.ts — mesma chamada /cities
+// traz findingsCount + freshness (lastGazetteDate/staleDays/dataStatus).
 
 export default async function CitiesMap({ locale }: Props) {
   const t = await getTranslations({ locale, namespace: 'home.cities' })
@@ -45,11 +29,16 @@ export default async function CitiesMap({ locale }: Props) {
   const lang: 'pt-br' | 'en-us' = locale === 'en-us' ? 'en-us' : 'pt-br'
 
   // UH-WEB-014 — busca stats de findings por cidade do /cities API
-  const statsMap = await fetchCityStats()
+  // UH-WEB-020 — a mesma resposta traz freshness por cidade
+  const freshnessMap = await fetchCitiesFreshness()
+  const statsMap = new Map(
+    [...freshnessMap.values()].map((c) => [c.cityId, c.findingsCount]),
+  )
   const allCities: City[] = Object.values(grouped).flat()
   const withStats = allCities.map((c) => ({
     city: c,
     findings: statsMap.get(c.cityId) ?? 0,
+    freshness: freshnessMap.get(c.cityId) ?? null,
   }))
 
   // Top 3 cidades com findings > 0 (para destaque)
@@ -167,7 +156,7 @@ export default async function CitiesMap({ locale }: Props) {
           {t('all_cities')}
         </h3>
         <ul className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {sortedAll.map(({ city, findings }) => (
+          {sortedAll.map(({ city, findings, freshness }) => (
             <li key={city.cityId}>
               <Link
                 href={`/${locale}/cidades/${city.slug}`}
@@ -178,13 +167,23 @@ export default async function CitiesMap({ locale }: Props) {
                 }`}
               >
                 <span className="flex min-w-0 items-center gap-2">
+                  {/* UH-WEB-020: dot âmbar quando a cobertura da cidade ativa
+                      está estagnada no Querido Diário (>7 dias sem gazette) */}
                   <span
                     aria-hidden="true"
                     className={`inline-block h-2 w-2 shrink-0 rounded-full ${
-                      city.active ? 'bg-brand-success' : 'bg-brand-gray/30'
+                      !city.active
+                        ? 'bg-brand-gray/30'
+                        : freshness && freshnessTone(freshness.dataStatus) === 'warn'
+                          ? 'bg-brand-amber'
+                          : 'bg-brand-success'
                     }`}
                     title={
-                      city.active ? t('badge_active_alt') : t('badge_planned_alt')
+                      !city.active
+                        ? t('badge_planned_alt')
+                        : freshness && freshnessTone(freshness.dataStatus) === 'warn' && freshness.lastGazetteDate
+                          ? t('stale_tooltip', { date: formatDate(freshness.lastGazetteDate, lang) })
+                          : t('badge_active_alt')
                     }
                   />
                   <span className="truncate text-brand-ink group-hover:text-brand-teal">

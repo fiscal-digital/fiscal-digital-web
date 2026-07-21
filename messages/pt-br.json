@@ -113,6 +113,7 @@
       "legend_planned": "Planejada (aguarda Querido Diário)",
       "badge_active_alt": "Em produção",
       "badge_planned_alt": "Planejada",
+      "stale_tooltip": "Cobertura estagnada — última edição indexada pelo Querido Diário em {date}",
       "top_title": "Municípios com mais achados",
       "top_subtitle": "Ranking por alertas publicados no pipeline. Cidades com maior atividade administrativa têm mais sinais detectados.",
       "findings_one": "1 achado",

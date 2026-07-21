@@ -135,6 +135,8 @@
       "repo_collectors_role": "Adaptadores de fontes de dados",
       "repo_analytics_name": "fiscal-digital-analytics",
       "repo_analytics_role": "Notebooks, relatórios e exports CSV",
+      "repo_evaluations_name": "fiscal-digital-evaluations",
+      "repo_evaluations_role": "Golden set rotulado, ADRs por Fiscal e baselines de precisão — a metodologia é pública",
       "badge_repos": "repositórios",
       "badge_code_license": "código",
       "badge_data_license": "dados e alertas",

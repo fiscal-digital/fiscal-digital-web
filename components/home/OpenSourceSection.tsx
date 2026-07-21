@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server'
-import { Code, Globe, TreeStructure, ChartBar, GithubLogo } from '@phosphor-icons/react/dist/ssr'
+import { Code, Globe, TreeStructure, ChartBar, Flask, GithubLogo } from '@phosphor-icons/react/dist/ssr'
 
 interface Props {
   locale: string
@@ -30,6 +30,12 @@ const REPOS = [
     href: 'https://github.com/fiscal-digital/fiscal-digital-analytics',
     stack: 'Jupyter · Python · CC-BY 4.0',
   },
+  {
+    key: 'evaluations',
+    Icon: Flask,
+    href: 'https://github.com/fiscal-digital/fiscal-digital-evaluations',
+    stack: 'Golden set · ADRs · baselines',
+  },
 ] as const
 
 export default async function OpenSourceSection({ locale }: Props) {
@@ -50,8 +56,8 @@ export default async function OpenSourceSection({ locale }: Props) {
           </p>
         </div>
 
-        {/* 4 repo cards */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {/* 5 repo cards — todos os repos públicos da org (UH-WEB-019) */}
+        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {REPOS.map(({ key, Icon, href, stack }) => (
             <a
               key={key}

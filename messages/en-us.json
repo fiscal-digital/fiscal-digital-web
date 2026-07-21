@@ -113,6 +113,7 @@
       "legend_planned": "Planned (awaiting Querido Diário)",
       "badge_active_alt": "In production",
       "badge_planned_alt": "Planned",
+      "stale_tooltip": "Coverage stalled — last gazette indexed by Querido Diário on {date}",
       "top_title": "Municipalities with most findings",
       "top_subtitle": "Ranked by alerts published in the pipeline. Cities with higher administrative activity have more signals detected.",
       "findings_one": "1 finding",

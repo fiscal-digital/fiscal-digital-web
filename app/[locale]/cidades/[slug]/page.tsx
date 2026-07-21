@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import {
   CaretLeft,
   Buildings,
+  CalendarBlank,
   Clock,
   ChartBar,
   CurrencyDollar,
@@ -14,6 +15,7 @@ import {
 import { routing } from '@/i18n/routing'
 import { CITIES, getCityBySlug, regionOf, REGION_LABELS } from '@/lib/cities'
 import { fetchAlertsWithTotal } from '@/lib/api'
+import { fetchCitiesFreshness, freshnessTone } from '@/lib/freshness'
 import { formatCurrency, formatDate } from '@/lib/findings'
 import { buildCityPlaceJsonLd } from '@/lib/llms-txt'
 import AlertsFeedClient from '@/components/AlertsFeedClient'
@@ -91,8 +93,12 @@ export default async function CidadePage({ params }: Props) {
 
   // Usa pageInfo.total (global) para KPIs — antes mostrava items.length (50,
   // limitado pela paginação default da API), divergindo do número real.
-  const result = await fetchAlertsWithTotal({ city: city.cityId, size: 200 })
+  const [result, freshnessMap] = await Promise.all([
+    fetchAlertsWithTotal({ city: city.cityId, size: 200 }),
+    fetchCitiesFreshness(),
+  ])
   const findings = result.items
+  const fresh = freshnessMap.get(city.cityId) ?? null
   const region = regionOf(city.uf)
   const isPt = locale === 'pt-br'
   const lang: 'pt-br' | 'en-us' = isPt ? 'pt-br' : 'en-us'
@@ -138,7 +144,18 @@ export default async function CidadePage({ params }: Props) {
     region: isPt ? 'Região' : 'Region',
     state: isPt ? 'Estado' : 'State',
     valueEmpty: isPt ? 'sem valor monetário' : 'no monetary value',
+    dataUntil: isPt ? 'Dados até' : 'Data through',
+    staleFor: (n: number) =>
+      isPt ? `cobertura estagnada há ${n} dias` : `coverage stalled for ${n} days`,
+    noCoverage: isPt ? 'Sem cobertura de dados' : 'No data coverage',
+    freshTooltip: isPt
+      ? 'Data da última edição do diário oficial indexada pelo Querido Diário para este município. Quando a fonte para de indexar, os painéis param de receber dados novos.'
+      : 'Date of the last official gazette indexed by Querido Diário for this municipality. When the source stops indexing, these panels stop receiving new data.',
   }
+
+  // UH-WEB-020 — badge de freshness (header, sempre visível p/ cidade ativa)
+  const freshTone = fresh ? freshnessTone(fresh.dataStatus) : null
+  const freshDateLabel = fresh?.lastGazetteDate ? formatDate(fresh.lastGazetteDate, lang) : null
 
   const placeJsonLd = buildCityPlaceJsonLd({
     locale: lang,
@@ -185,6 +202,28 @@ export default async function CidadePage({ params }: Props) {
               {!city.active && (
                 <p className="mt-3 inline-block rounded-md border border-brand-amber/40 bg-brand-amber/10 px-3 py-1 text-xs">
                   {t.inactive}
+                </p>
+              )}
+              {city.active && fresh && (
+                <p
+                  title={t.freshTooltip}
+                  className={`mt-3 inline-flex items-center gap-1.5 rounded-md border px-3 py-1 text-xs ${
+                    freshTone === 'warn'
+                      ? 'border-brand-amber/60 bg-brand-amber/15'
+                      : 'border-white/20 bg-white/10'
+                  }`}
+                >
+                  <CalendarBlank size={12} weight="bold" aria-hidden="true" />
+                  {freshDateLabel ? (
+                    <>
+                      {t.dataUntil} <span className="font-mono font-semibold">{freshDateLabel}</span>
+                      {freshTone === 'warn' && fresh.staleDays != null && (
+                        <span className="opacity-90">· {t.staleFor(fresh.staleDays)}</span>
+                      )}
+                    </>
+                  ) : (
+                    t.noCoverage
+                  )}
                 </p>
               )}
             </div>

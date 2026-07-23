@@ -18,6 +18,9 @@ const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? 'https://fiscaldigital.org'
 
 export default defineConfig({
   testDir: './e2e',
+  // TST-010..014: gera lib/contracts.generated.ts (gitignored) antes dos specs
+  // de contrato — o workflow chama `npx playwright test` direto, sem prebuild.
+  globalSetup: './e2e/global-setup.ts',
   // Sequencial por padrão — testes contra prod são read-only mas paralelismo
   // pode disparar throttle do CloudFront/Lambda em rajadas curtas. Em CI
   // mantemos 1 worker; localmente o dev pode subir para acelerar.

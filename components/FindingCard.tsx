@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { ArrowRight } from '@phosphor-icons/react'
 import { useTranslations } from 'next-intl'
 import { getRiskLevel, getRiskLabel } from '@/lib/brand'
-import { findingIdToSlug } from '@/lib/findings'
+import { findingIdToSlug, formatDate } from '@/lib/findings'
 import type { Finding } from './AlertsFeed'
 
 interface FindingCardProps {
@@ -18,15 +18,6 @@ function formatCurrency(value: number, locale: 'pt-br' | 'en-us'): string {
   return value.toLocaleString(locale === 'pt-br' ? 'pt-BR' : 'en-US', {
     style: 'currency',
     currency: 'BRL',
-  })
-}
-
-function formatDate(iso: string, locale: 'pt-br' | 'en-us'): string {
-  const d = new Date(iso)
-  return d.toLocaleDateString(locale === 'pt-br' ? 'pt-BR' : 'en-US', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
   })
 }
 

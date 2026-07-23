@@ -82,10 +82,10 @@ describe('FindingCard', () => {
     const { container } = render(
       <FindingCard finding={makeFinding()} typeLabel={typeLabel} t={t} locale="pt-br" />,
     )
-    // Normaliza NBSP / narrow-NBSP para espaço comum: o Intl formata moeda BRL
-    // com esses caracteres e a variante muda conforme a versão do ICU (Windows
-    // local vs Linux do CI), o que tornava o snapshot flaky entre ambientes.
-    const html = (container.firstChild as HTMLElement).outerHTML.replace(new RegExp('[\u00a0\u202f\u2009]', 'g'), ' ')
+    // Mascara a data: o componente formata com toLocaleDateString sem timeZone,
+    // entao a data UTC vira dia diferente conforme o fuso do runner (Windows
+    // Brasil UTC-3 vs Linux do CI em UTC) — mascarada para estabilidade.
+    const html = (container.firstChild as HTMLElement).outerHTML.replace(/\d{2}\/\d{2}\/\d{4}/g, 'DD/MM/AAAA')
     expect(html).toMatchSnapshot()
   })
 })

@@ -390,8 +390,12 @@ export default function FindingDetail({
         </div>
       </details>
 
-      {/* FONTE — PDF preview */}
-      {showPdf && (
+      {/* FONTE — PDF preview.
+          TST-010..014: `source` é opcional no contrato (a API só o emite quando
+          há evidence[0].source). Antes o tipo mentia dizendo obrigatório e este
+          bloco renderizava um preview apontando para undefined. Sem fonte não
+          há o que pré-visualizar nem para onde linkar. */}
+      {showPdf && finding.source && (
         <PdfPreview
           source={finding.source}
           cachedPdfUrl={finding.cachedPdfUrl}
@@ -402,7 +406,7 @@ export default function FindingDetail({
         />
       )}
 
-      {!showPdf && (
+      {!showPdf && finding.source && (
         <a
           href={finding.source}
           target="_blank"

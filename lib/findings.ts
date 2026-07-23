@@ -10,61 +10,22 @@
  * não o do DynamoDB.
  */
 
-export interface ApiFindingEvidence {
-  source: string
-  excerpt: string
-  date: string
-}
-
-export interface ApiFinding {
-  id: string
-  type: string
-  cityId: string
-  city: string
-  state: string
-  riskScore: number
-  confidence: number
-  value?: number
-  secretaria?: string
-  legalBasis?: string
-  narrative?: string
-  /** URL canônica da gazette — first evidence source. */
-  source: string
-  createdAt: string
-  /** Frente F: expor evidence completo. Stub-tolerante. */
-  evidence?: ApiFindingEvidence[]
-  /** Frente F: cnpj denormalizado para perfis de fornecedor. */
-  cnpj?: string
-  contractNumber?: string
-  fiscalId?: string
-  /**
-   * URL do PDF no cache CDN (gazettes.fiscaldigital.org). Derivado pelo
-   * backend a partir do source QD. Pode estar 404 se ainda não foi cacheado
-   * pelo backfill — preferir pdfProxyUrl no iframe.
-   */
-  cachedPdfUrl?: string | null
-  /**
-   * Lazy cache on-demand — endpoint /pdf?source=... que sempre funciona:
-   * cache hit redireciona pro CDN; cache miss baixa do QD, sobe para S3 e
-   * redireciona pro CDN; erro cai em redirect para QD direto. Primeira
-   * visualização popula o cache, próximas batem direto no CDN.
-   */
-  pdfProxyUrl?: string | null
-}
-
-export interface ApiAlertsResponse {
-  total: number
-  filters: Record<string, string | undefined>
-  pageInfo?: {
-    total: number
-    page: number
-    pageSize: number
-    totalPages: number
-    totalValue: number
-    citiesCount: number
-  }
-  items: ApiFinding[]
-}
+// TST-010..014: os tipos abaixo NÃO são mais declarados à mão — derivam dos
+// schemas zod do contrato (lib/contracts.generated.ts, espelho de
+// packages/contracts no repo engine). Mudou a API? O contrato muda no engine,
+// o sync traz para cá e o `tsc` aponta cada ponto de uso que precisa ajuste.
+//
+// Divergências que essa derivação corrigiu (mapeamento 2026-07-23):
+//   - `source` era declarado obrigatório aqui, mas a API só o emite quando há
+//     evidence[0].source — chegava `undefined` em runtime.
+//   - `evidence[].date` era obrigatório aqui e não é required no contrato;
+//     `applySorting` caía em 0 silenciosamente.
+//   - `pageInfo` era opcional aqui e a API sempre retorna.
+export type {
+  Evidence as ApiFindingEvidence,
+  AlertItem as ApiFinding,
+  AlertsResponse as ApiAlertsResponse,
+} from './contracts.generated'
 
 export interface SortableFinding {
   riskScore: number

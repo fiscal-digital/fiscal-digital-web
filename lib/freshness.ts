@@ -5,15 +5,11 @@ import { API_URL } from './api'
 // do Querido Diário estagna por município sem aviso, e o site não pode exibir
 // painel estagnado como se estivesse atual (verificabilidade pública).
 
-export type DataStatus = 'atualizada' | 'estagnada' | 'sem-dados'
-
-export interface CityFreshness {
-  cityId: string
-  findingsCount: number
-  lastGazetteDate: string | null
-  staleDays: number | null
-  dataStatus: DataStatus
-}
+// TST-010..014: derivado do contrato em vez de redeclarado. `CityFreshness` era
+// um subset manual de 5 dos 11 campos de /cities; agora é o tipo do contrato.
+export type { DataStatus, City as CityFreshness } from './contracts.generated'
+import { citiesResponseSchema } from './contracts.generated'
+import type { DataStatus, City as CityFreshness } from './contracts.generated'
 
 /** Tom visual do status — puro para unit test. */
 export function freshnessTone(status: DataStatus): 'ok' | 'warn' | 'muted' {
@@ -23,29 +19,28 @@ export function freshnessTone(status: DataStatus): 'ok' | 'warn' | 'muted' {
 }
 
 /**
- * Busca `/cities` (inclui freshness + findingsCount) e indexa por cityId.
- * Tolerante a falha — API fora durante build degrada para mapa vazio
- * (UI omite o badge; nunca quebra a página).
+ * Busca `/cities` e indexa por cityId.
+ *
+ * TST-010..014: a resposta é VALIDADA em runtime contra o schema do contrato,
+ * não apenas tipada. Se a API mudar de shape, isso aparece aqui (warn) em vez
+ * de virar `undefined` silencioso lá na frente — que foi exatamente como
+ * `confidence` e `source` divergiram sem ninguém notar.
+ *
+ * Tolerante a falha por design: API fora ou contrato divergente degradam para
+ * mapa vazio (a UI omite o badge; a página nunca quebra).
  */
 export async function fetchCitiesFreshness(): Promise<Map<string, CityFreshness>> {
   try {
     const res = await fetch(`${API_URL}/cities`, { next: { revalidate: 300 } })
     if (!res.ok) return new Map()
-    const data = (await res.json()) as Array<Partial<CityFreshness>>
-    return new Map(
-      data
-        .filter((c): c is Partial<CityFreshness> & { cityId: string } => typeof c.cityId === 'string')
-        .map((c) => [
-          c.cityId,
-          {
-            cityId: c.cityId,
-            findingsCount: c.findingsCount ?? 0,
-            lastGazetteDate: c.lastGazetteDate ?? null,
-            staleDays: c.staleDays ?? null,
-            dataStatus: (c.dataStatus as DataStatus | undefined) ?? 'sem-dados',
-          },
-        ]),
-    )
+
+    const parsed = citiesResponseSchema.safeParse(await res.json())
+    if (!parsed.success) {
+      console.warn('[contracts] /cities divergiu do contrato:', parsed.error.issues.slice(0, 3))
+      return new Map()
+    }
+
+    return new Map(parsed.data.map((c) => [c.cityId, c]))
   } catch {
     return new Map()
   }

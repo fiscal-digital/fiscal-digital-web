@@ -3,7 +3,9 @@
  * por alerta. Centraliza strings canônicas e estruturas para que /llms.txt,
  * /llms-full.txt e /alertas/[id] consumam o mesmo source of truth.
  *
- * Padrão: https://llmstxt.org. Bllueprint: AI SEO Onda 1.
+ * Padrão: https://llmstxt.org. Blueprint: AI SEO Onda 1, atualizado na Onda 2
+ * para anunciar as superfícies novas (JSON Feed, OpenAPI, página Dataset /dados
+ * e a convenção de markdown view /alertas/<id>/m) na seção Dados.
  */
 
 import type { ApiFinding } from './findings'
@@ -26,12 +28,16 @@ const SECTION_SOBRE = `## Sobre
 
 const SECTION_DADOS = `## Dados
 - [Feed RSS de alertas](${API}/rss): atualizado a cada execução
+- [Feed JSON de alertas](${SITE}/pt-br/alertas/feed.json): JSON Feed 1.1, mesmo conteúdo do RSS em JSON (LLM-friendly)
 - [API REST de alertas](${API}/alerts): paginado, filtros por cidade/estado/tipo
 - [API REST de cidades](${API}/cities): 50 cidades cobertas
 - [Estatísticas agregadas](${API}/stats)
 - [Estatística por cidade](${API}/cities/{cityId}/stats)
+- [Especificação OpenAPI 3.1](${API}/openapi.json): contrato completo da API REST (endpoints, schemas, exemplos)
 - [Custos operacionais](${API}/transparencia/costs): transparência financeira
-- [Health check](${API}/health): lista endpoints e versão`
+- [Health check](${API}/health): lista endpoints e versão
+- [Página Dataset](${SITE}/pt-br/dados): metadados citáveis do corpus (JSON-LD schema.org/Dataset, CC-BY-4.0)
+- [Markdown por alerta](${SITE}/pt-br/alertas/<id>/m): o sufixo /m devolve qualquer alerta como markdown LLM-friendly (text/markdown), espelho do HTML em /alertas/<id>`
 
 const SECTION_FISCAIS = `## Fiscais ativos
 - Licitações: Lei 14.133/2021 Art. 75 (dispensas e fracionamento)

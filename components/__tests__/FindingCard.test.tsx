@@ -82,6 +82,10 @@ describe('FindingCard', () => {
     const { container } = render(
       <FindingCard finding={makeFinding()} typeLabel={typeLabel} t={t} locale="pt-br" />,
     )
-    expect(container.firstChild).toMatchSnapshot()
+    // Normaliza NBSP / narrow-NBSP para espaço comum: o Intl formata moeda BRL
+    // com esses caracteres e a variante muda conforme a versão do ICU (Windows
+    // local vs Linux do CI), o que tornava o snapshot flaky entre ambientes.
+    const html = (container.firstChild as HTMLElement).outerHTML.replace(new RegExp('[\u00a0\u202f\u2009]', 'g'), ' ')
+    expect(html).toMatchSnapshot()
   })
 })

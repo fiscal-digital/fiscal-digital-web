@@ -7,27 +7,29 @@
   },
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/generate-brand-theme.mjs",
+    "prebuild": "node scripts/sync-contracts.mjs && node scripts/generate-brand-theme.mjs",
     "build": "open-next build",
-    "predev": "node scripts/generate-brand-theme.mjs",
+    "predev": "node scripts/sync-contracts.mjs && node scripts/generate-brand-theme.mjs",
     "type-check": "tsc --noEmit",
     "brand:theme": "node scripts/generate-brand-theme.mjs",
     "lint:copy": "node scripts/lint-copy.mjs",
-    "pretest": "npm run lint:copy",
+    "pretest": "node scripts/sync-contracts.mjs && npm run lint:copy",
     "test": "vitest run",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:codegen": "playwright codegen https://fiscaldigital.org/pt-br/alertas/",
-    "test:e2e:full": "PLAYWRIGHT_FULL_MATRIX=1 playwright test"
+    "test:e2e:full": "PLAYWRIGHT_FULL_MATRIX=1 playwright test",
+    "contracts:sync": "node scripts/sync-contracts.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.0",
     "next": "^16.2.10",
     "next-intl": "^4.13.1",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "react-dom": "^19.2.7",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@opennextjs/aws": "^4.0.3",

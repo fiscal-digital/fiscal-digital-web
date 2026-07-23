@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ArrowSquareOut, FilePdf, Eye, X as XIcon } from '@phosphor-icons/react'
 import { API_URL } from '@/lib/api'
+import { formatDate } from '@/lib/findings'
 
 /**
  * PdfPreview — Componente híbrido de visualização do diário oficial.
@@ -65,18 +66,6 @@ const labels = {
   },
 } as const
 
-function formatDate(iso: string, locale: 'pt-br' | 'en-us'): string {
-  try {
-    const d = new Date(iso)
-    return d.toLocaleDateString(locale === 'pt-br' ? 'pt-BR' : 'en-US', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
-  } catch {
-    return iso
-  }
-}
 
 export default function PdfPreview({ source, cachedPdfUrl, pdfProxyUrl, excerpt, date, locale = 'pt-br' }: PdfPreviewProps) {
   const [showInline, setShowInline] = useState(false)

@@ -168,6 +168,7 @@ export default function FindingDetail({
     try {
       const d = new Date(gazetteDate)
       return d.toLocaleDateString(isPt ? 'pt-BR' : 'en-US', {
+        timeZone: 'UTC', // BUG-WEB-001: data de gazette é UTC, não fuso local
         month: 'short',
         year: 'numeric',
       }).replace('.', '')
@@ -205,8 +206,8 @@ export default function FindingDetail({
           <span
             className="rounded-pill border border-brand-gray/25 bg-brand-paper px-3 py-1 text-xs font-semibold text-brand-gray"
             title={isPt
-              ? `Documento publicado em ${gazetteDate ? new Date(gazetteDate).toLocaleDateString('pt-BR') : ''}. Identificado pela análise retrospectiva do diário oficial.`
-              : `Document published on ${gazetteDate ? new Date(gazetteDate).toLocaleDateString('en-US') : ''}. Detected by retrospective analysis of the official gazette.`}
+              ? `Documento publicado em ${gazetteDate ? new Date(gazetteDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : ''}. Identificado pela análise retrospectiva do diário oficial.`
+              : `Document published on ${gazetteDate ? new Date(gazetteDate).toLocaleDateString('en-US', { timeZone: 'UTC' }) : ''}. Detected by retrospective analysis of the official gazette.`}
           >
             {isPt ? `Diário de ${gazetteDateLabel}` : `Gazette from ${gazetteDateLabel}`}
           </span>

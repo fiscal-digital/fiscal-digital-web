@@ -155,16 +155,28 @@ export function formatCurrency(value: number, locale: 'pt-br' | 'en-us' = 'pt-br
   })
 }
 
+/**
+ * Formata data de gazette/achado como DD/MM/AAAA.
+ *
+ * BUG-WEB-001: `timeZone: 'UTC'` é obrigatório. As datas vêm como `YYYY-MM-DD`
+ * (data de diário) ou timestamp UTC de meia-noite — sem fixar o fuso, o
+ * `new Date(...)` interpreta em UTC e o `toLocaleDateString` renderiza no fuso
+ * local, deslocando um dia para trás no Brasil (UTC-3). Um diário do dia 15
+ * aparecia como 14 para o leitor brasileiro, quebrando a verificabilidade
+ * contra o Querido Diário.
+ */
 export function formatDate(iso: string, locale: 'pt-br' | 'en-us' = 'pt-br'): string {
-  try {
-    return new Date(iso).toLocaleDateString(locale === 'pt-br' ? 'pt-BR' : 'en-US', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
-  } catch {
-    return iso
-  }
+  const d = new Date(iso)
+  // Data inválida não LANÇA — toLocaleDateString devolve 'Invalid Date'. O
+  // try/catch anterior nunca capturava isso; guardamos com isNaN para de fato
+  // degradar para a string original, como o código sempre pretendeu.
+  if (Number.isNaN(d.getTime())) return iso
+  return d.toLocaleDateString(locale === 'pt-br' ? 'pt-BR' : 'en-US', {
+    timeZone: 'UTC',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
 }
 
 /** ID da finding contém timestamp e cityId — extrai data limpo para metadata. */

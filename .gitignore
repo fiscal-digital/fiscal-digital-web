@@ -28,3 +28,6 @@ playwright/.cache/
 *.local
 .DS_Store
 Thumbs.db
+
+# Contrato zod espelhado do repo engine (TST-010..014) — gerado por scripts/sync-contracts.mjs
+lib/contracts.generated.ts

@@ -24,8 +24,18 @@ jobs:
     # LRN-20260606-003 (revisado): causa real do CANCEL era apt-get install do
     # `--with-deps`, nao CDN. Container resolve definitivamente.
     # Tag DEVE bater com versao do @playwright/test em package.json.
+    #
+    # O que "bater" significa, medido em 2026-09-20 (PR #74): cada versao do
+    # pacote pede um build especifico de Chromium (browsers.json do
+    # playwright-core). 1.62.0 e 1.62.1 pedem o 1234; 1.63.0 pede o 1243. O
+    # container v1.62.0 so tem o 1234, entao o bump para 1.63 falhou os 44
+    # testes com "Executable doesn't exist at /ms-playwright/
+    # chromium_headless_shell-1243" — zero falha de codigo, 100% paridade.
+    #
+    # Regra pratica: bump do @playwright/test sem bump desta tag e vermelho
+    # garantido. O Dependabot nao sabe disso; quem mergear precisa saber.
     container:
-      image: mcr.microsoft.com/playwright:v1.62.0-jammy
+      image: mcr.microsoft.com/playwright:v1.63.0-jammy
       options: --user 1001
     timeout-minutes: 10
 

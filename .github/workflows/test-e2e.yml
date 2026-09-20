@@ -18,7 +18,7 @@ permissions:
 jobs:
   e2e:
     name: Playwright (Chromium + Mobile Chrome)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     # Container oficial Playwright Microsoft com Chromium + apt deps pre-instalados.
     # Elimina ~120min de `apt-get install` que ubuntu-latest sofria em cold path.
     # LRN-20260606-003 (revisado): causa real do CANCEL era apt-get install do

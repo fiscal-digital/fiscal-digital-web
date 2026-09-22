@@ -37,8 +37,11 @@ export async function fetchAlerts(params: {
 
   try {
     const res = await fetch(url, {
-      // SSG: cache durante o build inteiro (Next 15+ semantics)
-      next: { revalidate: 3600 },
+      // 60 s, igual ao detalhe (fetchFindingById) e ao `revalidate` das páginas.
+      // Com 3600 s a lista mostrava por até 1 h um alerta que a API já
+      // escondia (interruptor por fiscal, `unpublishable`): o card levava a
+      // um 404 — foi o que derrubou o E2E "estrutura completa" em 22/09/2026.
+      next: { revalidate: 60 },
     })
     if (!res.ok) {
       console.warn(`[fetchAlerts] HTTP ${res.status} for ${url}`)
@@ -108,7 +111,8 @@ export async function fetchAlertsWithTotal(params: {
   const empty: AlertsResult = { items: [], total: 0, totalValue: 0, citiesCount: 0 }
 
   try {
-    const res = await fetch(url, { next: { revalidate: 3600 } })
+    // 60 s — ver comentário em fetchAlerts: lista e detalhe precisam expirar juntos.
+    const res = await fetch(url, { next: { revalidate: 60 } })
     if (!res.ok) return empty
     const data = (await res.json()) as ApiAlertsResponse
     const pi = data.pageInfo

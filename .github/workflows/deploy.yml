@@ -10,6 +10,12 @@ permissions:
   id-token: write
   contents: read
 
+# Fila única: sem isto, dois merges próximos rodam deploys sobrepostos e o
+# que terminar por último vence, mesmo sendo o commit mais antigo.
+concurrency:
+  group: deploy-web-prod
+  cancel-in-progress: false
+
 jobs:
   deploy:
     # Roda somente se o E2E passou — evita deploy de commit quebrado
@@ -19,6 +25,14 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
+
+      # Re-run de um E2E antigo dispara deploy do commit antigo e termina
+      # verde (mesmo problema de fiscal-digital#214). Rollback aqui é revert.
+      - name: Commit é o topo da main?
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPLOY_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: .github/scripts/guard-main-tip.sh
 
       - uses: actions/setup-node@v7
         with:
@@ -32,6 +46,10 @@ jobs:
         run: npm run build
         env:
           NEXT_PUBLIC_API_URL: https://api.fiscaldigital.org
+
+      - name: Build id
+        id: build
+        run: echo "id=$(cat .next/BUILD_ID)" >> "$GITHUB_OUTPUT"
 
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v6
@@ -62,6 +80,8 @@ jobs:
             --function-name ${{ vars.LAMBDA_FN_NAME }} \
             --zip-file fileb://server-function.zip \
             --region us-east-1
+          # Invalidar antes da Lambda nova ficar ativa repovoa o cache com a versão antiga.
+          aws lambda wait function-updated-v2 --function-name ${{ vars.LAMBDA_FN_NAME }} --region us-east-1
 
       # Deploy Lambda de revalidação (worker SQS do ISR)
       - name: Deploy revalidation Lambda
@@ -73,6 +93,8 @@ jobs:
             --function-name ${{ vars.LAMBDA_REVALIDATE_FN_NAME }} \
             --zip-file fileb://revalidation-function.zip \
             --region us-east-1
+          # Invalidar antes da Lambda nova ficar ativa repovoa o cache com a versão antiga.
+          aws lambda wait function-updated-v2 --function-name ${{ vars.LAMBDA_REVALIDATE_FN_NAME }} --region us-east-1
 
       # Invalidação seletiva — NÃO invalida /_next/static/* (hashed, imutável)
       - name: Invalidate CloudFront
@@ -80,3 +102,8 @@ jobs:
           aws cloudfront create-invalidation \
             --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} \
             --paths "/" "/pt-br/*" "/en-us/*"
+
+      # A E2E do PR roda contra produção, ou seja, contra a versão ANTERIOR.
+      # Este é o único ponto que verifica o build novo no ar.
+      - name: Smoke pós-deploy
+        run: .github/scripts/smoke-web.sh "${{ steps.build.outputs.id }}"
